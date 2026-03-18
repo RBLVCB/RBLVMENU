@@ -1,5 +1,5 @@
 -- ================================================
---   RBLV Library
+--   RBLV Library v3.0
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -624,155 +624,135 @@ function Library:CreateWindow(opts)
 
         -- DROPDOWN
         function Tab:Dropdown(text, list, callback)
-            local T = Library.CurrentTheme
+            local T       = Library.CurrentTheme
             local dropped = false
+            local ITEM_H  = 30   -- height of each option row
+            local LIST_H  = 150  -- max visible height of the open list
             Library.Flags[text] = ""
 
-            -- The row element (just the header button, no ClipsDescendants)
+            -- Outer wrapper — expands downward when open
             local DFr = Instance.new("Frame", Page)
-            DFr.Name = "ElementFrame"; DFr.BackgroundColor3 = T.Element
-            DFr.Size = UDim2.new(1,0,0,36); DFr.ClipsDescendants = false
+            DFr.Name            = "ElementFrame"
+            DFr.BackgroundColor3 = T.Element
+            DFr.Size            = UDim2.new(1, 0, 0, 36)
+            DFr.ClipsDescendants = true
             Instance.new("UICorner", DFr)
 
+            -- Header label (shows current selection)
             local DL = Instance.new("TextLabel", DFr)
-            DL.BackgroundTransparency = 1; DL.Position = UDim2.new(0,10,0,0); DL.Size = UDim2.new(1,-40,0,36)
-            DL.Font = Enum.Font.Gotham; DL.Text = text; DL.TextColor3 = T.Text; DL.TextSize = 14
+            DL.BackgroundTransparency = 1
+            DL.Position = UDim2.new(0, 10, 0, 0)
+            DL.Size     = UDim2.new(1, -40, 0, 36)
+            DL.Font     = Enum.Font.Gotham
+            DL.Text     = text
+            DL.TextColor3 = T.Text
+            DL.TextSize = 14
             DL.TextXAlignment = Enum.TextXAlignment.Left
 
+            -- Arrow icon
             local Arrow = Instance.new("ImageLabel", DFr)
-            Arrow.BackgroundTransparency = 1; Arrow.Position = UDim2.new(1,-30,0,8)
-            Arrow.Size = UDim2.new(0,20,0,20); Arrow.Image = "rbxassetid://6031090990"
+            Arrow.BackgroundTransparency = 1
+            Arrow.Position = UDim2.new(1, -30, 0, 8)
+            Arrow.Size     = UDim2.new(0, 20, 0, 20)
+            Arrow.Image    = "rbxassetid://6031090990"
 
+            -- Scrollable list (sits below the header, hidden until opened)
+            local ListScroll = Instance.new("ScrollingFrame", DFr)
+            ListScroll.Name                = "ListScroll"
+            ListScroll.BackgroundColor3    = Color3.fromRGB(25, 25, 35)
+            ListScroll.Position            = UDim2.new(0, 0, 0, 38)
+            ListScroll.Size                = UDim2.new(1, 0, 0, LIST_H)
+            ListScroll.CanvasSize          = UDim2.new(0, 0, 0, 0)
+            ListScroll.ScrollBarThickness  = 5
+            ListScroll.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 160)
+            ListScroll.BorderSizePixel     = 0
+            ListScroll.Visible             = false
+            ListScroll.ZIndex              = 5
+            Instance.new("UICorner", ListScroll).CornerRadius = UDim.new(0, 6)
+
+            local ItemLayout = Instance.new("UIListLayout", ListScroll)
+            ItemLayout.SortOrder    = Enum.SortOrder.LayoutOrder
+            ItemLayout.Padding      = UDim.new(0, 2)
+
+            -- Hit button covers the header row only
             local HitBtn = Instance.new("TextButton", DFr)
-            HitBtn.BackgroundTransparency = 1; HitBtn.Size = UDim2.new(1,0,0,36)
-            HitBtn.Text = ""; HitBtn.AutoButtonColor = false; HitBtn.ZIndex = 2
-
-            -- Floating list: parented to PagesFolder so it renders above everything
-            -- and is NOT clipped by the Page's ScrollingFrame
-            local FLOAT_H = 180  -- visible height of the floating list
-            local ITEM_H  = 28
-
-            local FloatFrame = Instance.new("Frame", PagesFolder)
-            FloatFrame.Name = "DropFloat_" .. text
-            FloatFrame.BackgroundColor3 = Color3.fromRGB(22,22,30)
-            FloatFrame.Size = UDim2.new(0,0,0,0)
-            FloatFrame.Position = UDim2.new(0,0,0,0)
-            FloatFrame.Visible = false
-            FloatFrame.ZIndex = 50
-            FloatFrame.ClipsDescendants = true
-            Instance.new("UICorner", FloatFrame).CornerRadius = UDim.new(0,6)
-            local FS = Instance.new("UIStroke", FloatFrame)
-            FS.Color = Color3.fromRGB(60,60,85); FS.Thickness = 1; FS.ZIndex = 51
-
-            local Scroll = Instance.new("ScrollingFrame", FloatFrame)
-            Scroll.BackgroundTransparency = 1
-            Scroll.Size = UDim2.new(1,0,1,0)
-            Scroll.CanvasSize = UDim2.new(0,0,0,0)
-            Scroll.ScrollBarThickness = 4
-            Scroll.ScrollBarImageColor3 = Color3.fromRGB(80,80,120)
-            Scroll.BorderSizePixel = 0
-            Scroll.ZIndex = 52
-            local SLL = Instance.new("UIListLayout", Scroll)
-            SLL.Padding = UDim.new(0,2); SLL.SortOrder = Enum.SortOrder.LayoutOrder
+            HitBtn.BackgroundTransparency = 1
+            HitBtn.Size   = UDim2.new(1, 0, 0, 36)
+            HitBtn.Text   = ""
+            HitBtn.ZIndex = 3
+            HitBtn.AutoButtonColor = false
 
             local function SelectItem(item)
-                DL.Text = text .. " (" .. item .. ")"
+                DL.Text             = text .. " (" .. item .. ")"
                 Library.Flags[text] = item
-                dropped = false
-                FloatFrame.Visible = false
-                CreateTween(Arrow, {Rotation = 0}, 0.15)
+                dropped             = false
+                ListScroll.Visible  = false
+                DFr.Size            = UDim2.new(1, 0, 0, 36)
+                Arrow.Rotation      = 0
                 pcall(callback, item)
             end
 
             local function BuildItems(itemList)
-                -- Clear old items
-                for _, c in pairs(Scroll:GetChildren()) do
+                for _, c in pairs(ListScroll:GetChildren()) do
                     if c:IsA("TextButton") then c:Destroy() end
                 end
-                -- Build new items
                 for idx, item in ipairs(itemList) do
-                    local IBtn = Instance.new("TextButton", Scroll)
-                    IBtn.BackgroundColor3 = Color3.fromRGB(30,30,42)
-                    IBtn.Size = UDim2.new(1,0,0,ITEM_H)
-                    IBtn.Font = Enum.Font.Gotham; IBtn.Text = item
-                    IBtn.TextColor3 = Color3.fromRGB(215,215,225); IBtn.TextSize = 13
-                    IBtn.AutoButtonColor = false; IBtn.BorderSizePixel = 0
-                    IBtn.LayoutOrder = idx; IBtn.ZIndex = 53
-                    Instance.new("UICorner", IBtn).CornerRadius = UDim.new(0,4)
+                    local IBtn = Instance.new("TextButton", ListScroll)
+                    IBtn.Name            = "Item_" .. idx
+                    IBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
+                    IBtn.Size            = UDim2.new(1, -6, 0, ITEM_H - 2)
+                    IBtn.Font            = Enum.Font.Gotham
+                    IBtn.Text            = item
+                    IBtn.TextColor3      = Color3.fromRGB(215, 215, 225)
+                    IBtn.TextSize        = 13
+                    IBtn.AutoButtonColor = false
+                    IBtn.BorderSizePixel = 0
+                    IBtn.LayoutOrder     = idx
+                    IBtn.ZIndex          = 6
+                    Instance.new("UICorner", IBtn).CornerRadius = UDim.new(0, 4)
+
+                    IBtn.MouseButton1Click:Connect(function()
+                        SelectItem(item)
+                    end)
                     IBtn.MouseEnter:Connect(function()
-                        IBtn.BackgroundColor3 = Color3.fromRGB(55,75,140)
+                        IBtn.BackgroundColor3 = Color3.fromRGB(55, 75, 140)
                     end)
                     IBtn.MouseLeave:Connect(function()
-                        IBtn.BackgroundColor3 = Color3.fromRGB(30,30,42)
+                        IBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
                     end)
-                    IBtn.MouseButton1Click:Connect(function() SelectItem(item) end)
                 end
-                -- Update canvas size for scrolling
-                local totalH = #itemList * (ITEM_H + 2)
-                Scroll.CanvasSize = UDim2.new(0,0,0,totalH)
+                -- Set canvas so the scrollbar works correctly
+                local totalH = #itemList * ITEM_H + (#itemList * 2)
+                ListScroll.CanvasSize = UDim2.new(0, 0, 0, totalH)
             end
 
             BuildItems(list)
 
-            -- Position the float below the header button when opened
-            local function OpenDropdown()
-                -- Get absolute position of the header button
-                local absPos  = DFr.AbsolutePosition
-                local absSize = DFr.AbsoluteSize
-                -- Convert to position relative to PagesFolder
-                local pfAbsPos = PagesFolder.AbsolutePosition
-                local relX = absPos.X - pfAbsPos.X
-                local relY = absPos.Y - pfAbsPos.Y + absSize.Y + 2
-
-                local visH = math.min(#list * (ITEM_H + 2), FLOAT_H)
-                FloatFrame.Position = UDim2.new(0, relX, 0, relY)
-                FloatFrame.Size     = UDim2.new(0, absSize.X, 0, visH)
-                FloatFrame.Visible  = true
-                Scroll.CanvasPosition = Vector2.new(0,0)
-                CreateTween(Arrow, {Rotation = 180}, 0.15)
-            end
-
-            local function CloseDropdown()
-                FloatFrame.Visible = false
-                CreateTween(Arrow, {Rotation = 0}, 0.15)
-            end
-
             HitBtn.MouseButton1Click:Connect(function()
                 dropped = not dropped
                 if dropped then
-                    -- Close any other open dropdowns first
-                    for _, v in pairs(PagesFolder:GetChildren()) do
-                        if v.Name:sub(1,10) == "DropFloat_" and v ~= FloatFrame then
-                            v.Visible = false
-                        end
-                    end
-                    OpenDropdown()
+                    ListScroll.Visible = true
+                    ListScroll.CanvasPosition = Vector2.new(0, 0)
+                    -- Expand the outer frame to show the list
+                    local expandH = 36 + 2 + LIST_H
+                    DFr.Size   = UDim2.new(1, 0, 0, expandH)
+                    Arrow.Rotation = 180
                 else
-                    CloseDropdown()
+                    ListScroll.Visible = false
+                    DFr.Size   = UDim2.new(1, 0, 0, 36)
+                    Arrow.Rotation = 0
                 end
-            end)
-
-            -- Close if user clicks anywhere else
-            UserInputService.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1
-                or input.UserInputType == Enum.UserInputType.Touch then
-                    if dropped and FloatFrame.Visible then
-                        -- Small delay so item clicks register first
-                        task.wait(0.05)
-                        if dropped then
-                            dropped = false
-                            CloseDropdown()
-                        end
-                    end
-                end
+                -- Update the page canvas so the rest of the content scrolls correctly
+                Page.CanvasSize = UDim2.new(0, 0, 0, PL.AbsoluteContentSize.Y + 20)
             end)
 
             Library.Elements[text] = {
-                Set = function(self, v) SelectItem(v) end,
+                Set = function(self, v)
+                    SelectItem(v)
+                end,
                 Refresh = function(self, newList)
                     list = newList
                     BuildItems(newList)
-                    -- Update float size next open
                 end
             }
             table.insert(Library.SearchIndex, {Name = text, Tab = name, Instance = DFr})

@@ -122,13 +122,13 @@ function Library:Notification(opts)
     local NT = Instance.new("TextLabel")
     NT.Parent = NF; NT.BackgroundTransparency = 1
     NT.Position = UDim2.new(0,12,0,8); NT.Size = UDim2.new(1,-16,0,18)
-    NT.Font = Enum.Font.GothamBold; NT.Text = Title
+    NT.Font = Enum.Font.Serif; NT.Text = Title
     NT.TextColor3 = T.Text; NT.TextSize = 13; NT.TextXAlignment = Enum.TextXAlignment.Left
 
     local ND = Instance.new("TextLabel")
     ND.Parent = NF; ND.BackgroundTransparency = 1
     ND.Position = UDim2.new(0,12,0,28); ND.Size = UDim2.new(1,-16,0,32)
-    ND.Font = Enum.Font.Gotham; ND.Text = Content
+    ND.Font = Enum.Font.Serif; ND.Text = Content
     ND.TextColor3 = Color3.fromRGB(180,180,180); ND.TextSize = 12
     ND.TextXAlignment = Enum.TextXAlignment.Left; ND.TextWrapped = true
 
@@ -175,7 +175,7 @@ function Library:CreateWindow(opts)
     OpenBtnFrame.Active           = true
     OpenBtnFrame.Text             = "☰"
     OpenBtnFrame.TextColor3       = Library.CurrentTheme.Text
-    OpenBtnFrame.Font             = Enum.Font.GothamBold
+    OpenBtnFrame.Font             = Enum.Font.Serif
     OpenBtnFrame.TextSize         = 22
     OpenBtnFrame.BorderSizePixel  = 0
     OpenBtnFrame.AutoButtonColor  = false
@@ -232,7 +232,7 @@ function Library:CreateWindow(opts)
     local TitleLbl = Instance.new("TextLabel", Topbar)
     TitleLbl.BackgroundTransparency = 1
     TitleLbl.Position = UDim2.new(0,15,0,0); TitleLbl.Size = UDim2.new(0.5,0,1,0)
-    TitleLbl.Font = Enum.Font.GothamBold; TitleLbl.Text = Title
+    TitleLbl.Font = Enum.Font.Serif; TitleLbl.Text = Title
     TitleLbl.TextColor3 = Library.CurrentTheme.Text; TitleLbl.TextSize = 14
     TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -265,7 +265,7 @@ function Library:CreateWindow(opts)
     SearchBar.BackgroundColor3 = Library.CurrentTheme.Top
     SearchBar.BorderSizePixel = 0
     SearchBar.Position = UDim2.new(0,10,0,50); SearchBar.Size = UDim2.new(0,130,0,30)
-    SearchBar.Font = Enum.Font.Gotham; SearchBar.PlaceholderText = "Search..."
+    SearchBar.Font = Enum.Font.Serif; SearchBar.PlaceholderText = "Search..."
     SearchBar.Text = ""; SearchBar.TextColor3 = Color3.fromRGB(255,255,255); SearchBar.TextSize = 13
     Instance.new("UICorner", SearchBar).CornerRadius = UDim.new(0,6)
     local SBI = Instance.new("ImageLabel", SearchBar)
@@ -382,27 +382,27 @@ function Library:CreateWindow(opts)
 
         local KTitle = Instance.new("TextLabel", KF)
         KTitle.BackgroundTransparency = 1; KTitle.Position = UDim2.new(0,0,0,15); KTitle.Size = UDim2.new(1,0,0,30)
-        KTitle.Font = Enum.Font.GothamBold; KTitle.Text = KeySystemConfig.KeyName
+        KTitle.Font = Enum.Font.Serif; KTitle.Text = KeySystemConfig.KeyName
         KTitle.TextColor3 = Color3.fromRGB(255,255,255); KTitle.TextSize = 20
 
         local KInput = Instance.new("TextBox", KF)
         KInput.BackgroundColor3 = Color3.fromRGB(35,35,35)
         KInput.Position = UDim2.new(0.1,0,0.4,0); KInput.Size = UDim2.new(0.8,0,0,40)
-        KInput.Font = Enum.Font.Gotham; KInput.PlaceholderText = "Enter Key..."
+        KInput.Font = Enum.Font.Serif; KInput.PlaceholderText = "Enter Key..."
         KInput.Text = ""; KInput.TextColor3 = Color3.fromRGB(255,255,255); KInput.TextSize = 14
         Instance.new("UICorner", KInput)
 
         local KBtn = Instance.new("TextButton", KF)
         KBtn.BackgroundColor3 = Color3.fromRGB(45,45,45)
         KBtn.Position = UDim2.new(0.1,0,0.65,0); KBtn.Size = UDim2.new(0.35,0,0,35)
-        KBtn.Font = Enum.Font.GothamBold; KBtn.Text = "Login"
+        KBtn.Font = Enum.Font.Serif; KBtn.Text = "Login"
         KBtn.TextColor3 = Color3.fromRGB(255,255,255); KBtn.TextSize = 14; KBtn.BorderSizePixel = 0
         Instance.new("UICorner", KBtn)
 
         local KLink = Instance.new("TextButton", KF)
         KLink.BackgroundColor3 = Color3.fromRGB(45,45,45)
         KLink.Position = UDim2.new(0.55,0,0.65,0); KLink.Size = UDim2.new(0.35,0,0,35)
-        KLink.Font = Enum.Font.GothamBold; KLink.Text = "Get Key"
+        KLink.Font = Enum.Font.Serif; KLink.Text = "Get Key"
         KLink.TextColor3 = Color3.fromRGB(255,255,255); KLink.TextSize = 14; KLink.BorderSizePixel = 0
         Instance.new("UICorner", KLink)
         MakeDraggable(KF, KF)
@@ -444,7 +444,7 @@ function Library:CreateWindow(opts)
         TabBtn.BackgroundColor3    = Color3.fromRGB(255,255,255)
         TabBtn.BackgroundTransparency = 1
         TabBtn.Size                = UDim2.new(1,0,0,30)
-        TabBtn.Font                = Enum.Font.GothamMedium
+        TabBtn.Font                = Enum.Font.Serif
         TabBtn.Text                = name
         TabBtn.TextColor3          = Color3.fromRGB(150,150,150)
         TabBtn.TextSize            = 14
@@ -493,7 +493,7 @@ function Library:CreateWindow(opts)
             local SL = Instance.new("TextLabel", Page)
             SL.Name = "SectionLabel"; SL.BackgroundTransparency = 1
             SL.Size = UDim2.new(1,0,0,24)
-            SL.Font = Enum.Font.GothamBold; SL.Text = text
+            SL.Font = Enum.Font.Serif; SL.Text = text
             SL.TextColor3 = Library.CurrentTheme.Accent; SL.TextSize = 13
             SL.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -514,7 +514,7 @@ function Library:CreateWindow(opts)
 
             local BT = Instance.new("TextButton", Btn)
             BT.BackgroundTransparency = 1; BT.Size = UDim2.new(1,0,1,0)
-            BT.Font = Enum.Font.Gotham; BT.Text = text
+            BT.Font = Enum.Font.Serif; BT.Text = text
             BT.TextColor3 = T.Text; BT.TextSize = 14; BT.AutoButtonColor = false
 
             BT.MouseButton1Click:Connect(function()
@@ -539,7 +539,7 @@ function Library:CreateWindow(opts)
 
             local TL = Instance.new("TextLabel", TFr)
             TL.BackgroundTransparency = 1; TL.Position = UDim2.new(0,10,0,0); TL.Size = UDim2.new(0.7,0,1,0)
-            TL.Font = Enum.Font.Gotham; TL.Text = text; TL.TextColor3 = T.Text; TL.TextSize = 14
+            TL.Font = Enum.Font.Serif; TL.Text = text; TL.TextColor3 = T.Text; TL.TextSize = 14
             TL.TextXAlignment = Enum.TextXAlignment.Left
 
             local SB = Instance.new("Frame", TFr)
@@ -582,13 +582,13 @@ function Library:CreateWindow(opts)
 
             local SL = Instance.new("TextLabel", SFr)
             SL.BackgroundTransparency = 1; SL.Position = UDim2.new(0,10,0,5); SL.Size = UDim2.new(1,-20,0,20)
-            SL.Font = Enum.Font.Gotham; SL.Text = text; SL.TextColor3 = T.Text; SL.TextSize = 14
+            SL.Font = Enum.Font.Serif; SL.Text = text; SL.TextColor3 = T.Text; SL.TextSize = 14
             SL.TextXAlignment = Enum.TextXAlignment.Left
 
             local VL = Instance.new("TextLabel", SFr)
             VL.Name = "ValLbl"; VL.BackgroundTransparency = 1
             VL.Position = UDim2.new(1,-60,0,5); VL.Size = UDim2.new(0,50,0,20)
-            VL.Font = Enum.Font.Gotham; VL.Text = tostring(val)
+            VL.Font = Enum.Font.Serif; VL.Text = tostring(val)
             VL.TextColor3 = Color3.fromRGB(200,200,200); VL.TextSize = 14; VL.TextXAlignment = Enum.TextXAlignment.Right
 
             local Bar = Instance.new("Frame", SFr)
@@ -643,7 +643,7 @@ function Library:CreateWindow(opts)
             DL.BackgroundTransparency = 1
             DL.Position = UDim2.new(0, 10, 0, 0)
             DL.Size     = UDim2.new(1, -40, 0, 36)
-            DL.Font     = Enum.Font.Gotham
+            DL.Font     = Enum.Font.Serif
             DL.Text     = text
             DL.TextColor3 = T.Text
             DL.TextSize = 14
@@ -701,7 +701,7 @@ function Library:CreateWindow(opts)
                     IBtn.Name            = "Item_" .. idx
                     IBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
                     IBtn.Size            = UDim2.new(1, -6, 0, ITEM_H - 2)
-                    IBtn.Font            = Enum.Font.Gotham
+                    IBtn.Font            = Enum.Font.Serif
                     IBtn.Text            = item
                     IBtn.TextColor3      = Color3.fromRGB(215, 215, 225)
                     IBtn.TextSize        = 13
@@ -769,13 +769,13 @@ function Library:CreateWindow(opts)
 
             local TbL = Instance.new("TextLabel", TbFr)
             TbL.BackgroundTransparency = 1; TbL.Position = UDim2.new(0,10,0,4); TbL.Size = UDim2.new(1,-20,0,16)
-            TbL.Font = Enum.Font.Gotham; TbL.Text = text; TbL.TextColor3 = T.Text; TbL.TextSize = 13
+            TbL.Font = Enum.Font.Serif; TbL.Text = text; TbL.TextColor3 = T.Text; TbL.TextSize = 13
             TbL.TextXAlignment = Enum.TextXAlignment.Left
 
             local Box = Instance.new("TextBox", TbFr)
             Box.BackgroundColor3 = Color3.fromRGB(30,30,30)
             Box.Position = UDim2.new(0,8,0,22); Box.Size = UDim2.new(1,-16,0,26)
-            Box.Font = Enum.Font.Gotham; Box.PlaceholderText = placeholder or ""
+            Box.Font = Enum.Font.Serif; Box.PlaceholderText = placeholder or ""
             Box.PlaceholderColor3 = Color3.fromRGB(100,100,100)
             Box.Text = ""; Box.TextColor3 = Color3.fromRGB(255,255,255); Box.TextSize = 13
             Box.ClearTextOnFocus = false; Box.BorderSizePixel = 0
@@ -805,13 +805,13 @@ function Library:CreateWindow(opts)
 
             local KL = Instance.new("TextLabel", KFr)
             KL.BackgroundTransparency = 1; KL.Position = UDim2.new(0,10,0,0); KL.Size = UDim2.new(0.6,0,1,0)
-            KL.Font = Enum.Font.Gotham; KL.Text = text; KL.TextColor3 = T.Text; KL.TextSize = 14
+            KL.Font = Enum.Font.Serif; KL.Text = text; KL.TextColor3 = T.Text; KL.TextSize = 14
             KL.TextXAlignment = Enum.TextXAlignment.Left
 
             local KBtn = Instance.new("TextButton", KFr)
             KBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
             KBtn.Position = UDim2.new(1,-90,0.5,-13); KBtn.Size = UDim2.new(0,80,0,26)
-            KBtn.Font = Enum.Font.GothamBold
+            KBtn.Font = Enum.Font.Serif
             KBtn.Text = key == Enum.KeyCode.Unknown and "None" or key.Name
             KBtn.TextColor3 = Color3.fromRGB(220,220,220); KBtn.TextSize = 12
             KBtn.AutoButtonColor = false; KBtn.BorderSizePixel = 0

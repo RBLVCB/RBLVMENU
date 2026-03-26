@@ -170,10 +170,11 @@ function Library:CreateWindow(opts)
     OpenBtnFrame.Parent           = TitanUI
     OpenBtnFrame.BackgroundColor3 = Library.CurrentTheme.Top
     OpenBtnFrame.Position         = UDim2.new(0.05,0,0.1,0)
-    OpenBtnFrame.Size             = UDim2.new(0,50,0,50)
+    OpenBtnFrame.Size             = UDim2.new(0,80,0,50)
+    OpenBtnFrame.Transparency    = 1
     OpenBtnFrame.Visible          = false
     OpenBtnFrame.Active           = true
-    OpenBtnFrame.Text             = "☰"
+    OpenBtnFrame.Text             = " • "
     OpenBtnFrame.TextColor3       = Library.CurrentTheme.Text
     OpenBtnFrame.Font             = Enum.Font.GothamBold
     OpenBtnFrame.TextSize         = 22

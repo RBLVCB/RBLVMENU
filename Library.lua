@@ -14,8 +14,16 @@ Library.Elements    = {}
 Library.SearchIndex = {}
 Library.IsOpen      = true
 
+-- Pick a random theme name at load time
+local _themeNames = {
+    "Default","DarkBlue","DarkRed","Ocean","Amethyst","Emerald","Sunset",
+    "Carbon","Midnight","Cyberpunk","Void","Crimson","Gold","Mint",
+    "Synthwave","Nebula","Aurora","Dracula","Cherry","Sapphire",
+}
+local _randomTheme = _themeNames[math.random(1, #_themeNames)]
+
 Library.Settings = {
-    Theme        = "Default",
+    Theme        = _randomTheme,
     Transparency = false,
 }
 
@@ -44,7 +52,7 @@ Library.Themes = {
     Sapphire  = {Main = Color3.fromRGB(5,10,40),   Top = Color3.fromRGB(10,18,60),  Accent = Color3.fromRGB(15,82,186),  Text = Color3.fromRGB(220,235,255), Element = Color3.fromRGB(15,28,75),  Glow = Color3.fromRGB(0,100,255)},
 }
 
-Library.CurrentTheme = Library.Themes["Default"]
+Library.CurrentTheme = Library.Themes[_randomTheme] or Library.Themes["Default"]
 
 -- ==================== UTILITY ====================
 

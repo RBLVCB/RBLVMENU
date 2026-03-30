@@ -77,45 +77,71 @@ local function MakeDraggable(handle, frame)
     end)
 end
 
-local CONFIG_FILE = "evade.json"
+-- ==================== FILE SYSTEM ====================
+
+local FOLDER_NAME = "RBLVMENU"
+local CONFIG_FILE = FOLDER_NAME .. "/evade.json"
+
+-- Create the RBLVMENU folder if it does not exist yet
+pcall(function()
+    if makefolder and not (isfolder and isfolder(FOLDER_NAME)) then
+        makefolder(FOLDER_NAME)
+    end
+end)
+
+-- External float-data hook: script.lua assigns these so the library
+-- can include floating-button state in the same save file.
+Library._GetFloatData = nil  -- function() -> table
+Library._SetFloatData = nil  -- function(table)
+
 local function SaveConfig()
     pcall(function()
         if not writefile then return end
+        -- Ensure folder exists
+        if makefolder and not (isfolder and isfolder(FOLDER_NAME)) then
+            makefolder(FOLDER_NAME)
+        end
         local data = {}
-        -- Save all UI flags (toggles, sliders, dropdowns, keybinds)
+        -- UI flags (toggles, sliders, dropdowns, keybinds)
         for k, v in pairs(Library.Flags) do
-            -- KeyCode values must be serialized as strings
             if typeof(v) == "EnumItem" then
                 data[k] = tostring(v)
             else
                 data[k] = v
             end
         end
-        -- Save current theme
+        -- Current theme
         data["__theme"] = Library.Settings.Theme
+        -- Floating button state
+        if Library._GetFloatData then
+            data["__floats"] = Library._GetFloatData()
+        end
         writefile(CONFIG_FILE, HttpService:JSONEncode(data))
     end)
 end
+
 local function LoadConfig()
     local found = false
     pcall(function()
         if not (isfile and isfile(CONFIG_FILE)) then return end
         found = true
         local data = HttpService:JSONDecode(readfile(CONFIG_FILE))
-        -- Restore theme first so the UI looks right before elements are set
+        -- Restore theme first so the UI recolors before elements are set
         if data["__theme"] and Library.Themes[data["__theme"]] then
             Library.CurrentTheme   = Library.Themes[data["__theme"]]
             Library.Settings.Theme = data["__theme"]
         end
+        -- Restore floating buttons
+        if data["__floats"] and Library._SetFloatData then
+            Library._SetFloatData(data["__floats"])
+        end
         -- Restore all UI elements
         for k, v in pairs(data) do
-            if k == "__theme" then continue end
+            if k == "__theme" or k == "__floats" then continue end
             if Library.Elements[k] then
                 pcall(function()
-                    -- Re-hydrate serialized KeyCode strings back to EnumItems
                     if type(v) == "string" and v:sub(1, 13) == "Enum.KeyCode." then
-                        local keyName = v:sub(14)
-                        local kc = Enum.KeyCode[keyName]
+                        local kc = Enum.KeyCode[v:sub(14)]
                         if kc then Library.Elements[k]:Set(kc) end
                     else
                         Library.Elements[k]:Set(v)
@@ -126,6 +152,10 @@ local function LoadConfig()
     end)
     return found
 end
+
+-- Expose publicly so script.lua can call save/load externally
+Library.SaveConfig = SaveConfig
+Library.LoadConfig = LoadConfig
 
 -- ==================== NOTIFICATION ====================
 

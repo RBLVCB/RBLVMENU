@@ -386,9 +386,18 @@ function Library:CreateWindow(opts)
     local PageContainer, PagesFolder
 
     -- Master switch: rebuilds the tab zone geometry in one shot.
-    -- All tab buttons and page frames are moved to new parents.
+    -- Page ScrollingFrames are rescued before destruction and re-homed after.
     local function ApplyTabLayout()
-        -- Destroy old zone if it exists
+        -- ── Rescue pages before destroying the old container ──
+        if PagesFolder then
+            for _, child in pairs(PagesFolder:GetChildren()) do
+                if child:IsA("ScrollingFrame") then
+                    child.Parent = MainFrame  -- safe holding spot
+                end
+            end
+        end
+
+        -- Destroy old zone
         if TabRail       then TabRail:Destroy() end
         if PageContainer then PageContainer:Destroy() end
 
@@ -491,11 +500,18 @@ function Library:CreateWindow(opts)
             PageContainer.ClipsDescendants = true
         end
 
-        -- Recreate PagesFolder inside the new PageContainer
+        -- Create fresh PagesFolder inside the new PageContainer
         PagesFolder = Instance.new("Frame", PageContainer)
         PagesFolder.Name = "Pages"
         PagesFolder.BackgroundTransparency = 1
         PagesFolder.Size = UDim2.new(1, 0, 1, 0)
+
+        -- Reclaim any rescued page ScrollingFrames back into PagesFolder
+        for _, child in pairs(MainFrame:GetChildren()) do
+            if child:IsA("ScrollingFrame") then
+                child.Parent = PagesFolder
+            end
+        end
     end
 
     -- Initial build
@@ -579,13 +595,8 @@ function Library:CreateWindow(opts)
     -- and reparents page ScrollingFrames into the new PagesFolder.
     -- Called by DirBtn after ApplyTabLayout().
     local function RebuildTabsAfterSwitch()
-        -- Reparent all page frames into the fresh PagesFolder
-        for _, entry in ipairs(_tabRegistry) do
-            if entry.page and entry.page.Parent ~= PagesFolder then
-                entry.page.Parent = PagesFolder
-            end
-        end
-
+        -- Pages are already in PagesFolder (moved by ApplyTabLayout).
+        -- Just rebuild the tab buttons in the new TabScroll.
         local firstVisible = nil
         for _, entry in ipairs(_tabRegistry) do
             -- Determine if this tab was active (visible)

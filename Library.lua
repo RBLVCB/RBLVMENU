@@ -261,8 +261,8 @@ function Library:CreateWindow(opts)
     -- Size: 520 x 340 (slightly tighter than NeonUI's 550x350)
     local W, H = 520, 340
     local HEADER_H = 36   -- title + close
-    local TABBAR_H = 30   -- tab buttons
-    local CONTENT_Y = HEADER_H + TABBAR_H
+    local TABBAR_H = 30   -- height of horizontal rail
+    -- CONTENT_Y is computed dynamically inside ApplyTabLayout
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Name             = "MainFrame"
@@ -333,6 +333,26 @@ function Library:CreateWindow(opts)
         CreateTween(CloseBtn, {TextColor3 = Color3.fromRGB(130, 130, 130)}, 0.12)
     end)
 
+    -- Tab-direction toggle button (next to close)
+    -- Cycles: horizontal (top rail) → vertical (left sidebar)
+    local DirBtn = Instance.new("TextButton", Header)
+    DirBtn.BackgroundTransparency = 1
+    DirBtn.AnchorPoint = Vector2.new(1, 0.5)
+    DirBtn.Position    = UDim2.new(1, -36, 0.5, 0)
+    DirBtn.Size        = UDim2.new(0, 22, 0, 22)
+    DirBtn.Text        = "⇆"
+    DirBtn.TextColor3  = Color3.fromRGB(110, 110, 110)
+    DirBtn.Font        = Enum.Font.GothamBold
+    DirBtn.TextSize    = 14
+    DirBtn.AutoButtonColor = false
+    DirBtn.BorderSizePixel = 0
+    DirBtn.MouseEnter:Connect(function()
+        CreateTween(DirBtn, {TextColor3 = Library.CurrentTheme.Accent}, 0.12)
+    end)
+    DirBtn.MouseLeave:Connect(function()
+        CreateTween(DirBtn, {TextColor3 = Color3.fromRGB(110, 110, 110)}, 0.12)
+    end)
+
     -- Toggle logic
     Library.IsOpen = true
     function Library:Toggle()
@@ -355,67 +375,139 @@ function Library:CreateWindow(opts)
     OpenBtn.MouseButton1Click:Connect(function() Library:Toggle() end)
     MakeDraggable(Header, MainFrame)
 
-    -- ── Tab Rail (horizontal bar under header) ──
-    local TabRail = Instance.new("Frame", MainFrame)
-    TabRail.Name             = "TabRail"
-    TabRail.BackgroundColor3 = Library.CurrentTheme.Top
-    TabRail.BorderSizePixel  = 0
-    TabRail.Position         = UDim2.new(0, 0, 0, HEADER_H)
-    TabRail.Size             = UDim2.new(1, 0, 0, TABBAR_H)
+    -- ── Tab Layout State ──
+    -- "h" = horizontal rail (top),  "v" = vertical sidebar (left)
+    local tabDirection = "h"
+    local SIDEBAR_W    = 110   -- width of vertical sidebar
+    local TABBAR_H     = 30    -- height of horizontal rail
 
-    local TabRailFix = Instance.new("Frame", TabRail)
-    TabRailFix.BackgroundColor3 = Library.CurrentTheme.Top
-    TabRailFix.BorderSizePixel  = 0
-    TabRailFix.Position = UDim2.new(0, 0, 1, -4)
-    TabRailFix.Size     = UDim2.new(1, 0, 0, 4)
+    -- These are set (and reset) by ApplyTabLayout below
+    local TabRail, TabRailFix, RailLine, TabScroll, TabLayout, TabPad
+    local PageContainer, PagesFolder
 
-    -- Thin separator line at bottom of tab rail
-    local RailLine = Instance.new("Frame", TabRail)
-    RailLine.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    RailLine.BorderSizePixel  = 0
-    RailLine.Position         = UDim2.new(0, 0, 1, -1)
-    RailLine.Size             = UDim2.new(1, 0, 0, 1)
+    -- Master switch: rebuilds the tab zone geometry in one shot.
+    -- All tab buttons and page frames are moved to new parents.
+    local function ApplyTabLayout()
+        -- Destroy old zone if it exists
+        if TabRail       then TabRail:Destroy() end
+        if PageContainer then PageContainer:Destroy() end
 
-    -- Scrollable tab container inside rail
-    local TabScroll = Instance.new("ScrollingFrame", TabRail)
-    TabScroll.BackgroundTransparency = 1
-    TabScroll.Position          = UDim2.new(0, 0, 0, 0)
-    TabScroll.Size              = UDim2.new(1, 0, 1, 0)
-    TabScroll.ScrollBarThickness = 0
-    TabScroll.BorderSizePixel   = 0
-    TabScroll.CanvasSize        = UDim2.new(0, 0, 0, 0)
-    TabScroll.ScrollingDirection = Enum.ScrollingDirection.X
+        local T = Library.CurrentTheme
 
-    local TabLayout = Instance.new("UIListLayout", TabScroll)
-    TabLayout.FillDirection = Enum.FillDirection.Horizontal
-    TabLayout.SortOrder     = Enum.SortOrder.LayoutOrder
-    TabLayout.Padding       = UDim.new(0, 0)
-    local TabPad = Instance.new("UIPadding", TabScroll)
-    TabPad.PaddingLeft = UDim.new(0, 6)
+        if tabDirection == "h" then
+            -- ── Horizontal: thin rail below header ──
+            TabRail = Instance.new("Frame", MainFrame)
+            TabRail.Name             = "TabRail"
+            TabRail.BackgroundColor3 = T.Top
+            TabRail.BorderSizePixel  = 0
+            TabRail.Position         = UDim2.new(0, 0, 0, HEADER_H)
+            TabRail.Size             = UDim2.new(1, 0, 0, TABBAR_H)
 
-    TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        TabScroll.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X + 12, 0, 0)
-    end)
+            TabRailFix = Instance.new("Frame", TabRail)
+            TabRailFix.BackgroundColor3 = T.Top
+            TabRailFix.BorderSizePixel  = 0
+            TabRailFix.Position = UDim2.new(0, 0, 1, -4)
+            TabRailFix.Size     = UDim2.new(1, 0, 0, 4)
 
-    -- ── Page Container ──
-    local PageContainer = Instance.new("Frame", MainFrame)
-    PageContainer.BackgroundTransparency = 1
-    PageContainer.Position = UDim2.new(0, 0, 0, CONTENT_Y)
-    PageContainer.Size     = UDim2.new(1, 0, 1, -CONTENT_Y)
-    PageContainer.ClipsDescendants = true
+            RailLine = Instance.new("Frame", TabRail)
+            RailLine.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            RailLine.BorderSizePixel  = 0
+            RailLine.Position         = UDim2.new(0, 0, 1, -1)
+            RailLine.Size             = UDim2.new(1, 0, 0, 1)
 
-    local PagesFolder = Instance.new("Frame", PageContainer)
-    PagesFolder.Name = "Pages"
-    PagesFolder.BackgroundTransparency = 1
-    PagesFolder.Size = UDim2.new(1, 0, 1, 0)
+            TabScroll = Instance.new("ScrollingFrame", TabRail)
+            TabScroll.BackgroundTransparency  = 1
+            TabScroll.Size                    = UDim2.new(1, 0, 1, 0)
+            TabScroll.ScrollBarThickness      = 0
+            TabScroll.BorderSizePixel         = 0
+            TabScroll.CanvasSize              = UDim2.new(0, 0, 0, 0)
+            TabScroll.ScrollingDirection      = Enum.ScrollingDirection.X
 
-    -- ── Search Bar (top-right of header) ──
+            TabLayout = Instance.new("UIListLayout", TabScroll)
+            TabLayout.FillDirection = Enum.FillDirection.Horizontal
+            TabLayout.SortOrder     = Enum.SortOrder.LayoutOrder
+            TabLayout.Padding       = UDim.new(0, 0)
+            TabPad = Instance.new("UIPadding", TabScroll)
+            TabPad.PaddingLeft = UDim.new(0, 6)
+
+            TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                TabScroll.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X + 12, 0, 0)
+            end)
+
+            -- Page container: full width, below the tab rail
+            local CONTENT_Y = HEADER_H + TABBAR_H
+            PageContainer = Instance.new("Frame", MainFrame)
+            PageContainer.BackgroundTransparency = 1
+            PageContainer.Position = UDim2.new(0, 0, 0, CONTENT_Y)
+            PageContainer.Size     = UDim2.new(1, 0, 1, -CONTENT_Y)
+            PageContainer.ClipsDescendants = true
+
+        else
+            -- ── Vertical: sidebar on the left ──
+            TabRail = Instance.new("Frame", MainFrame)
+            TabRail.Name             = "TabRail"
+            TabRail.BackgroundColor3 = T.Top
+            TabRail.BorderSizePixel  = 0
+            TabRail.Position         = UDim2.new(0, 0, 0, HEADER_H)
+            TabRail.Size             = UDim2.new(0, SIDEBAR_W, 1, -HEADER_H)
+
+            TabRailFix = Instance.new("Frame", TabRail)  -- dummy for RefreshTheme compat
+            TabRailFix.BackgroundTransparency = 1
+            TabRailFix.Size = UDim2.new(0, 0, 0, 0)
+
+            -- Vertical separator on the right edge of sidebar
+            RailLine = Instance.new("Frame", TabRail)
+            RailLine.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            RailLine.BorderSizePixel  = 0
+            RailLine.Position         = UDim2.new(1, -1, 0, 0)
+            RailLine.Size             = UDim2.new(0, 1, 1, 0)
+
+            TabScroll = Instance.new("ScrollingFrame", TabRail)
+            TabScroll.BackgroundTransparency  = 1
+            TabScroll.Size                    = UDim2.new(1, -1, 1, 0)
+            TabScroll.ScrollBarThickness      = 2
+            TabScroll.BorderSizePixel         = 0
+            TabScroll.CanvasSize              = UDim2.new(0, 0, 0, 0)
+            TabScroll.ScrollingDirection      = Enum.ScrollingDirection.Y
+
+            TabLayout = Instance.new("UIListLayout", TabScroll)
+            TabLayout.FillDirection = Enum.FillDirection.Vertical
+            TabLayout.SortOrder     = Enum.SortOrder.LayoutOrder
+            TabLayout.Padding       = UDim.new(0, 2)
+            TabPad = Instance.new("UIPadding", TabScroll)
+            TabPad.PaddingTop   = UDim.new(0, 6)
+            TabPad.PaddingLeft  = UDim.new(0, 4)
+            TabPad.PaddingRight = UDim.new(0, 4)
+
+            TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                TabScroll.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y + 12)
+            end)
+
+            -- Page container: right of sidebar, below header
+            PageContainer = Instance.new("Frame", MainFrame)
+            PageContainer.BackgroundTransparency = 1
+            PageContainer.Position = UDim2.new(0, SIDEBAR_W, 0, HEADER_H)
+            PageContainer.Size     = UDim2.new(1, -SIDEBAR_W, 1, -HEADER_H)
+            PageContainer.ClipsDescendants = true
+        end
+
+        -- Recreate PagesFolder inside the new PageContainer
+        PagesFolder = Instance.new("Frame", PageContainer)
+        PagesFolder.Name = "Pages"
+        PagesFolder.BackgroundTransparency = 1
+        PagesFolder.Size = UDim2.new(1, 0, 1, 0)
+    end
+
+    -- Initial build
+    ApplyTabLayout()
+
+    -- ── Search Bar (top-right of header, nudged left to clear both buttons) ──
     local SearchBox = Instance.new("TextBox", Header)
     SearchBox.Name               = "SearchBar"
     SearchBox.BackgroundColor3   = Library.CurrentTheme.Main
     SearchBox.BorderSizePixel    = 0
     SearchBox.AnchorPoint        = Vector2.new(1, 0.5)
-    SearchBox.Position           = UDim2.new(1, -38, 0.5, 0)
+    SearchBox.Position           = UDim2.new(1, -64, 0.5, 0)
     SearchBox.Size               = UDim2.new(0, 110, 0, 20)
     SearchBox.Font               = Enum.Font.Gotham
     SearchBox.PlaceholderText    = "search..."
@@ -436,6 +528,8 @@ function Library:CreateWindow(opts)
     end)
 
     -- ── Tab switch helper ──
+    -- References TabScroll and PagesFolder via upvalue — both are reassigned
+    -- by ApplyTabLayout so closures always see the current table.
     local function SwitchToTab(PageName)
         for _, v in pairs(TabScroll:GetChildren()) do
             if v:IsA("TextButton") then
@@ -475,6 +569,104 @@ function Library:CreateWindow(opts)
                 break
             end
         end
+    end)
+
+    -- ── Direction toggle logic ──
+    -- Stores per-tab data so we can recreate buttons after a layout switch
+    local _tabRegistry = {}  -- { {name, page} , ... } in order
+
+    -- Rebuilds tab buttons in TabScroll matching the current direction mode,
+    -- and reparents page ScrollingFrames into the new PagesFolder.
+    -- Called by DirBtn after ApplyTabLayout().
+    local function RebuildTabsAfterSwitch()
+        -- Reparent all page frames into the fresh PagesFolder
+        for _, entry in ipairs(_tabRegistry) do
+            if entry.page and entry.page.Parent ~= PagesFolder then
+                entry.page.Parent = PagesFolder
+            end
+        end
+
+        local firstVisible = nil
+        for _, entry in ipairs(_tabRegistry) do
+            -- Determine if this tab was active (visible)
+            local wasActive = entry.page and entry.page.Visible
+
+            -- Create a new tab button for this tab in the new TabScroll
+            local name = entry.name
+            local TabBtn = Instance.new("TextButton", TabScroll)
+            TabBtn.Name                   = name
+            TabBtn.BackgroundTransparency = 1
+            TabBtn.Font                   = Enum.Font.GothamMedium
+            TabBtn.Text                   = name
+            TabBtn.TextSize               = 11
+            TabBtn.BorderSizePixel        = 0
+            TabBtn.AutoButtonColor        = false
+
+            if tabDirection == "h" then
+                TabBtn.Size       = UDim2.new(0, math.max(#name * 7 + 20, 60), 1, 0)
+                TabBtn.TextColor3 = Color3.fromRGB(110, 110, 110)
+            else
+                TabBtn.Size       = UDim2.new(1, 0, 0, 28)
+                TabBtn.TextColor3 = Color3.fromRGB(110, 110, 110)
+                TabBtn.TextXAlignment = Enum.TextXAlignment.Left
+                -- Indent for sidebar
+                local SBPad = Instance.new("UIPadding", TabBtn)
+                SBPad.PaddingLeft = UDim.new(0, 8)
+            end
+
+            local ActiveBar = Instance.new("Frame", TabBtn)
+            ActiveBar.Name   = "ActiveBar"
+            ActiveBar.BackgroundColor3       = Library.CurrentTheme.Accent
+            ActiveBar.BorderSizePixel        = 0
+            ActiveBar.BackgroundTransparency = wasActive and 0 or 1
+
+            if tabDirection == "h" then
+                ActiveBar.AnchorPoint = Vector2.new(0.5, 1)
+                ActiveBar.Position    = UDim2.new(0.5, 0, 1, 0)
+                ActiveBar.Size        = UDim2.new(0.7, 0, 0, 2)
+                Instance.new("UICorner", ActiveBar).CornerRadius = UDim.new(1, 0)
+            else
+                -- Vertical mode: left edge indicator bar
+                ActiveBar.AnchorPoint = Vector2.new(0, 0.5)
+                ActiveBar.Position    = UDim2.new(0, 0, 0.5, 0)
+                ActiveBar.Size        = UDim2.new(0, 2, 0.6, 0)
+                Instance.new("UICorner", ActiveBar).CornerRadius = UDim.new(1, 0)
+            end
+
+            if wasActive then
+                TabBtn.TextColor3 = Library.CurrentTheme.Accent
+                firstVisible = name
+            end
+
+            TabBtn.MouseButton1Click:Connect(function() SwitchToTab(name) end)
+            TabBtn.MouseEnter:Connect(function()
+                if TabBtn.TextColor3 ~= Library.CurrentTheme.Accent then
+                    CreateTween(TabBtn, {TextColor3 = Color3.fromRGB(180, 180, 180)}, 0.12)
+                end
+            end)
+            TabBtn.MouseLeave:Connect(function()
+                if TabBtn.TextColor3 ~= Library.CurrentTheme.Accent then
+                    CreateTween(TabBtn, {TextColor3 = Color3.fromRGB(110, 110, 110)}, 0.12)
+                end
+            end)
+
+            entry.btn = TabBtn
+        end
+
+        -- If nothing was active, activate the first tab
+        if not firstVisible and #_tabRegistry > 0 then
+            SwitchToTab(_tabRegistry[1].name)
+        end
+    end
+
+    DirBtn.MouseButton1Click:Connect(function()
+        tabDirection = (tabDirection == "h") and "v" or "h"
+        DirBtn.Text = (tabDirection == "h") and "⇆" or "⇅"
+        -- Rebuild layout scaffolding (destroys old TabRail & PageContainer,
+        -- creates fresh ones, assigns new TabScroll & PagesFolder upvalues)
+        ApplyTabLayout()
+        -- Repopulate buttons and reparent pages
+        RebuildTabsAfterSwitch()
     end)
 
     -- ── Theme Refresh ──
@@ -631,39 +823,39 @@ function Library:CreateWindow(opts)
     function Window:Tab(name)
         local Tab = {}
 
-        -- Tab button in the rail
+        -- Tab button in the rail (horizontal mode by default)
         local TabBtn = Instance.new("TextButton", TabScroll)
-        TabBtn.Name                  = name
+        TabBtn.Name                   = name
         TabBtn.BackgroundTransparency = 1
-        TabBtn.Size                  = UDim2.new(0, math.max(#name * 7 + 20, 60), 1, 0)
-        TabBtn.Font                  = Enum.Font.GothamMedium
-        TabBtn.Text                  = name
-        TabBtn.TextColor3            = Color3.fromRGB(110, 110, 110)
-        TabBtn.TextSize              = 11
-        TabBtn.BorderSizePixel       = 0
-        TabBtn.AutoButtonColor       = false
+        TabBtn.Size                   = UDim2.new(0, math.max(#name * 7 + 20, 60), 1, 0)
+        TabBtn.Font                   = Enum.Font.GothamMedium
+        TabBtn.Text                   = name
+        TabBtn.TextColor3             = Color3.fromRGB(110, 110, 110)
+        TabBtn.TextSize               = 11
+        TabBtn.BorderSizePixel        = 0
+        TabBtn.AutoButtonColor        = false
 
-        -- Active indicator: thin underline at bottom of tab button
+        -- Active indicator: underline (horizontal) or left bar (vertical)
         local ActiveBar = Instance.new("Frame", TabBtn)
-        ActiveBar.Name                = "ActiveBar"
-        ActiveBar.BackgroundColor3    = Library.CurrentTheme.Accent
-        ActiveBar.BorderSizePixel     = 0
-        ActiveBar.AnchorPoint         = Vector2.new(0.5, 1)
-        ActiveBar.Position            = UDim2.new(0.5, 0, 1, 0)
-        ActiveBar.Size                = UDim2.new(0.7, 0, 0, 2)
+        ActiveBar.Name                   = "ActiveBar"
+        ActiveBar.BackgroundColor3       = Library.CurrentTheme.Accent
+        ActiveBar.BorderSizePixel        = 0
+        ActiveBar.AnchorPoint            = Vector2.new(0.5, 1)
+        ActiveBar.Position               = UDim2.new(0.5, 0, 1, 0)
+        ActiveBar.Size                   = UDim2.new(0.7, 0, 0, 2)
         ActiveBar.BackgroundTransparency = 1
         Instance.new("UICorner", ActiveBar).CornerRadius = UDim.new(1, 0)
 
-        -- Page
+        -- Page (content area)
         local Page = Instance.new("ScrollingFrame", PagesFolder)
-        Page.Name                = name
+        Page.Name                 = name
         Page.BackgroundTransparency = 1
-        Page.Size                = UDim2.new(1, 0, 1, 0)
-        Page.ScrollBarThickness  = 2
+        Page.Size                 = UDim2.new(1, 0, 1, 0)
+        Page.ScrollBarThickness   = 2
         Page.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 60)
-        Page.Visible             = false
-        Page.CanvasSize          = UDim2.new(0, 0, 0, 0)
-        Page.BorderSizePixel     = 0
+        Page.Visible              = false
+        Page.CanvasSize           = UDim2.new(0, 0, 0, 0)
+        Page.BorderSizePixel      = 0
 
         local PL = Instance.new("UIListLayout", Page)
         PL.SortOrder = Enum.SortOrder.LayoutOrder
@@ -691,10 +883,13 @@ function Library:CreateWindow(opts)
 
         if FirstTab then
             FirstTab = false
-            TabBtn.TextColor3 = Library.CurrentTheme.Accent
+            TabBtn.TextColor3                = Library.CurrentTheme.Accent
             ActiveBar.BackgroundTransparency = 0
-            Page.Visible = true
+            Page.Visible                     = true
         end
+
+        -- Register this tab so direction-switch can recreate it
+        table.insert(_tabRegistry, {name = name, page = Page, btn = TabBtn})
 
         -- ────────────────────────────────────────
         -- ELEMENTS
@@ -841,26 +1036,39 @@ function Library:CreateWindow(opts)
             local sliding = false
             Library.Flags[text] = val
 
-            local Fr = ElemBase(46)
+            -- 44px total: 18px for label row, 4px gap, 4px track, 18px bottom padding
+            local Fr = ElemBase(44)
 
-            ElemLabel(Fr, text, 5, 12)
+            -- Label: left side, vertically centred in the top half
+            local SLbl = Instance.new("TextLabel", Fr)
+            SLbl.BackgroundTransparency = 1
+            SLbl.Position  = UDim2.new(0, 10, 0, 0)
+            SLbl.Size      = UDim2.new(1, -60, 0, 22)
+            SLbl.Font      = Enum.Font.Gotham
+            SLbl.Text      = text
+            SLbl.TextColor3 = T.Text
+            SLbl.TextSize  = 12
+            SLbl.TextXAlignment = Enum.TextXAlignment.Left
+            SLbl.TextYAlignment = Enum.TextYAlignment.Center
 
+            -- Value: right side, same row as label
             local ValLbl = Instance.new("TextLabel", Fr)
             ValLbl.BackgroundTransparency = 1
             ValLbl.AnchorPoint = Vector2.new(1, 0)
-            ValLbl.Position    = UDim2.new(1, -10, 0, 5)
-            ValLbl.Size        = UDim2.new(0, 40, 0, 14)
+            ValLbl.Position    = UDim2.new(1, -8, 0, 0)
+            ValLbl.Size        = UDim2.new(0, 44, 0, 22)
             ValLbl.Font        = Enum.Font.GothamMedium
             ValLbl.Text        = tostring(val)
             ValLbl.TextColor3  = T.Accent
             ValLbl.TextSize    = 11
             ValLbl.TextXAlignment = Enum.TextXAlignment.Right
+            ValLbl.TextYAlignment = Enum.TextYAlignment.Center
 
-            -- Track
+            -- Track: sits below the label row
             local Track = Instance.new("Frame", Fr)
             Track.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
             Track.BorderSizePixel  = 0
-            Track.Position = UDim2.new(0, 10, 0, 30)
+            Track.Position = UDim2.new(0, 10, 0, 28)
             Track.Size     = UDim2.new(1, -20, 0, 4)
             Instance.new("UICorner", Track).CornerRadius = UDim.new(1, 0)
 
@@ -870,7 +1078,6 @@ function Library:CreateWindow(opts)
             Fill.Size             = UDim2.new((val - min) / (max - min), 0, 1, 0)
             Instance.new("UICorner", Fill).CornerRadius = UDim.new(1, 0)
 
-            -- Knob on fill
             local SKnob = Instance.new("Frame", Track)
             SKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             SKnob.BorderSizePixel  = 0
@@ -879,25 +1086,27 @@ function Library:CreateWindow(opts)
             SKnob.Size             = UDim2.new(0, 10, 0, 10)
             Instance.new("UICorner", SKnob).CornerRadius = UDim.new(1, 0)
 
-            local HitBtn = Instance.new("TextButton", Track)
+            -- Hit zone covers the WHOLE frame so dragging anywhere on the row works
+            local HitBtn = Instance.new("TextButton", Fr)
             HitBtn.BackgroundTransparency = 1
-            HitBtn.Size = UDim2.new(1, 0, 0, 20)
-            HitBtn.AnchorPoint = Vector2.new(0, 0.5)
-            HitBtn.Position    = UDim2.new(0, 0, 0.5, 0)
-            HitBtn.Text        = ""
-            HitBtn.AutoButtonColor = false
+            HitBtn.Size             = UDim2.new(1, 0, 1, 0)
+            HitBtn.Text             = ""
+            HitBtn.AutoButtonColor  = false
+            HitBtn.ZIndex           = 4
 
             local function SetVal(v)
                 val = math.clamp(v, min, max)
                 Library.Flags[text] = val
                 ValLbl.Text = tostring(val)
                 local pct = (val - min) / (max - min)
-                CreateTween(Fill,  {Size     = UDim2.new(pct, 0, 1, 0)}, 0.08)
-                CreateTween(SKnob, {Position = UDim2.new(pct, 0, 0.5, 0)}, 0.08)
+                CreateTween(Fill,  {Size     = UDim2.new(pct, 0, 1, 0)}, 0.06)
+                CreateTween(SKnob, {Position = UDim2.new(pct, 0, 0.5, 0)}, 0.06)
                 pcall(callback, val)
             end
+            -- Always compute from track position even though hit zone is the full frame
             local function UpdateFromInput(i)
-                local pct = math.clamp((i.Position.X - Track.AbsolutePosition.X) / Track.AbsoluteSize.X, 0, 1)
+                local relX = i.Position.X - Track.AbsolutePosition.X
+                local pct  = math.clamp(relX / Track.AbsoluteSize.X, 0, 1)
                 SetVal(math.floor(min + (max - min) * pct))
             end
 
@@ -1029,12 +1238,20 @@ function Library:CreateWindow(opts)
 
             BuildItems(list)
 
+            -- Compute the visible list height: fit content exactly, capped at LIST_MAX
+            local function CalcListH()
+                local contentH = #list * ITEM_H + 8  -- 8 = top/bottom padding
+                return math.min(contentH, LIST_MAX)
+            end
+
             HitBtn.MouseButton1Click:Connect(function()
                 dropped = not dropped
                 if dropped then
+                    local listH = CalcListH()
+                    ListFrame.Size             = UDim2.new(1, 0, 0, listH)
                     ListFrame.Visible          = true
                     ListFrame.CanvasPosition   = Vector2.new(0, 0)
-                    Fr.Size                    = UDim2.new(1, 0, 0, 34 + LIST_MAX)
+                    Fr.Size                    = UDim2.new(1, 0, 0, 34 + listH)
                     CreateTween(Chev, {Rotation = 180}, 0.15)
                 else
                     ListFrame.Visible = false
@@ -1045,8 +1262,18 @@ function Library:CreateWindow(opts)
             end)
 
             Library.Elements[text] = {
-                Set     = function(self, v) SelectItem(v) end,
-                Refresh = function(self, newList) list = newList; BuildItems(newList) end,
+                Set = function(self, v) SelectItem(v) end,
+                Refresh = function(self, newList)
+                    list = newList
+                    BuildItems(newList)
+                    -- If open, resize to fit the new list
+                    if dropped then
+                        local listH = CalcListH()
+                        ListFrame.Size = UDim2.new(1, 0, 0, listH)
+                        Fr.Size        = UDim2.new(1, 0, 0, 34 + listH)
+                        Page.CanvasSize = UDim2.new(0, 0, 0, PL.AbsoluteContentSize.Y + 20)
+                    end
+                end,
             }
             table.insert(Library.SearchIndex, {Name = text, Tab = name, Instance = Fr})
             return SelLbl

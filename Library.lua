@@ -31,7 +31,6 @@ Library.Settings = {
 -- ==================== THEMES ====================
 
 Library.Themes = {
-    Default   = {Main = Color3.fromRGB(20,20,20),  Top = Color3.fromRGB(30,30,30),  Accent = Color3.fromRGB(0,160,255),  Text = Color3.fromRGB(255,255,255), Element = Color3.fromRGB(35,35,35),  Glow = Color3.fromRGB(0,110,220)},
     DarkBlue  = {Main = Color3.fromRGB(15,20,30),  Top = Color3.fromRGB(20,25,40),  Accent = Color3.fromRGB(50,100,255), Text = Color3.fromRGB(240,240,255), Element = Color3.fromRGB(25,30,45),  Glow = Color3.fromRGB(40,80,200)},
     DarkRed   = {Main = Color3.fromRGB(30,15,15),  Top = Color3.fromRGB(40,20,20),  Accent = Color3.fromRGB(255,60,60),  Text = Color3.fromRGB(255,240,240), Element = Color3.fromRGB(45,25,25),  Glow = Color3.fromRGB(200,40,40)},
     Ocean     = {Main = Color3.fromRGB(10,30,35),  Top = Color3.fromRGB(15,40,45),  Accent = Color3.fromRGB(0,200,200),  Text = Color3.fromRGB(220,255,255), Element = Color3.fromRGB(20,50,55),  Glow = Color3.fromRGB(0,150,150)},

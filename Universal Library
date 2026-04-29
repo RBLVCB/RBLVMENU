@@ -1,5 +1,5 @@
 -- ================================================
---   Universal Library v2.1.
+--   Universal Library v2.0
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -13,59 +13,6 @@ Library.Flags       = {}
 Library.Elements    = {}
 Library.SearchIndex = {}
 Library.IsOpen      = true
-Library._Connections = {}   -- all RBXScriptConnections for Unload
-Library._FlagWatchers = {}  -- { flagName = { callback, ... } }
-Library._GuiRoots    = {}   -- all ScreenGuis for Unload
-
--- ==================== FLAG API ====================
-
-function Library:GetFlag(name)
-    return Library.Flags[name]
-end
-
-function Library:SetFlag(name, value)
-    Library.Flags[name] = value
-    if Library.Elements[name] then
-        pcall(function() Library.Elements[name]:Set(value) end)
-    end
-    if Library._FlagWatchers[name] then
-        for _, cb in ipairs(Library._FlagWatchers[name]) do
-            pcall(cb, value)
-        end
-    end
-end
-
-function Library:OnFlagChanged(name, callback)
-    if not Library._FlagWatchers[name] then
-        Library._FlagWatchers[name] = {}
-    end
-    table.insert(Library._FlagWatchers[name], callback)
-end
-
--- ==================== UNLOAD ====================
-
-function Library:Unload()
-    -- Disconnect all connections
-    for _, conn in ipairs(Library._Connections) do
-        pcall(function() conn:Disconnect() end)
-    end
-    Library._Connections = {}
-
-    -- Destroy all GUIs
-    for _, gui in ipairs(Library._GuiRoots) do
-        pcall(function() gui:Destroy() end)
-    end
-    Library._GuiRoots = {}
-
-    -- Clear state
-    Library.Flags        = {}
-    Library.Elements     = {}
-    Library.SearchIndex  = {}
-    Library._FlagWatchers = {}
-    Library.IsOpen       = false
-
-    Library:Notification({Title = "Unloaded", Content = "Script has been unloaded.", Duration = 3})
-end
 
 -- Pick a random theme at load
 local _themeNames = {
@@ -416,11 +363,11 @@ function Library:CreateWindow(opts)
     function Library:Toggle()
         Library.IsOpen = not Library.IsOpen
         if Library.IsOpen then
-            OpenBtn.Visible   = false
+            OpenBtn.Visible = false
             MainFrame.Visible = true
-            CreateTween(MainFrame, {BackgroundTransparency = Library.Settings.Transparency and 0.45 or 0}, 0.25)
+            CreateTween(MainFrame, {Size = UDim2.new(0, W, 0, H)}, 0.3)
         else
-            local close = CreateTween(MainFrame, {BackgroundTransparency = 1}, 0.25)
+            local close = CreateTween(MainFrame, {Size = UDim2.new(0, W, 0, 0)}, 0.3)
             close.Completed:Connect(function()
                 if not Library.IsOpen then
                     MainFrame.Visible = false
@@ -880,11 +827,7 @@ function Library:CreateWindow(opts)
             Library:RefreshTheme()
             Library:Notification({Title = "Config", Content = "Config loaded.", Duration = 3})
         end
-        -- Set full size immediately so elements render with correct AbsoluteSize
-        MainFrame.Size = UDim2.new(0, W, 0, H)
-        -- Then do a subtle fade-in instead of a size tween
-        MainFrame.BackgroundTransparency = 1
-        CreateTween(MainFrame, {BackgroundTransparency = Library.Settings.Transparency and 0.45 or 0}, 0.3)
+        CreateTween(MainFrame, {Size = UDim2.new(0, W, 0, H)}, 0.35)
     end
 
     -- ==========================================
@@ -938,14 +881,9 @@ function Library:CreateWindow(opts)
         PP.PaddingLeft  = UDim.new(0, 8)
         PP.PaddingRight = UDim.new(0, 8)
 
-        local function UpdateCanvas()
+        PL:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             Page.CanvasSize = UDim2.new(0, 0, 0, PL.AbsoluteContentSize.Y + 20)
-        end
-
-        PL:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateCanvas)
-
-        -- Force canvas refresh once the frame is fully rendered
-        task.defer(UpdateCanvas)
+        end)
 
         TabBtn.MouseButton1Click:Connect(function() SwitchToTab(name) end)
         TabBtn.MouseEnter:Connect(function()
@@ -1099,9 +1037,6 @@ function Library:CreateWindow(opts)
                 CreateTween(Track, {BackgroundColor3 = Toggled and Library.CurrentTheme.Accent or Color3.fromRGB(50, 50, 50)}, 0.15)
                 CreateTween(Knob,  {Position = Toggled and UDim2.new(1, -16, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)}, 0.15)
                 pcall(callback, Toggled)
-                if Library._FlagWatchers[text] then
-                    for _, cb in ipairs(Library._FlagWatchers[text]) do pcall(cb, Toggled) end
-                end
             end
 
             HitBtn.MouseButton1Click:Connect(function() Update(not Toggled) end)
@@ -1440,334 +1375,7 @@ function Library:CreateWindow(opts)
             table.insert(Library.SearchIndex, {Name = text, Tab = name, Instance = Fr})
         end
 
-        -- SECTION DIVIDER
-        function Tab:Section(text)
-            local SF = Instance.new("Frame", Page)
-            SF.Name             = "SectionFrame"
-            SF.BackgroundTransparency = 1
-            SF.Size             = UDim2.new(1, 0, 0, 24)
-            SF.BorderSizePixel  = 0
-
-            -- Left line
-            local LineL = Instance.new("Frame", SF)
-            LineL.BackgroundColor3      = Library.CurrentTheme.Accent
-            LineL.BackgroundTransparency = 0.6
-            LineL.BorderSizePixel       = 0
-            LineL.AnchorPoint           = Vector2.new(0, 0.5)
-            LineL.Position              = UDim2.new(0, 8, 0.5, 0)
-            LineL.Size                  = UDim2.new(0, 18, 0, 1)
-
-            -- Label
-            local SLbl = Instance.new("TextLabel", SF)
-            SLbl.BackgroundTransparency = 1
-            SLbl.AnchorPoint            = Vector2.new(0.5, 0.5)
-            SLbl.Position               = UDim2.new(0.5, 0, 0.5, 0)
-            SLbl.Size                   = UDim2.new(0.6, 0, 1, 0)
-            SLbl.Font                   = Enum.Font.GothamBold
-            SLbl.Text                   = text:upper()
-            SLbl.TextColor3             = Library.CurrentTheme.Accent
-            SLbl.TextSize               = 9
-            SLbl.TextXAlignment         = Enum.TextXAlignment.Center
-
-            -- Right line
-            local LineR = Instance.new("Frame", SF)
-            LineR.BackgroundColor3      = Library.CurrentTheme.Accent
-            LineR.BackgroundTransparency = 0.6
-            LineR.BorderSizePixel       = 0
-            LineR.AnchorPoint           = Vector2.new(1, 0.5)
-            LineR.Position              = UDim2.new(1, -8, 0.5, 0)
-            LineR.Size                  = UDim2.new(0, 18, 0, 1)
-
-            return SF
-        end
-
-        -- MULTI TOGGLE
-        function Tab:MultiToggle(text, options, default, callback)
-            local T        = Library.CurrentTheme
-            local selected = default or options[1]
-            Library.Flags[text] = selected
-
-            -- Height: label row (20) + button row (28) + padding (10)
-            local Fr = ElemBase(58)
-
-            local Lbl = Instance.new("TextLabel", Fr)
-            Lbl.BackgroundTransparency = 1
-            Lbl.Position    = UDim2.new(0, 10, 0, 4)
-            Lbl.Size        = UDim2.new(1, -20, 0, 16)
-            Lbl.Font        = Enum.Font.Gotham
-            Lbl.Text        = text
-            Lbl.TextColor3  = T.Text
-            Lbl.TextSize    = 12
-            Lbl.TextXAlignment = Enum.TextXAlignment.Left
-
-            -- Button row container
-            local Row = Instance.new("Frame", Fr)
-            Row.BackgroundTransparency = 1
-            Row.Position = UDim2.new(0, 8, 0, 24)
-            Row.Size     = UDim2.new(1, -16, 0, 26)
-            local RowLayout = Instance.new("UIListLayout", Row)
-            RowLayout.FillDirection = Enum.FillDirection.Horizontal
-            RowLayout.SortOrder     = Enum.SortOrder.LayoutOrder
-            RowLayout.Padding       = UDim.new(0, 4)
-
-            local btnRefs = {}
-
-            local function SelectOption(opt)
-                selected = opt
-                Library.Flags[text] = opt
-                for _, ref in ipairs(btnRefs) do
-                    local isActive = (ref.opt == opt)
-                    CreateTween(ref.btn, {
-                        BackgroundColor3 = isActive and T.Accent or Color3.fromRGB(35, 35, 35),
-                        TextColor3       = isActive and Color3.fromRGB(255,255,255) or Color3.fromRGB(150,150,150),
-                    }, 0.15)
-                end
-                pcall(callback, opt)
-                if Library._FlagWatchers[text] then
-                    for _, cb in ipairs(Library._FlagWatchers[text]) do pcall(cb, opt) end
-                end
-            end
-
-            local btnW = math.floor((Row.AbsoluteSize.X - (#options - 1) * 4) / #options)
-            -- Use a fixed per-button width based on option count
-            local perW = math.max(40, math.floor(240 / #options) - 4)
-
-            for _, opt in ipairs(options) do
-                local Btn = Instance.new("TextButton", Row)
-                Btn.BackgroundColor3 = (opt == selected) and T.Accent or Color3.fromRGB(35, 35, 35)
-                Btn.Size             = UDim2.new(0, perW, 1, 0)
-                Btn.Font             = Enum.Font.GothamMedium
-                Btn.Text             = opt
-                Btn.TextColor3       = (opt == selected) and Color3.fromRGB(255,255,255) or Color3.fromRGB(150,150,150)
-                Btn.TextSize         = 10
-                Btn.BorderSizePixel  = 0
-                Btn.AutoButtonColor  = false
-                Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 4)
-
-                table.insert(btnRefs, {btn = Btn, opt = opt})
-                Btn.MouseButton1Click:Connect(function() SelectOption(opt) end)
-            end
-
-            Library.Elements[text] = {
-                Set = function(self, v) SelectOption(v) end,
-                Get = function(self) return selected end,
-            }
-            table.insert(Library.SearchIndex, {Name = text, Tab = name, Instance = Fr})
-            return Fr
-        end
-
         return Tab
-    end
-
-    -- Register main GUI for unload
-    table.insert(Library._GuiRoots, TitanUI)
-
-    -- ==================== FLOATING BUTTON SYSTEM ====================
-
-    local _floatGui = Instance.new("ScreenGui")
-    _floatGui.Name           = "Universal_FloatingBtns"
-    _floatGui.ResetOnSpawn   = false
-    _floatGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    _floatGui.DisplayOrder   = 8999
-    _floatGui.Enabled        = true
-    _floatGui.Parent         = CoreGui
-    table.insert(Library._GuiRoots, _floatGui)
-
-    local _floatingButtons = {}
-    getgenv()._floatDragEnabled = true
-
-    local function _makeFloatingButton(name, labelText, defaultPos, onClick)
-        local T   = Library.CurrentTheme
-        local cfg = { width=140, height=36, opacity=0, fontSize=14, triggerMode="Instant", defaultPos=defaultPos }
-
-        local frame = Instance.new("Frame", _floatGui)
-        frame.Name                   = "Float_"..name
-        frame.BackgroundColor3       = T.Element
-        frame.BackgroundTransparency = cfg.opacity
-        frame.BorderSizePixel        = 0
-        frame.Size                   = UDim2.new(0, cfg.width, 0, cfg.height)
-        frame.Position               = defaultPos
-        frame.Visible                = true
-        Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
-        local stroke = Instance.new("UIStroke", frame)
-        stroke.Color        = T.Glow or T.Accent
-        stroke.Thickness    = 1.5
-        stroke.Transparency = 0.5
-
-        local btn = Instance.new("TextButton", frame)
-        btn.BackgroundTransparency = 1
-        btn.Size                   = UDim2.new(1, 0, 1, 0)
-        btn.Font                   = Enum.Font.Gotham
-        btn.Text                   = labelText
-        btn.TextColor3             = T.Text
-        btn.TextSize               = cfg.fontSize
-        btn.AutoButtonColor        = false
-        btn.BorderSizePixel        = 0
-        btn.Active                 = true
-
-        local dragging = false; local dragStart = nil; local frameStart = nil; local touchInput = nil
-        local DRAG_THRESH = 10
-
-        local function fireAction()
-            if dragging then return end
-            CreateTween(frame, {BackgroundColor3 = Library.CurrentTheme.Accent}, 0.12)
-            task.delay(0.15, function() CreateTween(frame, {BackgroundColor3 = Library.CurrentTheme.Element}, 0.12) end)
-            pcall(onClick, btn)
-        end
-
-        local c1 = btn.InputBegan:Connect(function(inp)
-            if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
-                touchInput = inp; dragStart = inp.Position; frameStart = frame.Position; dragging = false
-                if cfg.triggerMode == "Instant" then task.spawn(function() task.wait(); fireAction() end) end
-            end
-        end)
-        local c2 = UserInputService.InputChanged:Connect(function(inp)
-            if touchInput and inp == touchInput and getgenv()._floatDragEnabled ~= false then
-                local d = inp.Position - dragStart
-                if d.Magnitude > DRAG_THRESH then
-                    dragging = true
-                    frame.Position = UDim2.new(frameStart.X.Scale, frameStart.X.Offset + d.X, frameStart.Y.Scale, frameStart.Y.Offset + d.Y)
-                end
-            end
-        end)
-        local c3 = UserInputService.InputEnded:Connect(function(inp)
-            if touchInput and inp == touchInput then
-                touchInput = nil
-                if cfg.triggerMode == "Release" then task.spawn(function() task.wait(); fireAction() end) end
-                task.wait(); dragging = false
-            end
-        end)
-        table.insert(Library._Connections, c1)
-        table.insert(Library._Connections, c2)
-        table.insert(Library._Connections, c3)
-
-        local entry = {frame=frame, btn=btn, stroke=stroke, cfg=cfg, name=name}
-        table.insert(_floatingButtons, entry)
-        return entry
-    end
-
-    -- Patch SetTheme to also update float button colours
-    local _origSetTheme = Library.SetTheme
-    function Library:SetTheme(themeName)
-        _origSetTheme(self, themeName)
-        local T = Library.CurrentTheme
-        for _, fb in ipairs(_floatingButtons) do
-            fb.frame.BackgroundColor3 = T.Element
-            fb.btn.TextColor3         = T.Text
-            fb.stroke.Color           = T.Glow or T.Accent
-        end
-    end
-
-    -- Hook float data into save/load
-    Library._GetFloatData = function()
-        local out = {}
-        for _, fb in ipairs(_floatingButtons) do
-            local pos = fb.frame.Position
-            out[fb.name] = {
-                visible=fb.frame.Visible, posXScale=pos.X.Scale, posXOffset=pos.X.Offset,
-                posYScale=pos.Y.Scale,  posYOffset=pos.Y.Offset, width=fb.cfg.width,
-                height=fb.cfg.height, opacity=fb.cfg.opacity, fontSize=fb.cfg.fontSize,
-                triggerMode=fb.cfg.triggerMode,
-            }
-        end
-        return out
-    end
-
-    Library._SetFloatData = function(floatData)
-        if type(floatData) ~= "table" then return end
-        for _, fb in ipairs(_floatingButtons) do
-            local d = floatData[fb.name]; if not d then continue end
-            if d.posXOffset ~= nil then
-                fb.frame.Position = UDim2.new(d.posXScale or 0, d.posXOffset, d.posYScale or 0, d.posYOffset or 0)
-            end
-            if d.visible ~= nil   then fb.frame.Visible = d.visible end
-            if d.width            then fb.cfg.width = d.width; fb.frame.Size = UDim2.new(0, d.width, 0, fb.cfg.height) end
-            if d.height           then fb.cfg.height = d.height; fb.frame.Size = UDim2.new(0, fb.cfg.width, 0, d.height) end
-            if d.opacity          then fb.cfg.opacity = d.opacity; fb.frame.BackgroundTransparency = d.opacity end
-            if d.fontSize         then fb.cfg.fontSize = d.fontSize; fb.btn.TextSize = d.fontSize end
-            if d.triggerMode      then fb.cfg.triggerMode = d.triggerMode end
-        end
-    end
-
-    -- Public: create floating buttons from a definition table
-    -- Usage: Window:CreateFloatingButtons({ {name="X", label="X", pos=UDim2.new(...), callback=fn}, ... })
-    function Window:CreateFloatingButtons(defs)
-        local entries = {}
-        for _, def in ipairs(defs) do
-            local entry = _makeFloatingButton(
-                def.name,
-                def.label or def.name,
-                def.pos or UDim2.new(0.5, -70, 0, 100),
-                def.callback or function() end
-            )
-            entries[def.name] = entry
-        end
-        return entries
-    end
-
-    -- Public: add a Float Settings tab that controls the buttons created above
-    function Window:AddFloatSettings(entries)
-        local _fbList = {}
-        for name, entry in pairs(entries) do
-            table.insert(_fbList, {name=name, entry=entry, label=entry.btn.Text})
-        end
-        table.sort(_fbList, function(a,b) return a.name < b.name end)
-
-        local FT = Window:Tab("Float Settings")
-
-        FT:Label("Global")
-        FT:Toggle("Hide All Buttons", false, function(state) _floatGui.Enabled = not state end)
-        FT:Toggle("Drag All", true, function(state) getgenv()._floatDragEnabled = state end)
-        FT:Toggle("Transparent All Buttons", false, function(state)
-            for _, fb in ipairs(_floatingButtons) do
-                fb.frame.BackgroundTransparency = state and 1 or (fb.cfg.opacity or 0)
-                fb.stroke.Transparency          = state and 1 or 0.5
-            end
-        end)
-        FT:Toggle("Transparent All Text", false, function(state)
-            for _, fb in ipairs(_floatingButtons) do fb.btn.TextTransparency = state and 1 or 0 end
-        end)
-        FT:Slider("Global Font Size", 8, 24, 14, function(v)
-            for _, fb in ipairs(_floatingButtons) do fb.btn.TextSize = v; fb.cfg.fontSize = v end
-        end)
-        FT:Slider("Global Opacity %", 0, 100, 100, function(v)
-            local trans = 1 - (v / 100)
-            for _, fb in ipairs(_floatingButtons) do
-                fb.frame.BackgroundTransparency = trans
-                fb.stroke.Transparency          = trans > 0 and 0.5 or 1
-                fb.cfg.opacity                  = trans
-            end
-        end)
-        FT:Button("Reset All Positions", function()
-            for _, fb in ipairs(_floatingButtons) do fb.frame.Position = fb.cfg.defaultPos end
-        end)
-
-        for _, item in ipairs(_fbList) do
-            FT:Section(item.label or item.name)
-            FT:Toggle(item.name .. " Visible", true, function(state)
-                item.entry.frame.Visible = state
-            end)
-            FT:Textbox(item.name .. " Width", "140", function(v)
-                local n = tonumber(v)
-                if n and n >= 60 and n <= 400 then
-                    item.entry.cfg.width = n
-                    item.entry.frame.Size = UDim2.new(0, n, 0, item.entry.cfg.height)
-                end
-            end)
-            FT:Textbox(item.name .. " Height", "36", function(v)
-                local n = tonumber(v)
-                if n and n >= 20 and n <= 120 then
-                    item.entry.cfg.height = n
-                    item.entry.frame.Size = UDim2.new(0, item.entry.cfg.width, 0, n)
-                end
-            end)
-            FT:MultiToggle(item.name .. " Trigger Mode", {"Instant", "Release"}, "Instant", function(v)
-                item.entry.cfg.triggerMode = v
-            end)
-            FT:Button(item.name .. " Reset Position", function()
-                item.entry.frame.Position = item.entry.cfg.defaultPos
-            end)
-        end
     end
 
     -- ── Built-in Configuration Tab ──

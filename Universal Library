@@ -1,5 +1,5 @@
 -- ================================================
---   Universal Library v2.1
+--   Universal Library v2.1.
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -416,11 +416,11 @@ function Library:CreateWindow(opts)
     function Library:Toggle()
         Library.IsOpen = not Library.IsOpen
         if Library.IsOpen then
-            OpenBtn.Visible = false
+            OpenBtn.Visible   = false
             MainFrame.Visible = true
-            CreateTween(MainFrame, {Size = UDim2.new(0, W, 0, H)}, 0.3)
+            CreateTween(MainFrame, {BackgroundTransparency = Library.Settings.Transparency and 0.45 or 0}, 0.25)
         else
-            local close = CreateTween(MainFrame, {Size = UDim2.new(0, W, 0, 0)}, 0.3)
+            local close = CreateTween(MainFrame, {BackgroundTransparency = 1}, 0.25)
             close.Completed:Connect(function()
                 if not Library.IsOpen then
                     MainFrame.Visible = false
@@ -880,7 +880,11 @@ function Library:CreateWindow(opts)
             Library:RefreshTheme()
             Library:Notification({Title = "Config", Content = "Config loaded.", Duration = 3})
         end
-        CreateTween(MainFrame, {Size = UDim2.new(0, W, 0, H)}, 0.35)
+        -- Set full size immediately so elements render with correct AbsoluteSize
+        MainFrame.Size = UDim2.new(0, W, 0, H)
+        -- Then do a subtle fade-in instead of a size tween
+        MainFrame.BackgroundTransparency = 1
+        CreateTween(MainFrame, {BackgroundTransparency = Library.Settings.Transparency and 0.45 or 0}, 0.3)
     end
 
     -- ==========================================
@@ -934,9 +938,14 @@ function Library:CreateWindow(opts)
         PP.PaddingLeft  = UDim.new(0, 8)
         PP.PaddingRight = UDim.new(0, 8)
 
-        PL:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        local function UpdateCanvas()
             Page.CanvasSize = UDim2.new(0, 0, 0, PL.AbsoluteContentSize.Y + 20)
-        end)
+        end
+
+        PL:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateCanvas)
+
+        -- Force canvas refresh once the frame is fully rendered
+        task.defer(UpdateCanvas)
 
         TabBtn.MouseButton1Click:Connect(function() SwitchToTab(name) end)
         TabBtn.MouseEnter:Connect(function()

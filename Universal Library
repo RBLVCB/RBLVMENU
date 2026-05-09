@@ -1,5 +1,5 @@
 -- ================================================
---   Universal Library v2.0
+--   Universal Library v2.0.l
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -245,7 +245,7 @@ function Library:CreateWindow(opts)
     OpenBtn.Parent           = TitanUI
     OpenBtn.BackgroundColor3 = Library.CurrentTheme.Top
     OpenBtn.AnchorPoint       = Vector2.new(0.5, 0)
-    OpenBtn.Position             = UDim2.new(0.5, 0, 0, 8)
+    OpenBtn.Position             = UDim2.new(0.5, 0, 0, 0)
     OpenBtn.Size             = UDim2.new(0, 56, 0, 26)
     OpenBtn.Visible          = false
     OpenBtn.Active           = true

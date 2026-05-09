@@ -244,7 +244,8 @@ function Library:CreateWindow(opts)
     OpenBtn.Name             = "OpenButton"
     OpenBtn.Parent           = TitanUI
     OpenBtn.BackgroundColor3 = Library.CurrentTheme.Top
-    OpenBtn.Position         = UDim2.new(0.05, 0, 0.1, 0)
+    OpenBtn.AnchorPoint       = Vector2.new(0.5, 0)
+    OpenBtn.Position             = UDim2.new(0.5, 0, 0, 8)
     OpenBtn.Size             = UDim2.new(0, 56, 0, 26)
     OpenBtn.Visible          = false
     OpenBtn.Active           = true

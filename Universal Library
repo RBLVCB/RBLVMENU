@@ -1,5 +1,5 @@
 -- ================================================
---   Universal Library v2.0.l
+--   Universal Library v2.0.l - Liquid Glass
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -14,44 +14,65 @@ Library.Elements    = {}
 Library.SearchIndex = {}
 Library.IsOpen      = true
 
--- Pick a random theme at load
-local _themeNames = {
-    "Default","DarkBlue","DarkRed","Ocean","Amethyst","Emerald","Sunset",
-    "Carbon","Midnight","Cyberpunk","Void","Crimson","Gold","Mint",
-    "Synthwave","Nebula","Aurora","Dracula","Cherry","Sapphire",
+-- ==================== LIQUID GLASS THEMES ====================
+
+Library.Themes = {
+    -- Core liquid glass palette: frosted, soft, ethereal
+    LiquidBlue = {
+        Main     = Color3.fromRGB(15, 25, 45),    -- Deep frost
+        Top      = Color3.fromRGB(20, 32, 55),    -- Header frost
+        Accent   = Color3.fromRGB(100, 180, 255), -- Vibrant cyan-blue
+        Text     = Color3.fromRGB(240, 245, 255), -- Crisp white
+        Element  = Color3.fromRGB(25, 40, 65),    -- Element frost
+        Glow     = Color3.fromRGB(80, 140, 200),  -- Soft glow
+        Trans    = 0.35,                          -- Glass transparency
+    },
+    LiquidPurple = {
+        Main     = Color3.fromRGB(30, 20, 45),
+        Top      = Color3.fromRGB(40, 28, 60),
+        Accent   = Color3.fromRGB(180, 100, 255),
+        Text     = Color3.fromRGB(245, 240, 255),
+        Element  = Color3.fromRGB(45, 30, 60),
+        Glow     = Color3.fromRGB(140, 80, 200),
+        Trans    = 0.35,
+    },
+    LiquidCyan = {
+        Main     = Color3.fromRGB(10, 35, 40),
+        Top      = Color3.fromRGB(15, 45, 50),
+        Accent   = Color3.fromRGB(0, 220, 220),
+        Text     = Color3.fromRGB(220, 255, 255),
+        Element  = Color3.fromRGB(20, 55, 65),
+        Glow     = Color3.fromRGB(0, 180, 180),
+        Trans    = 0.35,
+    },
+    LiquidGreen = {
+        Main     = Color3.fromRGB(20, 38, 25),
+        Top      = Color3.fromRGB(28, 48, 33),
+        Accent   = Color3.fromRGB(80, 230, 120),
+        Text     = Color3.fromRGB(235, 255, 240),
+        Element  = Color3.fromRGB(32, 58, 40),
+        Glow     = Color3.fromRGB(60, 180, 100),
+        Trans    = 0.35,
+    },
+    LiquidPink = {
+        Main     = Color3.fromRGB(40, 20, 35),
+        Top      = Color3.fromRGB(50, 28, 45),
+        Accent   = Color3.fromRGB(255, 100, 180),
+        Text     = Color3.fromRGB(255, 240, 250),
+        Element  = Color3.fromRGB(60, 35, 55),
+        Glow     = Color3.fromRGB(220, 80, 150),
+        Trans    = 0.35,
+    },
 }
-local _randomTheme = _themeNames[math.random(1, #_themeNames)]
+
+local _randomTheme = {"LiquidBlue", "LiquidPurple", "LiquidCyan", "LiquidGreen", "LiquidPink"}[math.random(1, 5)]
 
 Library.Settings = {
     Theme        = _randomTheme,
-    Transparency = false,
+    Transparency = true, -- Always use glass by default
 }
 
--- ==================== THEMES ====================
-
-Library.Themes = {
-    DarkBlue  = {Main = Color3.fromRGB(15,20,30),  Top = Color3.fromRGB(20,25,40),  Accent = Color3.fromRGB(50,100,255), Text = Color3.fromRGB(240,240,255), Element = Color3.fromRGB(25,30,45),  Glow = Color3.fromRGB(40,80,200)},
-    DarkRed   = {Main = Color3.fromRGB(30,15,15),  Top = Color3.fromRGB(40,20,20),  Accent = Color3.fromRGB(255,60,60),  Text = Color3.fromRGB(255,240,240), Element = Color3.fromRGB(45,25,25),  Glow = Color3.fromRGB(200,40,40)},
-    Ocean     = {Main = Color3.fromRGB(10,30,35),  Top = Color3.fromRGB(15,40,45),  Accent = Color3.fromRGB(0,200,200),  Text = Color3.fromRGB(220,255,255), Element = Color3.fromRGB(20,50,55),  Glow = Color3.fromRGB(0,150,150)},
-    Amethyst  = {Main = Color3.fromRGB(30,20,35),  Top = Color3.fromRGB(40,25,45),  Accent = Color3.fromRGB(180,80,255), Text = Color3.fromRGB(250,230,255), Element = Color3.fromRGB(45,30,50),  Glow = Color3.fromRGB(140,60,200)},
-    Emerald   = {Main = Color3.fromRGB(20,35,20),  Top = Color3.fromRGB(25,45,25),  Accent = Color3.fromRGB(50,200,80),  Text = Color3.fromRGB(230,255,230), Element = Color3.fromRGB(30,50,30),  Glow = Color3.fromRGB(40,160,60)},
-    Sunset    = {Main = Color3.fromRGB(35,25,20),  Top = Color3.fromRGB(45,30,25),  Accent = Color3.fromRGB(255,140,50), Text = Color3.fromRGB(255,240,220), Element = Color3.fromRGB(50,35,30),  Glow = Color3.fromRGB(200,100,40)},
-    Carbon    = {Main = Color3.fromRGB(10,10,10),  Top = Color3.fromRGB(20,20,20),  Accent = Color3.fromRGB(120,120,120),Text = Color3.fromRGB(200,200,200), Element = Color3.fromRGB(30,30,30),  Glow = Color3.fromRGB(80,80,80)},
-    Midnight  = {Main = Color3.fromRGB(10,10,20),  Top = Color3.fromRGB(15,15,30),  Accent = Color3.fromRGB(100,100,255),Text = Color3.fromRGB(240,240,255), Element = Color3.fromRGB(25,25,45),  Glow = Color3.fromRGB(80,80,220)},
-    Cyberpunk = {Main = Color3.fromRGB(10,10,15),  Top = Color3.fromRGB(20,20,25),  Accent = Color3.fromRGB(255,230,0),  Text = Color3.fromRGB(255,255,255), Element = Color3.fromRGB(30,30,35),  Glow = Color3.fromRGB(0,255,255)},
-    Void      = {Main = Color3.fromRGB(5,5,5),     Top = Color3.fromRGB(15,15,15),  Accent = Color3.fromRGB(255,255,255),Text = Color3.fromRGB(255,255,255), Element = Color3.fromRGB(25,25,25),  Glow = Color3.fromRGB(150,150,150)},
-    Crimson   = {Main = Color3.fromRGB(25,10,10),  Top = Color3.fromRGB(40,15,15),  Accent = Color3.fromRGB(220,20,60),  Text = Color3.fromRGB(255,230,230), Element = Color3.fromRGB(50,25,25),  Glow = Color3.fromRGB(255,0,50)},
-    Gold      = {Main = Color3.fromRGB(30,25,10),  Top = Color3.fromRGB(45,40,20),  Accent = Color3.fromRGB(255,215,0),  Text = Color3.fromRGB(255,255,220), Element = Color3.fromRGB(55,50,30),  Glow = Color3.fromRGB(220,180,0)},
-    Mint      = {Main = Color3.fromRGB(20,30,25),  Top = Color3.fromRGB(30,45,35),  Accent = Color3.fromRGB(0,255,170),  Text = Color3.fromRGB(230,255,240), Element = Color3.fromRGB(40,60,50),  Glow = Color3.fromRGB(0,200,140)},
-    Synthwave = {Main = Color3.fromRGB(20,10,30),  Top = Color3.fromRGB(30,15,45),  Accent = Color3.fromRGB(255,0,255),  Text = Color3.fromRGB(255,255,255), Element = Color3.fromRGB(50,25,70),  Glow = Color3.fromRGB(0,255,255)},
-    Nebula    = {Main = Color3.fromRGB(18,8,28),   Top = Color3.fromRGB(28,14,42),  Accent = Color3.fromRGB(180,50,255), Text = Color3.fromRGB(245,225,255), Element = Color3.fromRGB(40,20,58),  Glow = Color3.fromRGB(150,0,255)},
-    Aurora    = {Main = Color3.fromRGB(5,20,15),   Top = Color3.fromRGB(8,32,25),   Accent = Color3.fromRGB(50,255,160), Text = Color3.fromRGB(210,255,240), Element = Color3.fromRGB(12,45,35),  Glow = Color3.fromRGB(20,230,140)},
-    Dracula   = {Main = Color3.fromRGB(40,42,54),  Top = Color3.fromRGB(68,71,90),  Accent = Color3.fromRGB(189,147,249),Text = Color3.fromRGB(248,248,242), Element = Color3.fromRGB(98,114,164),Glow = Color3.fromRGB(255,121,198)},
-    Cherry    = {Main = Color3.fromRGB(25,15,20),  Top = Color3.fromRGB(40,25,30),  Accent = Color3.fromRGB(255,50,100), Text = Color3.fromRGB(255,230,240), Element = Color3.fromRGB(55,35,45),  Glow = Color3.fromRGB(200,80,120)},
-    Sapphire  = {Main = Color3.fromRGB(5,10,40),   Top = Color3.fromRGB(10,18,60),  Accent = Color3.fromRGB(15,82,186),  Text = Color3.fromRGB(220,235,255), Element = Color3.fromRGB(15,28,75),  Glow = Color3.fromRGB(0,100,255)},
-}
-
-Library.CurrentTheme = Library.Themes[_randomTheme] or Library.Themes["Default"]
+Library.CurrentTheme = Library.Themes[_randomTheme] or Library.Themes["LiquidBlue"]
 
 -- ==================== UTILITY ====================
 
@@ -78,8 +99,6 @@ end
 
 -- ==================== FILE SYSTEM ====================
 
--- These are overridden by Library:SetProjectConfig() before CreateWindow is called.
--- Defaults are generic; each project should set its own folder and config file name.
 local FOLDER_NAME = "UniversalMenu"
 local CONFIG_FILE = FOLDER_NAME .. "/config.json"
 
@@ -168,18 +187,23 @@ function Library:Notification(opts)
     NotifGui.ZIndexBehavior  = Enum.ZIndexBehavior.Sibling
     NotifGui.DisplayOrder    = 9999
 
-    -- Pill-shaped notification, right side
     local NF = Instance.new("Frame")
     NF.Parent            = NotifGui
     NF.BackgroundColor3  = T.Top
+    NF.BackgroundTransparency = T.Trans + 0.1
     NF.BorderSizePixel   = 0
     NF.AnchorPoint       = Vector2.new(1, 1)
     NF.Position          = UDim2.new(1, -14, 1, -14)
     NF.Size              = UDim2.new(0, 240, 0, 0)
     NF.ClipsDescendants  = true
-    Instance.new("UICorner", NF).CornerRadius = UDim.new(0, 6)
+    Instance.new("UICorner", NF).CornerRadius = UDim.new(0, 12)
 
-    -- Accent left strip
+    -- Frosted glass border
+    local NBorder = Instance.new("UIStroke", NF)
+    NBorder.Color = T.Accent
+    NBorder.Thickness = 1
+    NBorder.Transparency = 0.4
+
     local Strip = Instance.new("Frame", NF)
     Strip.BackgroundColor3 = T.Accent
     Strip.BorderSizePixel  = 0
@@ -202,7 +226,7 @@ function Library:Notification(opts)
     ND.Size     = UDim2.new(1, -18, 0, 28)
     ND.Font     = Enum.Font.Gotham
     ND.Text     = Content
-    ND.TextColor3 = Color3.fromRGB(160, 160, 160)
+    ND.TextColor3 = Color3.fromRGB(180, 200, 220)
     ND.TextSize   = 11
     ND.TextXAlignment = Enum.TextXAlignment.Left
     ND.TextWrapped    = true
@@ -228,7 +252,7 @@ function Library:CreateWindow(opts)
         KeySite = opts.KeySite   or "",
     }
 
-    Library.CurrentTheme = Library.Themes[Library.Settings.Theme] or Library.Themes["Default"]
+    Library.CurrentTheme = Library.Themes[Library.Settings.Theme] or Library.Themes["LiquidBlue"]
 
     pcall(function() CoreGui:FindFirstChild("Universal_UI"):Destroy() end)
 
@@ -239,11 +263,11 @@ function Library:CreateWindow(opts)
     TitanUI.ResetOnSpawn   = false
     TitanUI.DisplayOrder   = 9000
 
-    -- ── Re-open floating pill ──
     local OpenBtn = Instance.new("TextButton")
     OpenBtn.Name             = "OpenButton"
     OpenBtn.Parent           = TitanUI
     OpenBtn.BackgroundColor3 = Library.CurrentTheme.Top
+    OpenBtn.BackgroundTransparency = Library.CurrentTheme.Trans + 0.1
     OpenBtn.AnchorPoint       = Vector2.new(0.5, 0)
     OpenBtn.Position             = UDim2.new(0.5, 0, 0, 0)
     OpenBtn.Size             = UDim2.new(0, 56, 0, 26)
@@ -259,16 +283,12 @@ function Library:CreateWindow(opts)
     local OBS = Instance.new("UIStroke", OpenBtn)
     OBS.Color     = Library.CurrentTheme.Accent
     OBS.Thickness = 1
+    OBS.Transparency = 0.3
     MakeDraggable(OpenBtn, OpenBtn)
 
-    -- ── Main Frame ──
-    -- Layout: single-column, narrow header bar on top,
-    --         tab rail below header, content pane fills rest.
-    -- Size: 520 x 340 (slightly tighter than NeonUI's 550x350)
     local W, H = 520, 340
-    local HEADER_H = 36   -- title + close
-    local TABBAR_H = 30   -- height of horizontal rail
-    -- CONTENT_Y is computed dynamically inside ApplyTabLayout
+    local HEADER_H = 36
+    local TABBAR_H = 30
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Name             = "MainFrame"
@@ -277,31 +297,33 @@ function Library:CreateWindow(opts)
     MainFrame.Position         = UDim2.new(0.5, 0, 0.5, 0)
     MainFrame.Size             = UDim2.new(0, W, 0, H)
     MainFrame.BackgroundColor3 = Library.CurrentTheme.Main
+    MainFrame.BackgroundTransparency = Library.CurrentTheme.Trans
     MainFrame.ClipsDescendants = true
     MainFrame.Visible          = not KeySystemConfig.Enabled
     if KeySystemConfig.Enabled then MainFrame.Size = UDim2.new(0, 0, 0, 0) end
 
-    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 7)
+    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
     local MS = Instance.new("UIStroke", MainFrame)
-    MS.Color     = Library.CurrentTheme.Glow or Color3.fromRGB(50, 50, 50)
+    MS.Color     = Library.CurrentTheme.Accent
     MS.Thickness = 1
-    MS.Transparency = 0.4
+    MS.Transparency = 0.5
 
-    -- ── Header bar ──
     local Header = Instance.new("Frame", MainFrame)
     Header.Name             = "Header"
     Header.BackgroundColor3 = Library.CurrentTheme.Top
+    Header.BackgroundTransparency = Library.CurrentTheme.Trans
     Header.Size             = UDim2.new(1, 0, 0, HEADER_H)
     Header.BorderSizePixel  = 0
-    -- Fix rounded corners bleed at bottom
+
     local HFix = Instance.new("Frame", Header)
     HFix.BackgroundColor3 = Library.CurrentTheme.Top
+    HFix.BackgroundTransparency = Library.CurrentTheme.Trans
     HFix.BorderSizePixel  = 0
     HFix.Position = UDim2.new(0, 0, 1, -4)
     HFix.Size     = UDim2.new(1, 0, 0, 4)
-    Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 7)
 
-    -- Title: accent dot + name
+    Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 12)
+
     local TitleDot = Instance.new("Frame", Header)
     TitleDot.BackgroundColor3 = Library.CurrentTheme.Accent
     TitleDot.BorderSizePixel  = 0
@@ -320,14 +342,13 @@ function Library:CreateWindow(opts)
     TitleLbl.TextSize   = 12
     TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- Close button: simple × text
     local CloseBtn = Instance.new("TextButton", Header)
     CloseBtn.BackgroundTransparency = 1
     CloseBtn.AnchorPoint = Vector2.new(1, 0.5)
     CloseBtn.Position    = UDim2.new(1, -10, 0.5, 0)
     CloseBtn.Size        = UDim2.new(0, 22, 0, 22)
     CloseBtn.Text        = "×"
-    CloseBtn.TextColor3  = Color3.fromRGB(130, 130, 130)
+    CloseBtn.TextColor3  = Color3.fromRGB(150, 160, 180)
     CloseBtn.Font        = Enum.Font.GothamBold
     CloseBtn.TextSize    = 18
     CloseBtn.AutoButtonColor = false
@@ -336,18 +357,16 @@ function Library:CreateWindow(opts)
         CreateTween(CloseBtn, {TextColor3 = Library.CurrentTheme.Text}, 0.12)
     end)
     CloseBtn.MouseLeave:Connect(function()
-        CreateTween(CloseBtn, {TextColor3 = Color3.fromRGB(130, 130, 130)}, 0.12)
+        CreateTween(CloseBtn, {TextColor3 = Color3.fromRGB(150, 160, 180)}, 0.12)
     end)
 
-    -- Tab-direction toggle button (next to close)
-    -- Cycles: horizontal (top rail) → vertical (left sidebar)
     local DirBtn = Instance.new("TextButton", Header)
     DirBtn.BackgroundTransparency = 1
     DirBtn.AnchorPoint = Vector2.new(1, 0.5)
     DirBtn.Position    = UDim2.new(1, -36, 0.5, 0)
     DirBtn.Size        = UDim2.new(0, 22, 0, 22)
     DirBtn.Text        = "⇆"
-    DirBtn.TextColor3  = Color3.fromRGB(110, 110, 110)
+    DirBtn.TextColor3  = Color3.fromRGB(130, 140, 160)
     DirBtn.Font        = Enum.Font.GothamBold
     DirBtn.TextSize    = 14
     DirBtn.AutoButtonColor = false
@@ -356,10 +375,9 @@ function Library:CreateWindow(opts)
         CreateTween(DirBtn, {TextColor3 = Library.CurrentTheme.Accent}, 0.12)
     end)
     DirBtn.MouseLeave:Connect(function()
-        CreateTween(DirBtn, {TextColor3 = Color3.fromRGB(110, 110, 110)}, 0.12)
+        CreateTween(DirBtn, {TextColor3 = Color3.fromRGB(130, 140, 160)}, 0.12)
     end)
 
-    -- Toggle logic
     Library.IsOpen = true
     function Library:Toggle()
         Library.IsOpen = not Library.IsOpen
@@ -381,51 +399,45 @@ function Library:CreateWindow(opts)
     OpenBtn.MouseButton1Click:Connect(function() Library:Toggle() end)
     MakeDraggable(Header, MainFrame)
 
-    -- ── Tab Layout State ──
-    -- "h" = horizontal rail (top),  "v" = vertical sidebar (left)
     local tabDirection = "h"
-    local SIDEBAR_W    = 110   -- width of vertical sidebar
-    local TABBAR_H     = 30    -- height of horizontal rail
+    local SIDEBAR_W    = 110
 
-    -- These are set (and reset) by ApplyTabLayout below
     local TabRail, TabRailFix, RailLine, TabScroll, TabLayout, TabPad
     local PageContainer, PagesFolder
 
-    -- Master switch: rebuilds the tab zone geometry in one shot.
-    -- Page ScrollingFrames are rescued before destruction and re-homed after.
     local function ApplyTabLayout()
-        -- ── Rescue pages before destroying the old container ──
         if PagesFolder then
             for _, child in pairs(PagesFolder:GetChildren()) do
                 if child:IsA("ScrollingFrame") then
-                    child.Parent = MainFrame  -- safe holding spot
+                    child.Parent = MainFrame
                 end
             end
         end
 
-        -- Destroy old zone
         if TabRail       then TabRail:Destroy() end
         if PageContainer then PageContainer:Destroy() end
 
         local T = Library.CurrentTheme
 
         if tabDirection == "h" then
-            -- ── Horizontal: thin rail below header ──
             TabRail = Instance.new("Frame", MainFrame)
             TabRail.Name             = "TabRail"
             TabRail.BackgroundColor3 = T.Top
+            TabRail.BackgroundTransparency = T.Trans
             TabRail.BorderSizePixel  = 0
             TabRail.Position         = UDim2.new(0, 0, 0, HEADER_H)
             TabRail.Size             = UDim2.new(1, 0, 0, TABBAR_H)
 
             TabRailFix = Instance.new("Frame", TabRail)
             TabRailFix.BackgroundColor3 = T.Top
+            TabRailFix.BackgroundTransparency = T.Trans
             TabRailFix.BorderSizePixel  = 0
             TabRailFix.Position = UDim2.new(0, 0, 1, -4)
             TabRailFix.Size     = UDim2.new(1, 0, 0, 4)
 
             RailLine = Instance.new("Frame", TabRail)
-            RailLine.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            RailLine.BackgroundColor3 = Color3.fromRGB(60, 80, 100)
+            RailLine.BackgroundTransparency = 0.5
             RailLine.BorderSizePixel  = 0
             RailLine.Position         = UDim2.new(0, 0, 1, -1)
             RailLine.Size             = UDim2.new(1, 0, 0, 1)
@@ -449,7 +461,6 @@ function Library:CreateWindow(opts)
                 TabScroll.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X + 12, 0, 0)
             end)
 
-            -- Page container: full width, below the tab rail
             local CONTENT_Y = HEADER_H + TABBAR_H
             PageContainer = Instance.new("Frame", MainFrame)
             PageContainer.BackgroundTransparency = 1
@@ -458,21 +469,21 @@ function Library:CreateWindow(opts)
             PageContainer.ClipsDescendants = true
 
         else
-            -- ── Vertical: sidebar on the left ──
             TabRail = Instance.new("Frame", MainFrame)
             TabRail.Name             = "TabRail"
             TabRail.BackgroundColor3 = T.Top
+            TabRail.BackgroundTransparency = T.Trans
             TabRail.BorderSizePixel  = 0
             TabRail.Position         = UDim2.new(0, 0, 0, HEADER_H)
             TabRail.Size             = UDim2.new(0, SIDEBAR_W, 1, -HEADER_H)
 
-            TabRailFix = Instance.new("Frame", TabRail)  -- dummy for RefreshTheme compat
+            TabRailFix = Instance.new("Frame", TabRail)
             TabRailFix.BackgroundTransparency = 1
             TabRailFix.Size = UDim2.new(0, 0, 0, 0)
 
-            -- Vertical separator on the right edge of sidebar
             RailLine = Instance.new("Frame", TabRail)
-            RailLine.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            RailLine.BackgroundColor3 = Color3.fromRGB(60, 80, 100)
+            RailLine.BackgroundTransparency = 0.5
             RailLine.BorderSizePixel  = 0
             RailLine.Position         = UDim2.new(1, -1, 0, 0)
             RailLine.Size             = UDim2.new(0, 1, 1, 0)
@@ -498,7 +509,6 @@ function Library:CreateWindow(opts)
                 TabScroll.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y + 12)
             end)
 
-            -- Page container: right of sidebar, below header
             PageContainer = Instance.new("Frame", MainFrame)
             PageContainer.BackgroundTransparency = 1
             PageContainer.Position = UDim2.new(0, SIDEBAR_W, 0, HEADER_H)
@@ -506,13 +516,11 @@ function Library:CreateWindow(opts)
             PageContainer.ClipsDescendants = true
         end
 
-        -- Create fresh PagesFolder inside the new PageContainer
         PagesFolder = Instance.new("Frame", PageContainer)
         PagesFolder.Name = "Pages"
         PagesFolder.BackgroundTransparency = 1
         PagesFolder.Size = UDim2.new(1, 0, 1, 0)
 
-        -- Reclaim any rescued page ScrollingFrames back into PagesFolder
         for _, child in pairs(MainFrame:GetChildren()) do
             if child:IsA("ScrollingFrame") then
                 child.Parent = PagesFolder
@@ -520,38 +528,35 @@ function Library:CreateWindow(opts)
         end
     end
 
-    -- Initial build
     ApplyTabLayout()
 
-    -- ── Search Bar (top-right of header, nudged left to clear both buttons) ──
     local SearchBox = Instance.new("TextBox", Header)
     SearchBox.Name               = "SearchBar"
-    SearchBox.BackgroundColor3   = Library.CurrentTheme.Main
+    SearchBox.BackgroundColor3   = Library.CurrentTheme.Element
+    SearchBox.BackgroundTransparency = Library.CurrentTheme.Trans
     SearchBox.BorderSizePixel    = 0
     SearchBox.AnchorPoint        = Vector2.new(1, 0.5)
     SearchBox.Position           = UDim2.new(1, -64, 0.5, 0)
     SearchBox.Size               = UDim2.new(0, 110, 0, 20)
     SearchBox.Font               = Enum.Font.Gotham
     SearchBox.PlaceholderText    = "search..."
-    SearchBox.PlaceholderColor3  = Color3.fromRGB(80, 80, 80)
+    SearchBox.PlaceholderColor3  = Color3.fromRGB(120, 130, 150)
     SearchBox.Text               = ""
-    SearchBox.TextColor3         = Color3.fromRGB(200, 200, 200)
+    SearchBox.TextColor3         = Color3.fromRGB(220, 230, 245)
     SearchBox.TextSize           = 11
     SearchBox.ClearTextOnFocus   = false
-    Instance.new("UICorner", SearchBox).CornerRadius = UDim.new(0, 4)
+    Instance.new("UICorner", SearchBox).CornerRadius = UDim.new(0, 6)
     local SBStroke = Instance.new("UIStroke", SearchBox)
-    SBStroke.Color     = Color3.fromRGB(45, 45, 45)
+    SBStroke.Color     = Color3.fromRGB(80, 100, 140)
     SBStroke.Thickness = 1
+    SBStroke.Transparency = 0.5
     SearchBox.Focused:Connect(function()
-        CreateTween(SBStroke, {Color = Library.CurrentTheme.Accent}, 0.15)
+        CreateTween(SBStroke, {Color = Library.CurrentTheme.Accent, Transparency = 0.2}, 0.15)
     end)
     SearchBox.FocusLost:Connect(function()
-        CreateTween(SBStroke, {Color = Color3.fromRGB(45, 45, 45)}, 0.15)
+        CreateTween(SBStroke, {Color = Color3.fromRGB(80, 100, 140), Transparency = 0.5}, 0.15)
     end)
 
-    -- ── Tab switch helper ──
-    -- References TabScroll and PagesFolder via upvalue — both are reassigned
-    -- by ApplyTabLayout so closures always see the current table.
     local function SwitchToTab(PageName)
         for _, v in pairs(TabScroll:GetChildren()) do
             if v:IsA("TextButton") then
@@ -562,7 +567,7 @@ function Library:CreateWindow(opts)
                         v.ActiveBar.BackgroundTransparency = 0
                     end
                 else
-                    v.TextColor3 = Color3.fromRGB(110, 110, 110)
+                    v.TextColor3 = Color3.fromRGB(130, 140, 160)
                     if v:FindFirstChild("ActiveBar") then
                         v.ActiveBar.BackgroundTransparency = 1
                     end
@@ -576,7 +581,6 @@ function Library:CreateWindow(opts)
         end
     end
 
-    -- Search logic
     SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
         local txt = SearchBox.Text:lower()
         if txt == "" then return end
@@ -593,22 +597,12 @@ function Library:CreateWindow(opts)
         end
     end)
 
-    -- ── Direction toggle logic ──
-    -- Stores per-tab data so we can recreate buttons after a layout switch
-    local _tabRegistry = {}  -- { {name, page} , ... } in order
+    local _tabRegistry = {}
 
-    -- Rebuilds tab buttons in TabScroll matching the current direction mode,
-    -- and reparents page ScrollingFrames into the new PagesFolder.
-    -- Called by DirBtn after ApplyTabLayout().
     local function RebuildTabsAfterSwitch()
-        -- Pages are already in PagesFolder (moved by ApplyTabLayout).
-        -- Just rebuild the tab buttons in the new TabScroll.
         local firstVisible = nil
         for _, entry in ipairs(_tabRegistry) do
-            -- Determine if this tab was active (visible)
             local wasActive = entry.page and entry.page.Visible
-
-            -- Create a new tab button for this tab in the new TabScroll
             local name = entry.name
             local TabBtn = Instance.new("TextButton", TabScroll)
             TabBtn.Name                   = name
@@ -621,12 +615,11 @@ function Library:CreateWindow(opts)
 
             if tabDirection == "h" then
                 TabBtn.Size       = UDim2.new(0, math.max(#name * 7 + 20, 60), 1, 0)
-                TabBtn.TextColor3 = Color3.fromRGB(110, 110, 110)
+                TabBtn.TextColor3 = Color3.fromRGB(130, 140, 160)
             else
                 TabBtn.Size       = UDim2.new(1, 0, 0, 28)
-                TabBtn.TextColor3 = Color3.fromRGB(110, 110, 110)
+                TabBtn.TextColor3 = Color3.fromRGB(130, 140, 160)
                 TabBtn.TextXAlignment = Enum.TextXAlignment.Left
-                -- Indent for sidebar
                 local SBPad = Instance.new("UIPadding", TabBtn)
                 SBPad.PaddingLeft = UDim.new(0, 8)
             end
@@ -643,7 +636,6 @@ function Library:CreateWindow(opts)
                 ActiveBar.Size        = UDim2.new(0.7, 0, 0, 2)
                 Instance.new("UICorner", ActiveBar).CornerRadius = UDim.new(1, 0)
             else
-                -- Vertical mode: left edge indicator bar
                 ActiveBar.AnchorPoint = Vector2.new(0, 0.5)
                 ActiveBar.Position    = UDim2.new(0, 0, 0.5, 0)
                 ActiveBar.Size        = UDim2.new(0, 2, 0.6, 0)
@@ -658,19 +650,18 @@ function Library:CreateWindow(opts)
             TabBtn.MouseButton1Click:Connect(function() SwitchToTab(name) end)
             TabBtn.MouseEnter:Connect(function()
                 if TabBtn.TextColor3 ~= Library.CurrentTheme.Accent then
-                    CreateTween(TabBtn, {TextColor3 = Color3.fromRGB(180, 180, 180)}, 0.12)
+                    CreateTween(TabBtn, {TextColor3 = Color3.fromRGB(200, 210, 230)}, 0.12)
                 end
             end)
             TabBtn.MouseLeave:Connect(function()
                 if TabBtn.TextColor3 ~= Library.CurrentTheme.Accent then
-                    CreateTween(TabBtn, {TextColor3 = Color3.fromRGB(110, 110, 110)}, 0.12)
+                    CreateTween(TabBtn, {TextColor3 = Color3.fromRGB(130, 140, 160)}, 0.12)
                 end
             end)
 
             entry.btn = TabBtn
         end
 
-        -- If nothing was active, activate the first tab
         if not firstVisible and #_tabRegistry > 0 then
             SwitchToTab(_tabRegistry[1].name)
         end
@@ -679,29 +670,24 @@ function Library:CreateWindow(opts)
     DirBtn.MouseButton1Click:Connect(function()
         tabDirection = (tabDirection == "h") and "v" or "h"
         DirBtn.Text = (tabDirection == "h") and "⇆" or "⇅"
-        -- Rebuild layout scaffolding (destroys old TabRail & PageContainer,
-        -- creates fresh ones, assigns new TabScroll & PagesFolder upvalues)
         ApplyTabLayout()
-        -- Repopulate buttons and reparent pages
         RebuildTabsAfterSwitch()
     end)
 
-    -- ── Theme Refresh ──
     function Library:RefreshTheme()
         local T = Library.CurrentTheme
-        local trans = Library.Settings.Transparency and 0.45 or 0
-        CreateTween(MainFrame, {BackgroundColor3 = T.Main, BackgroundTransparency = trans}, 0.25)
-        CreateTween(Header,    {BackgroundColor3 = T.Top}, 0.25)
-        CreateTween(HFix,      {BackgroundColor3 = T.Top}, 0.25)
-        CreateTween(TabRail,   {BackgroundColor3 = T.Top}, 0.25)
-        CreateTween(TabRailFix,{BackgroundColor3 = T.Top}, 0.25)
-        CreateTween(SearchBox, {BackgroundColor3 = T.Main}, 0.25)
-        CreateTween(MS,        {Color = T.Glow or T.Accent}, 0.25)
+        CreateTween(MainFrame, {BackgroundColor3 = T.Main, BackgroundTransparency = T.Trans}, 0.25)
+        CreateTween(Header,    {BackgroundColor3 = T.Top, BackgroundTransparency = T.Trans}, 0.25)
+        CreateTween(HFix,      {BackgroundColor3 = T.Top, BackgroundTransparency = T.Trans}, 0.25)
+        CreateTween(TabRail,   {BackgroundColor3 = T.Top, BackgroundTransparency = T.Trans}, 0.25)
+        CreateTween(TabRailFix,{BackgroundColor3 = T.Top, BackgroundTransparency = T.Trans}, 0.25)
+        CreateTween(SearchBox, {BackgroundColor3 = T.Element, BackgroundTransparency = T.Trans}, 0.25)
+        CreateTween(MS,        {Color = T.Accent}, 0.25)
         TitleDot.BackgroundColor3 = T.Accent
         TitleLbl.TextColor3       = T.Text
         OpenBtn.BackgroundColor3  = T.Top
+        OpenBtn.BackgroundTransparency = T.Trans + 0.1
         OBS.Color                 = T.Accent
-        OpenBtn.TextColor3        = T.Accent
 
         for _, obj in pairs(TabScroll:GetChildren()) do
             if obj:IsA("TextButton") then
@@ -709,7 +695,7 @@ function Library:CreateWindow(opts)
                     obj.TextColor3 = T.Accent
                     obj.ActiveBar.BackgroundColor3 = T.Accent
                 else
-                    obj.TextColor3 = Color3.fromRGB(110, 110, 110)
+                    obj.TextColor3 = Color3.fromRGB(130, 140, 160)
                     if obj:FindFirstChild("ActiveBar") then
                         obj.ActiveBar.BackgroundColor3 = T.Accent
                     end
@@ -721,7 +707,7 @@ function Library:CreateWindow(opts)
             if page:IsA("ScrollingFrame") then
                 for _, elem in pairs(page:GetChildren()) do
                     if elem:IsA("Frame") and elem.Name == "ElemFrame" then
-                        CreateTween(elem, {BackgroundColor3 = T.Element}, 0.25)
+                        CreateTween(elem, {BackgroundColor3 = T.Element, BackgroundTransparency = T.Trans}, 0.25)
                         local lbl = elem:FindFirstChildOfClass("TextLabel")
                         if lbl then lbl.TextColor3 = T.Text end
                     elseif elem:IsA("TextLabel") and elem.Name == "SectionLbl" then
@@ -742,22 +728,22 @@ function Library:CreateWindow(opts)
         end
     end
 
-    -- ── Key System ──
     if KeySystemConfig.Enabled then
         local KF = Instance.new("Frame", TitanUI)
-        KF.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+        KF.BackgroundColor3 = Color3.fromRGB(25, 35, 55)
+        KF.BackgroundTransparency = 0.3
         KF.AnchorPoint = Vector2.new(0.5, 0.5)
         KF.Position    = UDim2.new(0.5, 0, 0.5, 0)
         KF.Size        = UDim2.new(0, 360, 0, 200)
-        Instance.new("UICorner", KF).CornerRadius = UDim.new(0, 8)
+        Instance.new("UICorner", KF).CornerRadius = UDim.new(0, 12)
         local KS = Instance.new("UIStroke", KF)
-        KS.Color = Color3.fromRGB(50, 50, 50); KS.Thickness = 1
+        KS.Color = Library.CurrentTheme.Accent; KS.Thickness = 1; KS.Transparency = 0.4
 
         local KAccent = Instance.new("Frame", KF)
         KAccent.BackgroundColor3 = Library.CurrentTheme.Accent
         KAccent.BorderSizePixel  = 0
         KAccent.Size = UDim2.new(1, 0, 0, 2)
-        Instance.new("UICorner", KAccent).CornerRadius = UDim.new(0, 8)
+        Instance.new("UICorner", KAccent).CornerRadius = UDim.new(0, 12)
 
         local KTitle = Instance.new("TextLabel", KF)
         KTitle.BackgroundTransparency = 1
@@ -769,31 +755,37 @@ function Library:CreateWindow(opts)
         KTitle.TextSize   = 15
 
         local KInput = Instance.new("TextBox", KF)
-        KInput.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+        KInput.BackgroundColor3 = Color3.fromRGB(35, 45, 65)
+        KInput.BackgroundTransparency = 0.25
         KInput.Position = UDim2.new(0.08, 0, 0, 58)
         KInput.Size     = UDim2.new(0.84, 0, 0, 34)
         KInput.Font     = Enum.Font.Gotham
         KInput.PlaceholderText = "enter key..."
-        KInput.PlaceholderColor3 = Color3.fromRGB(70, 70, 70)
+        KInput.PlaceholderColor3 = Color3.fromRGB(100, 110, 130)
         KInput.Text       = ""
-        KInput.TextColor3 = Color3.fromRGB(220, 220, 220)
+        KInput.TextColor3 = Color3.fromRGB(230, 240, 255)
         KInput.TextSize   = 13
         KInput.BorderSizePixel = 0
-        Instance.new("UICorner", KInput).CornerRadius = UDim.new(0, 5)
-        local KIS = Instance.new("UIStroke", KInput); KIS.Color = Color3.fromRGB(45, 45, 45)
+        Instance.new("UICorner", KInput).CornerRadius = UDim.new(0, 8)
+        local KIS = Instance.new("UIStroke", KInput); KIS.Color = Library.CurrentTheme.Accent; KIS.Transparency = 0.4
 
         local function MakeKBtn(txt, x, w, accent)
             local b = Instance.new("TextButton", KF)
-            b.BackgroundColor3 = accent and Library.CurrentTheme.Accent or Color3.fromRGB(35, 35, 35)
+            b.BackgroundColor3 = accent and Library.CurrentTheme.Accent or Color3.fromRGB(45, 55, 75)
+            b.BackgroundTransparency = accent and 0 or 0.25
             b.Position    = UDim2.new(x, 0, 0, 108)
             b.Size        = UDim2.new(w, -4, 0, 30)
             b.Font        = Enum.Font.GothamBold
             b.Text        = txt
-            b.TextColor3  = accent and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 180, 180)
+            b.TextColor3  = Color3.fromRGB(255, 255, 255)
             b.TextSize    = 12
             b.BorderSizePixel = 0
             b.AutoButtonColor = false
-            Instance.new("UICorner", b).CornerRadius = UDim.new(0, 5)
+            Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
+            local bstroke = Instance.new("UIStroke", b)
+            bstroke.Color = Library.CurrentTheme.Accent
+            bstroke.Thickness = 1
+            bstroke.Transparency = accent and 0.3 or 0.6
             return b
         end
         local KBtn  = MakeKBtn("Login",    0.08, 0.46, true)
@@ -818,9 +810,9 @@ function Library:CreateWindow(opts)
                 end)
             else
                 Library:Notification({Title = "Error", Content = "Incorrect key."})
-                CreateTween(KIS, {Color = Color3.fromRGB(200, 40, 40)}, 0.1)
+                CreateTween(KIS, {Color = Color3.fromRGB(255, 100, 100)}, 0.1)
                 task.wait(0.6)
-                CreateTween(KIS, {Color = Color3.fromRGB(45, 45, 45)}, 0.2)
+                CreateTween(KIS, {Color = Library.CurrentTheme.Accent}, 0.2)
             end
         end)
     else
@@ -840,19 +832,17 @@ function Library:CreateWindow(opts)
     function Window:Tab(name)
         local Tab = {}
 
-        -- Tab button in the rail (horizontal mode by default)
         local TabBtn = Instance.new("TextButton", TabScroll)
         TabBtn.Name                   = name
         TabBtn.BackgroundTransparency = 1
         TabBtn.Size                   = UDim2.new(0, math.max(#name * 7 + 20, 60), 1, 0)
         TabBtn.Font                   = Enum.Font.GothamMedium
         TabBtn.Text                   = name
-        TabBtn.TextColor3             = Color3.fromRGB(110, 110, 110)
+        TabBtn.TextColor3             = Color3.fromRGB(130, 140, 160)
         TabBtn.TextSize               = 11
         TabBtn.BorderSizePixel        = 0
         TabBtn.AutoButtonColor        = false
 
-        -- Active indicator: underline (horizontal) or left bar (vertical)
         local ActiveBar = Instance.new("Frame", TabBtn)
         ActiveBar.Name                   = "ActiveBar"
         ActiveBar.BackgroundColor3       = Library.CurrentTheme.Accent
@@ -863,13 +853,12 @@ function Library:CreateWindow(opts)
         ActiveBar.BackgroundTransparency = 1
         Instance.new("UICorner", ActiveBar).CornerRadius = UDim.new(1, 0)
 
-        -- Page (content area)
         local Page = Instance.new("ScrollingFrame", PagesFolder)
         Page.Name                 = name
         Page.BackgroundTransparency = 1
         Page.Size                 = UDim2.new(1, 0, 1, 0)
         Page.ScrollBarThickness   = 2
-        Page.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 60)
+        Page.ScrollBarImageColor3 = Color3.fromRGB(80, 100, 140)
         Page.Visible              = false
         Page.CanvasSize           = UDim2.new(0, 0, 0, 0)
         Page.BorderSizePixel      = 0
@@ -889,12 +878,12 @@ function Library:CreateWindow(opts)
         TabBtn.MouseButton1Click:Connect(function() SwitchToTab(name) end)
         TabBtn.MouseEnter:Connect(function()
             if TabBtn.TextColor3 ~= Library.CurrentTheme.Accent then
-                CreateTween(TabBtn, {TextColor3 = Color3.fromRGB(180, 180, 180)}, 0.12)
+                CreateTween(TabBtn, {TextColor3 = Color3.fromRGB(200, 210, 230)}, 0.12)
             end
         end)
         TabBtn.MouseLeave:Connect(function()
             if TabBtn.TextColor3 ~= Library.CurrentTheme.Accent then
-                CreateTween(TabBtn, {TextColor3 = Color3.fromRGB(110, 110, 110)}, 0.12)
+                CreateTween(TabBtn, {TextColor3 = Color3.fromRGB(130, 140, 160)}, 0.12)
             end
         end)
 
@@ -905,25 +894,23 @@ function Library:CreateWindow(opts)
             Page.Visible                     = true
         end
 
-        -- Register this tab so direction-switch can recreate it
         table.insert(_tabRegistry, {name = name, page = Page, btn = TabBtn})
 
-        -- ────────────────────────────────────────
-        -- ELEMENTS
-        -- ────────────────────────────────────────
-
-        -- Helper: create a clean element frame
         local function ElemBase(h)
             local f = Instance.new("Frame", Page)
             f.Name             = "ElemFrame"
             f.BackgroundColor3 = Library.CurrentTheme.Element
+            f.BackgroundTransparency = Library.CurrentTheme.Trans
             f.Size             = UDim2.new(1, 0, 0, h or 34)
             f.BorderSizePixel  = 0
-            Instance.new("UICorner", f).CornerRadius = UDim.new(0, 5)
+            Instance.new("UICorner", f).CornerRadius = UDim.new(0, 8)
+            local stroke = Instance.new("UIStroke", f)
+            stroke.Color = Library.CurrentTheme.Accent
+            stroke.Thickness = 0.5
+            stroke.Transparency = 0.7
             return f
         end
 
-        -- Helper: left-aligned label inside a frame
         local function ElemLabel(parent, txt, yOff, sz)
             local l = Instance.new("TextLabel", parent)
             l.BackgroundTransparency = 1
@@ -937,7 +924,7 @@ function Library:CreateWindow(opts)
             return l
         end
 
-        -- SECTION LABEL
+        -- LABEL
         function Tab:Label(text)
             local SL = Instance.new("TextLabel", Page)
             SL.Name = "SectionLbl"
@@ -952,7 +939,7 @@ function Library:CreateWindow(opts)
             local Line = Instance.new("Frame", SL)
             Line.Name             = "Line"
             Line.BackgroundColor3 = Library.CurrentTheme.Accent
-            Line.BackgroundTransparency = 0.7
+            Line.BackgroundTransparency = 0.6
             Line.BorderSizePixel  = 0
             Line.Position = UDim2.new(0, 0, 1, -1)
             Line.Size     = UDim2.new(1, 0, 0, 1)
@@ -974,28 +961,27 @@ function Library:CreateWindow(opts)
             BT.TextSize   = 12
             BT.AutoButtonColor = false
 
-            -- Right arrow hint
             local Arrow = Instance.new("TextLabel", Fr)
             Arrow.BackgroundTransparency = 1
             Arrow.AnchorPoint = Vector2.new(1, 0.5)
             Arrow.Position    = UDim2.new(1, -10, 0.5, 0)
             Arrow.Size        = UDim2.new(0, 14, 0, 14)
             Arrow.Text        = "›"
-            Arrow.TextColor3  = Color3.fromRGB(70, 70, 70)
+            Arrow.TextColor3  = Color3.fromRGB(100, 120, 150)
             Arrow.Font        = Enum.Font.GothamBold
             Arrow.TextSize    = 14
 
             BT.MouseButton1Click:Connect(function()
-                CreateTween(Fr, {BackgroundColor3 = T.Accent}, 0.1)
+                CreateTween(Fr, {BackgroundColor3 = T.Accent, BackgroundTransparency = 0.5}, 0.1)
                 task.wait(0.1)
-                CreateTween(Fr, {BackgroundColor3 = Library.CurrentTheme.Element}, 0.12)
+                CreateTween(Fr, {BackgroundColor3 = Library.CurrentTheme.Element, BackgroundTransparency = Library.CurrentTheme.Trans}, 0.12)
                 pcall(callback)
             end)
             BT.MouseEnter:Connect(function()
                 CreateTween(Arrow, {TextColor3 = T.Accent}, 0.12)
             end)
             BT.MouseLeave:Connect(function()
-                CreateTween(Arrow, {TextColor3 = Color3.fromRGB(70, 70, 70)}, 0.12)
+                CreateTween(Arrow, {TextColor3 = Color3.fromRGB(100, 120, 150)}, 0.12)
             end)
             table.insert(Library.SearchIndex, {Name = text, Tab = name, Instance = Fr})
             return BT
@@ -1010,9 +996,9 @@ function Library:CreateWindow(opts)
             local Fr = ElemBase(32)
             ElemLabel(Fr, text)
 
-            -- Track: slim rounded rect
             local Track = Instance.new("Frame", Fr)
-            Track.BackgroundColor3 = Toggled and T.Accent or Color3.fromRGB(50, 50, 50)
+            Track.BackgroundColor3 = Toggled and T.Accent or Color3.fromRGB(70, 80, 100)
+            Track.BackgroundTransparency = Toggled and 0.3 or 0.5
             Track.AnchorPoint      = Vector2.new(1, 0.5)
             Track.Position         = UDim2.new(1, -10, 0.5, 0)
             Track.Size             = UDim2.new(0, 34, 0, 18)
@@ -1035,7 +1021,7 @@ function Library:CreateWindow(opts)
 
             local function Update(val)
                 Toggled = val; Library.Flags[text] = Toggled
-                CreateTween(Track, {BackgroundColor3 = Toggled and Library.CurrentTheme.Accent or Color3.fromRGB(50, 50, 50)}, 0.15)
+                CreateTween(Track, {BackgroundColor3 = Toggled and T.Accent or Color3.fromRGB(70, 80, 100), BackgroundTransparency = Toggled and 0.3 or 0.5}, 0.15)
                 CreateTween(Knob,  {Position = Toggled and UDim2.new(1, -16, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)}, 0.15)
                 pcall(callback, Toggled)
             end
@@ -1053,10 +1039,8 @@ function Library:CreateWindow(opts)
             local sliding = false
             Library.Flags[text] = val
 
-            -- 44px total: 18px for label row, 4px gap, 4px track, 18px bottom padding
             local Fr = ElemBase(44)
 
-            -- Label: left side, vertically centred in the top half
             local SLbl = Instance.new("TextLabel", Fr)
             SLbl.BackgroundTransparency = 1
             SLbl.Position  = UDim2.new(0, 10, 0, 0)
@@ -1068,7 +1052,6 @@ function Library:CreateWindow(opts)
             SLbl.TextXAlignment = Enum.TextXAlignment.Left
             SLbl.TextYAlignment = Enum.TextYAlignment.Center
 
-            -- Value: right side, same row as label
             local ValLbl = Instance.new("TextLabel", Fr)
             ValLbl.BackgroundTransparency = 1
             ValLbl.AnchorPoint = Vector2.new(1, 0)
@@ -1081,9 +1064,9 @@ function Library:CreateWindow(opts)
             ValLbl.TextXAlignment = Enum.TextXAlignment.Right
             ValLbl.TextYAlignment = Enum.TextYAlignment.Center
 
-            -- Track: sits below the label row
             local Track = Instance.new("Frame", Fr)
-            Track.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            Track.BackgroundColor3 = Color3.fromRGB(70, 80, 100)
+            Track.BackgroundTransparency = 0.4
             Track.BorderSizePixel  = 0
             Track.Position = UDim2.new(0, 10, 0, 28)
             Track.Size     = UDim2.new(1, -20, 0, 4)
@@ -1091,6 +1074,7 @@ function Library:CreateWindow(opts)
 
             local Fill = Instance.new("Frame", Track)
             Fill.BackgroundColor3 = T.Accent
+            Fill.BackgroundTransparency = 0.25
             Fill.BorderSizePixel  = 0
             Fill.Size             = UDim2.new((val - min) / (max - min), 0, 1, 0)
             Instance.new("UICorner", Fill).CornerRadius = UDim.new(1, 0)
@@ -1103,7 +1087,6 @@ function Library:CreateWindow(opts)
             SKnob.Size             = UDim2.new(0, 10, 0, 10)
             Instance.new("UICorner", SKnob).CornerRadius = UDim.new(1, 0)
 
-            -- Hit zone covers the WHOLE frame so dragging anywhere on the row works
             local HitBtn = Instance.new("TextButton", Fr)
             HitBtn.BackgroundTransparency = 1
             HitBtn.Size             = UDim2.new(1, 0, 1, 0)
@@ -1120,7 +1103,7 @@ function Library:CreateWindow(opts)
                 CreateTween(SKnob, {Position = UDim2.new(pct, 0, 0.5, 0)}, 0.06)
                 pcall(callback, val)
             end
-            -- Always compute from track position even though hit zone is the full frame
+
             local function UpdateFromInput(i)
                 local relX = i.Position.X - Track.AbsolutePosition.X
                 local pct  = math.clamp(relX / Track.AbsoluteSize.X, 0, 1)
@@ -1158,10 +1141,15 @@ function Library:CreateWindow(opts)
             local Fr = Instance.new("Frame", Page)
             Fr.Name             = "ElemFrame"
             Fr.BackgroundColor3 = T.Element
+            Fr.BackgroundTransparency = T.Trans
             Fr.Size             = UDim2.new(1, 0, 0, 32)
             Fr.ClipsDescendants = true
             Fr.BorderSizePixel  = 0
-            Instance.new("UICorner", Fr).CornerRadius = UDim.new(0, 5)
+            Instance.new("UICorner", Fr).CornerRadius = UDim.new(0, 8)
+            local fstroke = Instance.new("UIStroke", Fr)
+            fstroke.Color = T.Accent
+            fstroke.Thickness = 0.5
+            fstroke.Transparency = 0.7
 
             local SelLbl = Instance.new("TextLabel", Fr)
             SelLbl.BackgroundTransparency = 1
@@ -1173,28 +1161,28 @@ function Library:CreateWindow(opts)
             SelLbl.TextSize   = 12
             SelLbl.TextXAlignment = Enum.TextXAlignment.Left
 
-            -- Chevron
             local Chev = Instance.new("TextLabel", Fr)
             Chev.BackgroundTransparency = 1
             Chev.AnchorPoint = Vector2.new(1, 0.5)
             Chev.Position    = UDim2.new(1, -10, 0, 16)
             Chev.Size        = UDim2.new(0, 14, 0, 14)
             Chev.Text        = "⌄"
-            Chev.TextColor3  = Color3.fromRGB(90, 90, 90)
+            Chev.TextColor3  = Color3.fromRGB(110, 120, 140)
             Chev.Font        = Enum.Font.GothamBold
             Chev.TextSize    = 13
 
             local ListFrame = Instance.new("ScrollingFrame", Fr)
-            ListFrame.BackgroundColor3     = Color3.fromRGB(22, 22, 22)
+            ListFrame.BackgroundColor3     = Color3.fromRGB(30, 40, 60)
+            ListFrame.BackgroundTransparency = 0.2
             ListFrame.BorderSizePixel      = 0
             ListFrame.Position             = UDim2.new(0, 0, 0, 34)
             ListFrame.Size                 = UDim2.new(1, 0, 0, LIST_MAX)
             ListFrame.CanvasSize           = UDim2.new(0, 0, 0, 0)
             ListFrame.ScrollBarThickness   = 3
-            ListFrame.ScrollBarImageColor3 = Color3.fromRGB(70, 70, 70)
+            ListFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 120, 150)
             ListFrame.Visible              = false
             ListFrame.ZIndex               = 5
-            Instance.new("UICorner", ListFrame).CornerRadius = UDim.new(0, 5)
+            Instance.new("UICorner", ListFrame).CornerRadius = UDim.new(0, 8)
 
             local IL = Instance.new("UIListLayout", ListFrame)
             IL.SortOrder = Enum.SortOrder.LayoutOrder
@@ -1227,26 +1215,29 @@ function Library:CreateWindow(opts)
                 end
                 for idx, item in ipairs(itemList) do
                     local IBtn = Instance.new("TextButton", ListFrame)
-                    IBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+                    IBtn.BackgroundColor3 = Color3.fromRGB(40, 50, 70)
+                    IBtn.BackgroundTransparency = 0.3
                     IBtn.Size             = UDim2.new(1, 0, 0, ITEM_H - 1)
                     IBtn.Font             = Enum.Font.Gotham
                     IBtn.Text             = item
-                    IBtn.TextColor3       = Color3.fromRGB(190, 190, 190)
+                    IBtn.TextColor3       = Color3.fromRGB(210, 220, 240)
                     IBtn.TextSize         = 11
                     IBtn.AutoButtonColor  = false
                     IBtn.BorderSizePixel  = 0
                     IBtn.LayoutOrder      = idx
                     IBtn.ZIndex           = 6
-                    Instance.new("UICorner", IBtn).CornerRadius = UDim.new(0, 4)
+                    Instance.new("UICorner", IBtn).CornerRadius = UDim.new(0, 6)
 
                     IBtn.MouseButton1Click:Connect(function() SelectItem(item) end)
                     IBtn.MouseEnter:Connect(function()
-                        IBtn.BackgroundColor3 = Library.CurrentTheme.Element
+                        IBtn.BackgroundColor3 = Library.CurrentTheme.Accent
+                        IBtn.BackgroundTransparency = 0.4
                         IBtn.TextColor3       = Library.CurrentTheme.Text
                     end)
                     IBtn.MouseLeave:Connect(function()
-                        IBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-                        IBtn.TextColor3       = Color3.fromRGB(190, 190, 190)
+                        IBtn.BackgroundColor3 = Color3.fromRGB(40, 50, 70)
+                        IBtn.BackgroundTransparency = 0.3
+                        IBtn.TextColor3       = Color3.fromRGB(210, 220, 240)
                     end)
                 end
                 local total = #itemList * ITEM_H + 8
@@ -1255,9 +1246,8 @@ function Library:CreateWindow(opts)
 
             BuildItems(list)
 
-            -- Compute the visible list height: fit content exactly, capped at LIST_MAX
             local function CalcListH()
-                local contentH = #list * ITEM_H + 8  -- 8 = top/bottom padding
+                local contentH = #list * ITEM_H + 8
                 return math.min(contentH, LIST_MAX)
             end
 
@@ -1283,7 +1273,6 @@ function Library:CreateWindow(opts)
                 Refresh = function(self, newList)
                     list = newList
                     BuildItems(newList)
-                    -- If open, resize to fit the new list
                     if dropped then
                         local listH = CalcListH()
                         ListFrame.Size = UDim2.new(1, 0, 0, listH)
@@ -1305,23 +1294,24 @@ function Library:CreateWindow(opts)
             Lbl.Size = UDim2.new(1, -20, 0, 14)
 
             local Box = Instance.new("TextBox", Fr)
-            Box.BackgroundColor3   = Color3.fromRGB(25, 25, 25)
+            Box.BackgroundColor3   = Color3.fromRGB(35, 45, 65)
+            Box.BackgroundTransparency = 0.3
             Box.BorderSizePixel    = 0
             Box.Position           = UDim2.new(0, 8, 0, 22)
             Box.Size               = UDim2.new(1, -16, 0, 20)
             Box.Font               = Enum.Font.Gotham
             Box.PlaceholderText    = placeholder or ""
-            Box.PlaceholderColor3  = Color3.fromRGB(75, 75, 75)
+            Box.PlaceholderColor3  = Color3.fromRGB(100, 110, 130)
             Box.Text               = ""
-            Box.TextColor3         = Color3.fromRGB(220, 220, 220)
+            Box.TextColor3         = Color3.fromRGB(230, 240, 255)
             Box.TextSize           = 11
             Box.ClearTextOnFocus   = false
-            Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 4)
-            local BS = Instance.new("UIStroke", Box); BS.Color = Color3.fromRGB(45, 45, 45); BS.Thickness = 1
+            Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 6)
+            local BS = Instance.new("UIStroke", Box); BS.Color = Color3.fromRGB(80, 100, 140); BS.Thickness = 1; BS.Transparency = 0.5
 
-            Box.Focused:Connect(function()  CreateTween(BS, {Color = Library.CurrentTheme.Accent}, 0.15) end)
+            Box.Focused:Connect(function()  CreateTween(BS, {Color = Library.CurrentTheme.Accent, Transparency = 0.2}, 0.15) end)
             Box.FocusLost:Connect(function(enter)
-                CreateTween(BS, {Color = Color3.fromRGB(45, 45, 45)}, 0.15)
+                CreateTween(BS, {Color = Color3.fromRGB(80, 100, 140), Transparency = 0.5}, 0.15)
                 if enter then pcall(callback, Box.Text) end
             end)
 
@@ -1340,32 +1330,33 @@ function Library:CreateWindow(opts)
             ElemLabel(Fr, text)
 
             local KBtn = Instance.new("TextButton", Fr)
-            KBtn.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+            KBtn.BackgroundColor3 = Color3.fromRGB(40, 50, 70)
+            KBtn.BackgroundTransparency = 0.3
             KBtn.AnchorPoint      = Vector2.new(1, 0.5)
             KBtn.Position         = UDim2.new(1, -8, 0.5, 0)
             KBtn.Size             = UDim2.new(0, 72, 0, 20)
             KBtn.Font             = Enum.Font.GothamMedium
             KBtn.Text             = key == Enum.KeyCode.Unknown and "None" or key.Name
-            KBtn.TextColor3       = Color3.fromRGB(170, 170, 170)
+            KBtn.TextColor3       = Color3.fromRGB(190, 200, 220)
             KBtn.TextSize         = 10
             KBtn.AutoButtonColor  = false
             KBtn.BorderSizePixel  = 0
-            Instance.new("UICorner", KBtn).CornerRadius = UDim.new(0, 4)
-            local KBS = Instance.new("UIStroke", KBtn); KBS.Color = Color3.fromRGB(50, 50, 50); KBS.Thickness = 1
+            Instance.new("UICorner", KBtn).CornerRadius = UDim.new(0, 6)
+            local KBS = Instance.new("UIStroke", KBtn); KBS.Color = Color3.fromRGB(80, 100, 140); KBS.Thickness = 1; KBS.Transparency = 0.5
 
             KBtn.MouseButton1Click:Connect(function()
                 binding = true
                 KBtn.Text      = "..."
                 KBtn.TextColor3 = T.Accent
-                CreateTween(KBS, {Color = T.Accent}, 0.12)
+                CreateTween(KBS, {Color = T.Accent, Transparency = 0.2}, 0.12)
             end)
 
             UserInputService.InputBegan:Connect(function(input, gpe)
                 if binding and not gpe and input.UserInputType == Enum.UserInputType.Keyboard then
                     key = input.KeyCode; binding = false
                     KBtn.Text       = key.Name
-                    KBtn.TextColor3 = Color3.fromRGB(170, 170, 170)
-                    CreateTween(KBS, {Color = Color3.fromRGB(50, 50, 50)}, 0.12)
+                    KBtn.TextColor3 = Color3.fromRGB(190, 200, 220)
+                    CreateTween(KBS, {Color = Color3.fromRGB(80, 100, 140), Transparency = 0.5}, 0.12)
                     Library.Flags[text] = key
                 elseif not binding and not gpe and input.UserInputType == Enum.UserInputType.Keyboard then
                     if input.KeyCode == key then pcall(callback, key) end
@@ -1379,7 +1370,7 @@ function Library:CreateWindow(opts)
         return Tab
     end
 
-    -- ── Built-in Configuration Tab ──
+    -- CONFIG TAB
     function Window:AddConfig()
         local CT = Window:Tab("Config")
         CT:Label("Appearance")
@@ -1390,11 +1381,6 @@ function Library:CreateWindow(opts)
 
         CT:Dropdown("Theme", ThemeNames, function(sel)
             Library:SetTheme(sel)
-        end)
-
-        CT:Toggle("Transparent Background", false, function(val)
-            Library.Settings.Transparency = val
-            Library:RefreshTheme()
         end)
 
         CT:Label("Save / Load")

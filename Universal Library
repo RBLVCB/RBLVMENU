@@ -302,11 +302,11 @@ function Library:CreateWindow(opts)
     MainFrame.Visible          = not KeySystemConfig.Enabled
     if KeySystemConfig.Enabled then MainFrame.Size = UDim2.new(0, 0, 0, 0) end
 
-    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
+    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 24)
     local MS = Instance.new("UIStroke", MainFrame)
-    MS.Color     = Library.CurrentTheme.Accent
-    MS.Thickness = 1
-    MS.Transparency = 0.45
+    MS.Color     = Color3.fromRGB(255, 255, 255)
+    MS.Thickness = 1.5
+    MS.Transparency = 0.6
 
     -- Subtle inner glass highlight (top edge sheen)
     local Sheen = Instance.new("Frame", MainFrame)
@@ -317,7 +317,7 @@ function Library:CreateWindow(opts)
     Sheen.Size             = UDim2.new(1, 0, 0.4, 0)
     Sheen.ZIndex           = 0
     local SheenCorner = Instance.new("UICorner", Sheen)
-    SheenCorner.CornerRadius = UDim.new(0, 12)
+    SheenCorner.CornerRadius = UDim.new(0, 24)
 
     -- ── Header bar ──
     local Header = Instance.new("Frame", MainFrame)
@@ -333,7 +333,7 @@ function Library:CreateWindow(opts)
     HFix.BorderSizePixel  = 0
     HFix.Position = UDim2.new(0, 0, 1, -4)
     HFix.Size     = UDim2.new(1, 0, 0, 4)
-    Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 12)
+    Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 24)
 
     -- Title: accent dot + name
     local TitleDot = Instance.new("Frame", Header)
@@ -527,11 +527,11 @@ function Library:CreateWindow(opts)
             TabLayout = Instance.new("UIListLayout", TabScroll)
             TabLayout.FillDirection = Enum.FillDirection.Vertical
             TabLayout.SortOrder     = Enum.SortOrder.LayoutOrder
-            TabLayout.Padding       = UDim.new(0, 2)
+            TabLayout.Padding       = UDim.new(0, 4)
             TabPad = Instance.new("UIPadding", TabScroll)
-            TabPad.PaddingTop   = UDim.new(0, 6)
-            TabPad.PaddingLeft  = UDim.new(0, 4)
-            TabPad.PaddingRight = UDim.new(0, 4)
+            TabPad.PaddingTop   = UDim.new(0, 8)
+            TabPad.PaddingLeft  = UDim.new(0, 6)
+            TabPad.PaddingRight = UDim.new(0, 6)
 
             TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
                 TabScroll.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y + 12)
@@ -578,7 +578,7 @@ function Library:CreateWindow(opts)
     SearchBox.TextColor3         = Color3.fromRGB(220, 230, 245)
     SearchBox.TextSize           = 11
     SearchBox.ClearTextOnFocus   = false
-    Instance.new("UICorner", SearchBox).CornerRadius = UDim.new(0, 6)
+    Instance.new("UICorner", SearchBox).CornerRadius = UDim.new(1, 0)
     local SBStroke = Instance.new("UIStroke", SearchBox)
     SBStroke.Color     = Color3.fromRGB(255, 255, 255)
     SBStroke.Thickness = 1
@@ -600,7 +600,7 @@ function Library:CreateWindow(opts)
                 if isActive then
                     v.TextColor3 = Library.CurrentTheme.Accent
                     if v:FindFirstChild("ActiveBar") then
-                        v.ActiveBar.BackgroundTransparency = 0
+                        v.ActiveBar.BackgroundTransparency = (tabDirection == "h") and 0 or 0.85
                     end
                 else
                     v.TextColor3 = Color3.fromRGB(130, 140, 155)
@@ -646,7 +646,7 @@ function Library:CreateWindow(opts)
         -- Just rebuild the tab buttons in the new TabScroll.
         local firstVisible = nil
         for _, entry in ipairs(_tabRegistry) do
-            -- Determine if this tab was active (visible)
+            -- Determine if this tab was active (check ActiveBar transparency < 1)
             local wasActive = entry.page and entry.page.Visible
 
             -- Create a new tab button for this tab in the new TabScroll
@@ -664,30 +664,34 @@ function Library:CreateWindow(opts)
                 TabBtn.Size       = UDim2.new(0, math.max(#name * 7 + 20, 60), 1, 0)
                 TabBtn.TextColor3 = Color3.fromRGB(130, 140, 155)
             else
-                TabBtn.Size       = UDim2.new(1, 0, 0, 28)
+                TabBtn.Size       = UDim2.new(1, 0, 0, 36)
                 TabBtn.TextColor3 = Color3.fromRGB(130, 140, 155)
                 TabBtn.TextXAlignment = Enum.TextXAlignment.Left
+                TabBtn.ZIndex = 2
                 -- Indent for sidebar
                 local SBPad = Instance.new("UIPadding", TabBtn)
-                SBPad.PaddingLeft = UDim.new(0, 8)
+                SBPad.PaddingLeft = UDim.new(0, 14)
             end
 
             local ActiveBar = Instance.new("Frame", TabBtn)
             ActiveBar.Name   = "ActiveBar"
-            ActiveBar.BackgroundColor3       = Library.CurrentTheme.Accent
             ActiveBar.BorderSizePixel        = 0
-            ActiveBar.BackgroundTransparency = wasActive and 0 or 1
+            ActiveBar.ZIndex = 1
 
             if tabDirection == "h" then
+                ActiveBar.BackgroundColor3       = Library.CurrentTheme.Accent
+                ActiveBar.BackgroundTransparency = wasActive and 0 or 1
                 ActiveBar.AnchorPoint = Vector2.new(0.5, 1)
                 ActiveBar.Position    = UDim2.new(0.5, 0, 1, 0)
                 ActiveBar.Size        = UDim2.new(0.7, 0, 0, 2)
                 Instance.new("UICorner", ActiveBar).CornerRadius = UDim.new(1, 0)
             else
-                -- Vertical mode: left edge indicator bar
+                -- Vertical mode: full pill background highlight
+                ActiveBar.BackgroundColor3       = Color3.fromRGB(255, 255, 255)
+                ActiveBar.BackgroundTransparency = wasActive and 0.85 or 1
                 ActiveBar.AnchorPoint = Vector2.new(0, 0.5)
                 ActiveBar.Position    = UDim2.new(0, 0, 0.5, 0)
-                ActiveBar.Size        = UDim2.new(0, 2, 0.6, 0)
+                ActiveBar.Size        = UDim2.new(1, 0, 1, 0)
                 Instance.new("UICorner", ActiveBar).CornerRadius = UDim.new(1, 0)
             end
 
@@ -747,14 +751,15 @@ function Library:CreateWindow(opts)
 
         for _, obj in pairs(TabScroll:GetChildren()) do
             if obj:IsA("TextButton") then
-                if obj:FindFirstChild("ActiveBar") and obj.ActiveBar.BackgroundTransparency == 0 then
+                local bar = obj:FindFirstChild("ActiveBar")
+                local isActive = bar and bar.BackgroundTransparency < 1
+                if isActive then
                     obj.TextColor3 = T.Accent
-                    obj.ActiveBar.BackgroundColor3 = T.Accent
+                    if tabDirection == "h" then
+                        bar.BackgroundColor3 = T.Accent
+                    end
                 else
                     obj.TextColor3 = Color3.fromRGB(130, 140, 155)
-                    if obj:FindFirstChild("ActiveBar") then
-                        obj.ActiveBar.BackgroundColor3 = T.Accent
-                    end
                 end
             end
         end
@@ -963,19 +968,19 @@ function Library:CreateWindow(opts)
         -- ELEMENTS
         -- ────────────────────────────────────────
 
-        -- Helper: create a clean frosted-glass element frame
+        -- Helper: create a clean frosted-glass element frame (pill-shaped)
         local function ElemBase(h)
             local f = Instance.new("Frame", Page)
             f.Name             = "ElemFrame"
             f.BackgroundColor3 = Library.CurrentTheme.Element
             f.BackgroundTransparency = GlassTrans()
-            f.Size             = UDim2.new(1, 0, 0, h or 34)
+            f.Size             = UDim2.new(1, 0, 0, h or 40)
             f.BorderSizePixel  = 0
-            Instance.new("UICorner", f).CornerRadius = UDim.new(0, 8)
+            Instance.new("UICorner", f).CornerRadius = UDim.new(0, 18)
             local stroke = Instance.new("UIStroke", f)
-            stroke.Color = Library.CurrentTheme.Accent
+            stroke.Color = Color3.fromRGB(255, 255, 255)
             stroke.Thickness = 1
-            stroke.Transparency = 0.8
+            stroke.Transparency = 0.88
             return f
         end
 
@@ -1019,7 +1024,7 @@ function Library:CreateWindow(opts)
         -- BUTTON
         function Tab:Button(text, callback)
             local T  = Library.CurrentTheme
-            local Fr = ElemBase(32)
+            local Fr = ElemBase(40)
 
             local BT = Instance.new("TextButton", Fr)
             BT.BackgroundTransparency = 1
@@ -1063,24 +1068,24 @@ function Library:CreateWindow(opts)
             local Toggled = default or false
             Library.Flags[text] = Toggled
 
-            local Fr = ElemBase(32)
+            local Fr = ElemBase(40)
             ElemLabel(Fr, text)
 
-            -- Track: slim rounded rect (glass)
+            -- Track: bigger rounded pill (glass)
             local Track = Instance.new("Frame", Fr)
-            Track.BackgroundColor3 = Toggled and T.Accent or Color3.fromRGB(255, 255, 255)
-            Track.BackgroundTransparency = Toggled and 0.25 or 0.85
+            Track.BackgroundColor3 = Toggled and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(255, 255, 255)
+            Track.BackgroundTransparency = Toggled and 0.05 or 0.85
             Track.AnchorPoint      = Vector2.new(1, 0.5)
-            Track.Position         = UDim2.new(1, -10, 0.5, 0)
-            Track.Size             = UDim2.new(0, 34, 0, 18)
+            Track.Position         = UDim2.new(1, -12, 0.5, 0)
+            Track.Size             = UDim2.new(0, 46, 0, 26)
             Track.BorderSizePixel  = 0
             Instance.new("UICorner", Track).CornerRadius = UDim.new(1, 0)
 
             local Knob = Instance.new("Frame", Track)
-            Knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            Knob.BackgroundColor3 = Toggled and T.Accent or Color3.fromRGB(120, 130, 145)
             Knob.AnchorPoint      = Vector2.new(0, 0.5)
-            Knob.Position         = Toggled and UDim2.new(1, -16, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
-            Knob.Size             = UDim2.new(0, 14, 0, 14)
+            Knob.Position         = Toggled and UDim2.new(1, -22, 0.5, 0) or UDim2.new(0, 3, 0.5, 0)
+            Knob.Size             = UDim2.new(0, 20, 0, 20)
             Knob.BorderSizePixel  = 0
             Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
 
@@ -1093,10 +1098,12 @@ function Library:CreateWindow(opts)
             local function Update(val)
                 Toggled = val; Library.Flags[text] = Toggled
                 CreateTween(Track, {
-                    BackgroundColor3 = Toggled and Library.CurrentTheme.Accent or Color3.fromRGB(255, 255, 255),
-                    BackgroundTransparency = Toggled and 0.25 or 0.85
+                    BackgroundTransparency = Toggled and 0.05 or 0.85
                 }, 0.15)
-                CreateTween(Knob,  {Position = Toggled and UDim2.new(1, -16, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)}, 0.15)
+                CreateTween(Knob,  {
+                    Position = Toggled and UDim2.new(1, -22, 0.5, 0) or UDim2.new(0, 3, 0.5, 0),
+                    BackgroundColor3 = Toggled and T.Accent or Color3.fromRGB(120, 130, 145)
+                }, 0.15)
                 pcall(callback, Toggled)
             end
 
@@ -1113,8 +1120,8 @@ function Library:CreateWindow(opts)
             local sliding = false
             Library.Flags[text] = val
 
-            -- 44px total: 18px for label row, 4px gap, 4px track, 18px bottom padding
-            local Fr = ElemBase(44)
+            -- 50px total: 22px for label row, track below
+            local Fr = ElemBase(50)
 
             -- Label: left side, vertically centred in the top half
             local SLbl = Instance.new("TextLabel", Fr)
@@ -1146,8 +1153,8 @@ function Library:CreateWindow(opts)
             Track.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             Track.BackgroundTransparency = 0.85
             Track.BorderSizePixel  = 0
-            Track.Position = UDim2.new(0, 10, 0, 28)
-            Track.Size     = UDim2.new(1, -20, 0, 4)
+            Track.Position = UDim2.new(0, 14, 0, 34)
+            Track.Size     = UDim2.new(1, -28, 0, 5)
             Instance.new("UICorner", Track).CornerRadius = UDim.new(1, 0)
 
             local Fill = Instance.new("Frame", Track)
@@ -1221,19 +1228,19 @@ function Library:CreateWindow(opts)
             Fr.Name             = "ElemFrame"
             Fr.BackgroundColor3 = T.Element
             Fr.BackgroundTransparency = GlassTrans()
-            Fr.Size             = UDim2.new(1, 0, 0, 32)
+            Fr.Size             = UDim2.new(1, 0, 0, 40)
             Fr.ClipsDescendants = true
             Fr.BorderSizePixel  = 0
-            Instance.new("UICorner", Fr).CornerRadius = UDim.new(0, 8)
+            Instance.new("UICorner", Fr).CornerRadius = UDim.new(0, 18)
             local FrStroke = Instance.new("UIStroke", Fr)
-            FrStroke.Color = T.Accent
+            FrStroke.Color = Color3.fromRGB(255, 255, 255)
             FrStroke.Thickness = 1
-            FrStroke.Transparency = 0.8
+            FrStroke.Transparency = 0.88
 
             local SelLbl = Instance.new("TextLabel", Fr)
             SelLbl.BackgroundTransparency = 1
-            SelLbl.Position = UDim2.new(0, 10, 0, 0)
-            SelLbl.Size     = UDim2.new(1, -32, 0, 32)
+            SelLbl.Position = UDim2.new(0, 14, 0, 0)
+            SelLbl.Size     = UDim2.new(1, -36, 0, 40)
             SelLbl.Font     = Enum.Font.Gotham
             SelLbl.Text     = text
             SelLbl.TextColor3 = T.Text
@@ -1244,7 +1251,7 @@ function Library:CreateWindow(opts)
             local Chev = Instance.new("TextLabel", Fr)
             Chev.BackgroundTransparency = 1
             Chev.AnchorPoint = Vector2.new(1, 0.5)
-            Chev.Position    = UDim2.new(1, -10, 0, 16)
+            Chev.Position    = UDim2.new(1, -14, 0, 20)
             Chev.Size        = UDim2.new(0, 14, 0, 14)
             Chev.Text        = "⌄"
             Chev.TextColor3  = Color3.fromRGB(120, 130, 145)
@@ -1255,14 +1262,14 @@ function Library:CreateWindow(opts)
             ListFrame.BackgroundColor3     = T.Top
             ListFrame.BackgroundTransparency = GlassTrans()
             ListFrame.BorderSizePixel      = 0
-            ListFrame.Position             = UDim2.new(0, 0, 0, 34)
+            ListFrame.Position             = UDim2.new(0, 0, 0, 42)
             ListFrame.Size                 = UDim2.new(1, 0, 0, LIST_MAX)
             ListFrame.CanvasSize           = UDim2.new(0, 0, 0, 0)
             ListFrame.ScrollBarThickness   = 3
             ListFrame.ScrollBarImageColor3 = T.Accent
             ListFrame.Visible              = false
             ListFrame.ZIndex               = 5
-            Instance.new("UICorner", ListFrame).CornerRadius = UDim.new(0, 8)
+            Instance.new("UICorner", ListFrame).CornerRadius = UDim.new(0, 14)
 
             local IL = Instance.new("UIListLayout", ListFrame)
             IL.SortOrder = Enum.SortOrder.LayoutOrder
@@ -1274,7 +1281,7 @@ function Library:CreateWindow(opts)
 
             local HitBtn = Instance.new("TextButton", Fr)
             HitBtn.BackgroundTransparency = 1
-            HitBtn.Size   = UDim2.new(1, 0, 0, 32)
+            HitBtn.Size   = UDim2.new(1, 0, 0, 40)
             HitBtn.Text   = ""
             HitBtn.ZIndex = 3
             HitBtn.AutoButtonColor = false
@@ -1284,7 +1291,7 @@ function Library:CreateWindow(opts)
                 Library.Flags[text] = item
                 dropped             = false
                 ListFrame.Visible   = false
-                Fr.Size             = UDim2.new(1, 0, 0, 32)
+                Fr.Size             = UDim2.new(1, 0, 0, 40)
                 Chev.Rotation       = 0
                 pcall(callback, item)
             end
@@ -1306,7 +1313,7 @@ function Library:CreateWindow(opts)
                     IBtn.BorderSizePixel  = 0
                     IBtn.LayoutOrder      = idx
                     IBtn.ZIndex           = 6
-                    Instance.new("UICorner", IBtn).CornerRadius = UDim.new(0, 6)
+                    Instance.new("UICorner", IBtn).CornerRadius = UDim.new(0, 12)
 
                     IBtn.MouseButton1Click:Connect(function() SelectItem(item) end)
                     IBtn.MouseEnter:Connect(function()
@@ -1339,11 +1346,11 @@ function Library:CreateWindow(opts)
                     ListFrame.Size             = UDim2.new(1, 0, 0, listH)
                     ListFrame.Visible          = true
                     ListFrame.CanvasPosition   = Vector2.new(0, 0)
-                    Fr.Size                    = UDim2.new(1, 0, 0, 34 + listH)
+                    Fr.Size                    = UDim2.new(1, 0, 0, 42 + listH)
                     CreateTween(Chev, {Rotation = 180}, 0.15)
                 else
                     ListFrame.Visible = false
-                    Fr.Size           = UDim2.new(1, 0, 0, 32)
+                    Fr.Size           = UDim2.new(1, 0, 0, 40)
                     CreateTween(Chev, {Rotation = 0}, 0.15)
                 end
                 Page.CanvasSize = UDim2.new(0, 0, 0, PL.AbsoluteContentSize.Y + 20)
@@ -1358,7 +1365,7 @@ function Library:CreateWindow(opts)
                     if dropped then
                         local listH = CalcListH()
                         ListFrame.Size = UDim2.new(1, 0, 0, listH)
-                        Fr.Size        = UDim2.new(1, 0, 0, 34 + listH)
+                        Fr.Size        = UDim2.new(1, 0, 0, 42 + listH)
                         Page.CanvasSize = UDim2.new(0, 0, 0, PL.AbsoluteContentSize.Y + 20)
                     end
                 end,
@@ -1370,17 +1377,17 @@ function Library:CreateWindow(opts)
         -- TEXTBOX
         function Tab:Textbox(text, placeholder, callback)
             local T  = Library.CurrentTheme
-            local Fr = ElemBase(48)
+            local Fr = ElemBase(54)
 
-            local Lbl = ElemLabel(Fr, text, 5, 11)
-            Lbl.Size = UDim2.new(1, -20, 0, 14)
+            local Lbl = ElemLabel(Fr, text, 8, 11)
+            Lbl.Size = UDim2.new(1, -28, 0, 14)
 
             local Box = Instance.new("TextBox", Fr)
             Box.BackgroundColor3   = Color3.fromRGB(255, 255, 255)
             Box.BackgroundTransparency = 0.9
             Box.BorderSizePixel    = 0
-            Box.Position           = UDim2.new(0, 8, 0, 22)
-            Box.Size               = UDim2.new(1, -16, 0, 20)
+            Box.Position           = UDim2.new(0, 12, 0, 26)
+            Box.Size               = UDim2.new(1, -24, 0, 22)
             Box.Font               = Enum.Font.Gotham
             Box.PlaceholderText    = placeholder or ""
             Box.PlaceholderColor3  = Color3.fromRGB(130, 140, 155)
@@ -1388,7 +1395,7 @@ function Library:CreateWindow(opts)
             Box.TextColor3         = T.Text
             Box.TextSize           = 11
             Box.ClearTextOnFocus   = false
-            Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 6)
+            Instance.new("UICorner", Box).CornerRadius = UDim.new(1, 0)
             local BS = Instance.new("UIStroke", Box); BS.Color = T.Accent; BS.Thickness = 1; BS.Transparency = 0.7
 
             Box.Focused:Connect(function()  CreateTween(BS, {Transparency = 0.3}, 0.15) end)
@@ -1408,22 +1415,22 @@ function Library:CreateWindow(opts)
             local binding = false
             Library.Flags[text] = key
 
-            local Fr = ElemBase(32)
+            local Fr = ElemBase(40)
             ElemLabel(Fr, text)
 
             local KBtn = Instance.new("TextButton", Fr)
             KBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             KBtn.BackgroundTransparency = 0.9
             KBtn.AnchorPoint      = Vector2.new(1, 0.5)
-            KBtn.Position         = UDim2.new(1, -8, 0.5, 0)
-            KBtn.Size             = UDim2.new(0, 72, 0, 20)
+            KBtn.Position         = UDim2.new(1, -12, 0.5, 0)
+            KBtn.Size             = UDim2.new(0, 76, 0, 26)
             KBtn.Font             = Enum.Font.GothamMedium
             KBtn.Text             = key == Enum.KeyCode.Unknown and "None" or key.Name
             KBtn.TextColor3       = Color3.fromRGB(190, 200, 215)
             KBtn.TextSize         = 10
             KBtn.AutoButtonColor  = false
             KBtn.BorderSizePixel  = 0
-            Instance.new("UICorner", KBtn).CornerRadius = UDim.new(0, 6)
+            Instance.new("UICorner", KBtn).CornerRadius = UDim.new(1, 0)
             local KBS = Instance.new("UIStroke", KBtn); KBS.Color = T.Accent; KBS.Thickness = 1; KBS.Transparency = 0.7
 
             KBtn.MouseButton1Click:Connect(function()

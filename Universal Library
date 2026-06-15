@@ -1,5 +1,5 @@
 -- ================================================
---   Universal Library v2.0 - Liquid Glass Edition
+--   Universal Library v2.0 - Liquid Glass Editiont
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -518,12 +518,12 @@ function Library:CreateWindow(opts)
                         if kn then kn.BackgroundColor3=kn:GetAttribute("On") and T.Accent or Color3.fromRGB(120,130,145) end
                     end
 
-                    -- Slider fill + value label
+                    -- Slider fill + value label (ValLbl is inside SliderTrack now)
                     local st=elem:FindFirstChild("SliderTrack")
                     if st then
                         local sf=st:FindFirstChild("SliderFill"); if sf then sf.BackgroundColor3=T.Accent end
+                        -- SliderValue text color stays white (on fill), no accent needed
                     end
-                    local sv=elem:FindFirstChild("SliderValue"); if sv then sv.TextColor3=T.Accent end
 
                     -- Dropdown list background + scrollbar
                     local lf=elem:FindFirstChildOfClass("ScrollingFrame")
@@ -725,62 +725,89 @@ function Library:CreateWindow(opts)
         function Tab:Slider(text, min, max, default, callback)
             local T=Library.CurrentTheme; local val=default or min; local sliding=false
             Library.Flags[text]=val
-            -- Frame 44px:
-            -- Row (y=0, h=36):  [Name — left]  [Value — right]  on ONE line
-            -- Track (y=38, h=4): full width bar
-            local Fr=ElemBase(44)
 
-            -- Name: anchored left, fills left 70% of row height
+            -- Layout (matches original v2.0 style):
+            --   Line 1 (y=0, h=22):  name label LEFT
+            --   Line 2 (y=22, h=16): track bar with value centered inside
+            -- Total frame = 46px
+            local Fr=ElemBase(46)
+
+            -- Row 1: slider name, top-left
             local SLbl=Instance.new("TextLabel",Fr); SLbl.Name="ElemLbl"
             SLbl.BackgroundTransparency=1
-            SLbl.Position=UDim2.new(0,12,0,0)
-            SLbl.Size=UDim2.new(0.7,-8,0,36)
+            SLbl.Position=UDim2.new(0,10,0,0)
+            SLbl.Size=UDim2.new(1,-20,0,22)
             SLbl.Font=Enum.Font.Gotham; SLbl.Text=text
             SLbl.TextColor3=T.Text; SLbl.TextSize=12
             SLbl.TextXAlignment=Enum.TextXAlignment.Left
             SLbl.TextYAlignment=Enum.TextYAlignment.Center
 
-            -- Value: anchored to right edge of frame, same row height
-            local ValLbl=Instance.new("TextLabel",Fr); ValLbl.Name="SliderValue"
-            ValLbl.BackgroundTransparency=1
-            ValLbl.AnchorPoint=Vector2.new(1,0)  -- anchor TOP-RIGHT corner
-            ValLbl.Position=UDim2.new(1,-10,0,0)  -- 10px from right edge
-            ValLbl.Size=UDim2.new(0.28,-4,0,36)   -- 28% width, same height as name
-            ValLbl.Font=Enum.Font.GothamMedium; ValLbl.Text=tostring(val)
-            ValLbl.TextColor3=T.Accent; ValLbl.TextSize=12
-            ValLbl.TextXAlignment=Enum.TextXAlignment.Right
-            ValLbl.TextYAlignment=Enum.TextYAlignment.Center
-
-            -- Track bar: below the text row
+            -- Row 2: track bar (full width), with value label centered ON TOP of fill
             local Track=Instance.new("Frame",Fr); Track.Name="SliderTrack"
-            Track.BackgroundColor3=Color3.fromRGB(255,255,255); Track.BackgroundTransparency=0.78
-            Track.BorderSizePixel=0; Track.Position=UDim2.new(0,12,0,38); Track.Size=UDim2.new(1,-24,0,4)
-            Instance.new("UICorner",Track).CornerRadius=UDim.new(1,0)
+            Track.BackgroundColor3=Color3.fromRGB(255,255,255)
+            Track.BackgroundTransparency=0.82; Track.BorderSizePixel=0
+            Track.Position=UDim2.new(0,10,0,26); Track.Size=UDim2.new(1,-20,0,16)
+            Instance.new("UICorner",Track).CornerRadius=UDim.new(0,8)
+
+            -- Fill: grows left to right inside track
             local Fill=Instance.new("Frame",Track); Fill.Name="SliderFill"
-            Fill.BackgroundColor3=T.Accent; Fill.BackgroundTransparency=0.1; Fill.BorderSizePixel=0
+            Fill.BackgroundColor3=T.Accent; Fill.BackgroundTransparency=0.1
+            Fill.BorderSizePixel=0
             Fill.Size=UDim2.new((val-min)/(max-min),0,1,0)
-            Instance.new("UICorner",Fill).CornerRadius=UDim.new(1,0)
+            Instance.new("UICorner",Fill).CornerRadius=UDim.new(0,8)
+
+            -- Value label: centered inside the track, on top of fill
+            local ValLbl=Instance.new("TextLabel",Track); ValLbl.Name="SliderValue"
+            ValLbl.BackgroundTransparency=1
+            ValLbl.Size=UDim2.new(1,0,1,0)
+            ValLbl.Font=Enum.Font.GothamMedium; ValLbl.Text=tostring(val)
+            ValLbl.TextColor3=Color3.fromRGB(255,255,255); ValLbl.TextSize=11
+            ValLbl.TextXAlignment=Enum.TextXAlignment.Center
+            ValLbl.TextYAlignment=Enum.TextYAlignment.Center
+            ValLbl.ZIndex=3
+
+            -- Invisible drag knob: small circle at current position
             local SKnob=Instance.new("Frame",Track); SKnob.Name="SliderKnob"
-            SKnob.BackgroundColor3=Color3.fromRGB(255,255,255); SKnob.BorderSizePixel=0
+            SKnob.BackgroundColor3=Color3.fromRGB(255,255,255)
+            SKnob.BackgroundTransparency=0.6; SKnob.BorderSizePixel=0
             SKnob.AnchorPoint=Vector2.new(0.5,0.5)
-            SKnob.Position=UDim2.new((val-min)/(max-min),0,0.5,0); SKnob.Size=UDim2.new(0,10,0,10)
-            Instance.new("UICorner",SKnob).CornerRadius=UDim.new(1,0)
+            SKnob.Position=UDim2.new((val-min)/(max-min),0,0.5,0)
+            SKnob.Size=UDim2.new(0,2,0,16)
+            SKnob.ZIndex=4
+
+            -- Hit zone covers full ElemFrame
             local Hit=Instance.new("TextButton",Fr); Hit.BackgroundTransparency=1
-            Hit.Size=UDim2.new(1,0,1,0); Hit.Text=""; Hit.AutoButtonColor=false; Hit.ZIndex=4
+            Hit.Size=UDim2.new(1,0,1,0); Hit.Text=""; Hit.AutoButtonColor=false; Hit.ZIndex=5
+
             local function SetVal(v)
-                val=math.clamp(v,min,max); Library.Flags[text]=val; ValLbl.Text=tostring(val)
+                val=math.clamp(v,min,max); Library.Flags[text]=val
+                ValLbl.Text=tostring(val)
                 local pct=(val-min)/(max-min)
-                Tw(Fill,{Size=UDim2.new(pct,0,1,0)},0.06); Tw(SKnob,{Position=UDim2.new(pct,0,0.5,0)},0.06)
+                TweenService:Create(Fill,TweenInfo.new(0.06,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{Size=UDim2.new(pct,0,1,0)}):Play()
+                TweenService:Create(SKnob,TweenInfo.new(0.06,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{Position=UDim2.new(pct,0,0.5,0)}):Play()
                 pcall(callback,val)
             end
-            local function FI(i) SetVal(math.floor(min+(max-min)*math.clamp((i.Position.X-Track.AbsolutePosition.X)/Track.AbsoluteSize.X,0,1))) end
-            Hit.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then sliding=true; FI(i) end end)
-            Hit.InputEnded:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then sliding=false end end)
-            UserInputService.InputChanged:Connect(function(i) if sliding and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then FI(i) end end)
+            local function FI(i)
+                local relX=i.Position.X-Track.AbsolutePosition.X
+                SetVal(math.floor(min+(max-min)*math.clamp(relX/Track.AbsoluteSize.X,0,1)))
+            end
+            Hit.InputBegan:Connect(function(i)
+                if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+                    sliding=true; FI(i)
+                end
+            end)
+            Hit.InputEnded:Connect(function(i)
+                if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+                    sliding=false
+                end
+            end)
+            UserInputService.InputChanged:Connect(function(i)
+                if sliding and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
+                    FI(i)
+                end
+            end)
             Library.Elements[text]={Set=function(self,v) SetVal(v) end}
             table.insert(Library.SearchIndex,{Name=text,Tab=name,Instance=Fr})
-        end
-
         -- DROPDOWN
         function Tab:Dropdown(text, list, callback)
             local T=Library.CurrentTheme; local dropped=false
@@ -850,36 +877,21 @@ function Library:CreateWindow(opts)
             return Sel
         end
 
--- ==================== TEXTBOX ====================
-function Tab:Textbox(text, placeholder, callback)
-    local T=Library.CurrentTheme; local Fr=ElemBase(48)
-    
-    -- Text label (sekarang di atas, bukan di bawah textbox)
-    local SLbl=Instance.new("TextLabel",Fr); SLbl.Name="ElemLbl"
-    SLbl.BackgroundTransparency=1
-    SLbl.Position=UDim2.new(0,12,0,0)
-    SLbl.Size=UDim2.new(1,-20,0,22)
-    SLbl.Font=Enum.Font.Gotham
-    SLbl.Text=text
-    SLbl.TextColor3=T.Text
-    SLbl.TextSize=12
-    SLbl.TextXAlignment=Enum.TextXAlignment.Left
-    SLbl.TextYAlignment=Enum.TextYAlignment.Top
-
-    -- Textbox (tetap sama)
-    local Box=Instance.new("TextBox",Fr); Box.BackgroundColor3=Color3.fromRGB(255,255,255)
-    Box.BackgroundTransparency=0.88; Box.BorderSizePixel=0
-    Box.Position=UDim2.new(0,10,0,26); Box.Size=UDim2.new(1,-20,0,22)
-    Box.Font=Enum.Font.Gotham; Box.PlaceholderText=placeholder or ""; Box.PlaceholderColor3=Color3.fromRGB(130,140,155)
-    Box.Text=""; Box.TextColor3=T.Text; Box.TextSize=11; Box.ClearTextOnFocus=false
-    Instance.new("UICorner",Box).CornerRadius=UDim.new(1,0)
-    local bs=Instance.new("UIStroke",Box); bs.Color=T.Accent; bs.Thickness=1; bs.Transparency=0.72
-    Box.Focused:Connect(function() Tw(bs,{Transparency=0.25},0.15) end)
-    Box.FocusLost:Connect(function(enter) Tw(bs,{Transparency=0.72},0.15); if enter then pcall(callback,Box.Text) end end)
-
-    Library.Elements[text]={Set=function(self,v) Box.Text=v end}
-    table.insert(Library.SearchIndex,{Name=text,Tab=name,Instance=Fr})
-end
+        -- TEXTBOX
+        function Tab:Textbox(text, placeholder, callback)
+            local T=Library.CurrentTheme; local Fr=ElemBase(52); ElemLbl(Fr,text,6,11)
+            local Box=Instance.new("TextBox",Fr); Box.BackgroundColor3=Color3.fromRGB(255,255,255)
+            Box.BackgroundTransparency=0.88; Box.BorderSizePixel=0
+            Box.Position=UDim2.new(0,10,0,24); Box.Size=UDim2.new(1,-20,0,22)
+            Box.Font=Enum.Font.Gotham; Box.PlaceholderText=placeholder or ""; Box.PlaceholderColor3=Color3.fromRGB(130,140,155)
+            Box.Text=""; Box.TextColor3=T.Text; Box.TextSize=11; Box.ClearTextOnFocus=false
+            Instance.new("UICorner",Box).CornerRadius=UDim.new(1,0)
+            local bs=Instance.new("UIStroke",Box); bs.Color=T.Accent; bs.Thickness=1; bs.Transparency=0.72
+            Box.Focused:Connect(function() Tw(bs,{Transparency=0.25},0.15) end)
+            Box.FocusLost:Connect(function(enter) Tw(bs,{Transparency=0.72},0.15); if enter then pcall(callback,Box.Text) end end)
+            Library.Elements[text]={Set=function(self,v) Box.Text=v end}
+            table.insert(Library.SearchIndex,{Name=text,Tab=name,Instance=Fr})
+        end
 
         -- KEYBIND
         function Tab:Keybind(text, default, callback)

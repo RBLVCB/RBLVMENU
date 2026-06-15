@@ -1,5 +1,5 @@
 -- ================================================
---   Universal Library v2.0 - Liquid Glass Edition
+--   Universal Library v2.0 - Liquid Glass Editio
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -725,36 +725,36 @@ function Library:CreateWindow(opts)
         function Tab:Slider(text, min, max, default, callback)
             local T=Library.CurrentTheme; local val=default or min; local sliding=false
             Library.Flags[text]=val
-            -- Layout: 46px total
-            --   Row (h=28, y=0):  name label left | value label right
-            --   Track (h=5, y=34): full-width minus 12px margins
-            local Fr=ElemBase(46)
+            -- Frame 44px:
+            -- Row (y=0, h=36):  [Name — left]  [Value — right]  on ONE line
+            -- Track (y=38, h=4): full width bar
+            local Fr=ElemBase(44)
 
-            -- Name label — left aligned, single row
+            -- Name: anchored left, fills left 70% of row height
             local SLbl=Instance.new("TextLabel",Fr); SLbl.Name="ElemLbl"
             SLbl.BackgroundTransparency=1
             SLbl.Position=UDim2.new(0,12,0,0)
-            SLbl.Size=UDim2.new(0.65,-4,0,30)
+            SLbl.Size=UDim2.new(0.7,-8,0,36)
             SLbl.Font=Enum.Font.Gotham; SLbl.Text=text
             SLbl.TextColor3=T.Text; SLbl.TextSize=12
             SLbl.TextXAlignment=Enum.TextXAlignment.Left
             SLbl.TextYAlignment=Enum.TextYAlignment.Center
 
-            -- Value label — right aligned, same row as name
+            -- Value: anchored to right edge of frame, same row height
             local ValLbl=Instance.new("TextLabel",Fr); ValLbl.Name="SliderValue"
             ValLbl.BackgroundTransparency=1
-            ValLbl.AnchorPoint=Vector2.new(1,0)
-            ValLbl.Position=UDim2.new(1,-12,0,0)
-            ValLbl.Size=UDim2.new(0.32,0,0,30)
+            ValLbl.AnchorPoint=Vector2.new(1,0)  -- anchor TOP-RIGHT corner
+            ValLbl.Position=UDim2.new(1,-10,0,0)  -- 10px from right edge
+            ValLbl.Size=UDim2.new(0.28,-4,0,36)   -- 28% width, same height as name
             ValLbl.Font=Enum.Font.GothamMedium; ValLbl.Text=tostring(val)
             ValLbl.TextColor3=T.Accent; ValLbl.TextSize=12
             ValLbl.TextXAlignment=Enum.TextXAlignment.Right
             ValLbl.TextYAlignment=Enum.TextYAlignment.Center
 
-            -- Track: sits below the label row
+            -- Track bar: below the text row
             local Track=Instance.new("Frame",Fr); Track.Name="SliderTrack"
-            Track.BackgroundColor3=Color3.fromRGB(255,255,255); Track.BackgroundTransparency=0.82
-            Track.BorderSizePixel=0; Track.Position=UDim2.new(0,12,0,34); Track.Size=UDim2.new(1,-24,0,5)
+            Track.BackgroundColor3=Color3.fromRGB(255,255,255); Track.BackgroundTransparency=0.78
+            Track.BorderSizePixel=0; Track.Position=UDim2.new(0,12,0,38); Track.Size=UDim2.new(1,-24,0,4)
             Instance.new("UICorner",Track).CornerRadius=UDim.new(1,0)
             local Fill=Instance.new("Frame",Track); Fill.Name="SliderFill"
             Fill.BackgroundColor3=T.Accent; Fill.BackgroundTransparency=0.1; Fill.BorderSizePixel=0

@@ -852,7 +852,7 @@ function Library:CreateWindow(opts)
 
 -- ==================== TEXTBOX ====================
 function Tab:Textbox(text, placeholder, callback)
-    local T=Library.CurrentTheme; local Fr=ElemBase(52)
+    local T=Library.CurrentTheme; local Fr=ElemBase(48)
     
     -- Text label (sekarang di atas, bukan di bawah textbox)
     local SLbl=Instance.new("TextLabel",Fr); SLbl.Name="ElemLbl"

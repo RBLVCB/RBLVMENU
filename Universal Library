@@ -1,5 +1,5 @@
 -- ================================================
---   Universal Library v2.0 - Liquid Glass Editio
+--   Universal Library v2.0 - Liquid Glass Edition
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -850,21 +850,36 @@ function Library:CreateWindow(opts)
             return Sel
         end
 
-        -- TEXTBOX
-        function Tab:Textbox(text, placeholder, callback)
-            local T=Library.CurrentTheme; local Fr=ElemBase(52); ElemLbl(Fr,text,6,11)
-            local Box=Instance.new("TextBox",Fr); Box.BackgroundColor3=Color3.fromRGB(255,255,255)
-            Box.BackgroundTransparency=0.88; Box.BorderSizePixel=0
-            Box.Position=UDim2.new(0,10,0,24); Box.Size=UDim2.new(1,-20,0,22)
-            Box.Font=Enum.Font.Gotham; Box.PlaceholderText=placeholder or ""; Box.PlaceholderColor3=Color3.fromRGB(130,140,155)
-            Box.Text=""; Box.TextColor3=T.Text; Box.TextSize=11; Box.ClearTextOnFocus=false
-            Instance.new("UICorner",Box).CornerRadius=UDim.new(1,0)
-            local bs=Instance.new("UIStroke",Box); bs.Color=T.Accent; bs.Thickness=1; bs.Transparency=0.72
-            Box.Focused:Connect(function() Tw(bs,{Transparency=0.25},0.15) end)
-            Box.FocusLost:Connect(function(enter) Tw(bs,{Transparency=0.72},0.15); if enter then pcall(callback,Box.Text) end end)
-            Library.Elements[text]={Set=function(self,v) Box.Text=v end}
-            table.insert(Library.SearchIndex,{Name=text,Tab=name,Instance=Fr})
-        end
+-- ==================== TEXTBOX ====================
+function Tab:Textbox(text, placeholder, callback)
+    local T=Library.CurrentTheme; local Fr=ElemBase(52)
+    
+    -- Text label (sekarang di atas, bukan di bawah textbox)
+    local SLbl=Instance.new("TextLabel",Fr); SLbl.Name="ElemLbl"
+    SLbl.BackgroundTransparency=1
+    SLbl.Position=UDim2.new(0,12,0,0)
+    SLbl.Size=UDim2.new(1,-20,0,22)
+    SLbl.Font=Enum.Font.Gotham
+    SLbl.Text=text
+    SLbl.TextColor3=T.Text
+    SLbl.TextSize=12
+    SLbl.TextXAlignment=Enum.TextXAlignment.Left
+    SLbl.TextYAlignment=Enum.TextYAlignment.Top
+
+    -- Textbox (tetap sama)
+    local Box=Instance.new("TextBox",Fr); Box.BackgroundColor3=Color3.fromRGB(255,255,255)
+    Box.BackgroundTransparency=0.88; Box.BorderSizePixel=0
+    Box.Position=UDim2.new(0,10,0,26); Box.Size=UDim2.new(1,-20,0,22)
+    Box.Font=Enum.Font.Gotham; Box.PlaceholderText=placeholder or ""; Box.PlaceholderColor3=Color3.fromRGB(130,140,155)
+    Box.Text=""; Box.TextColor3=T.Text; Box.TextSize=11; Box.ClearTextOnFocus=false
+    Instance.new("UICorner",Box).CornerRadius=UDim.new(1,0)
+    local bs=Instance.new("UIStroke",Box); bs.Color=T.Accent; bs.Thickness=1; bs.Transparency=0.72
+    Box.Focused:Connect(function() Tw(bs,{Transparency=0.25},0.15) end)
+    Box.FocusLost:Connect(function(enter) Tw(bs,{Transparency=0.72},0.15); if enter then pcall(callback,Box.Text) end end)
+
+    Library.Elements[text]={Set=function(self,v) Box.Text=v end}
+    table.insert(Library.SearchIndex,{Name=text,Tab=name,Instance=Fr})
+end
 
         -- KEYBIND
         function Tab:Keybind(text, default, callback)

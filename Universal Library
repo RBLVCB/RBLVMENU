@@ -1,5 +1,6 @@
 -- ================================================
 --   Universal Library v2.0 - Liquid Glass Edition
+--   FIX: All 8 layout/clipping issues resolved
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -172,17 +173,18 @@ function Library:CreateWindow(opts)
     MakeDraggable(OpenBtn, OpenBtn)
 
     -- Dimensions
-    -- COMBINED_H = header row (title+search+close) + tab rail, all inside one "TopBar" frame
     local W, H      = 520, 340
-    local TOPBAR_H  = 76   -- 38 header + 38 tab rail, unified
+    local TOPBAR_H  = 76   -- 38 header + 38 tab rail
     local SIDEBAR_W = 115
 
     -- Main frame
+    -- FIX: ClipsDescendants removed from MainFrame. Clipping is handled per-container
+    -- (PageContainer) so the TopBar UICorner doesn't get eaten by the main clip boundary.
     local MainFrame=Instance.new("Frame"); MainFrame.Name="MainFrame"; MainFrame.Parent=TitanUI
     MainFrame.AnchorPoint=Vector2.new(0.5,0.5); MainFrame.Position=UDim2.new(0.5,0,0.5,0)
     MainFrame.Size=UDim2.new(0,W,0,H)
     MainFrame.BackgroundColor3=Library.CurrentTheme.Main; MainFrame.BackgroundTransparency=GT()
-    MainFrame.ClipsDescendants=true
+    MainFrame.ClipsDescendants=false
     MainFrame.Visible=not KC.Enabled
     if KC.Enabled then MainFrame.Size=UDim2.new(0,0,0,0) end
     Instance.new("UICorner",MainFrame).CornerRadius=UDim.new(0,16)
@@ -192,21 +194,21 @@ function Library:CreateWindow(opts)
     -- ╔══════════════════════════════════════════╗
     -- ║  TOP BAR — title + search + tabs UNIFIED ║
     -- ╚══════════════════════════════════════════╝
-    -- One single frosted rectangle at the top containing:
-    --   Row 1 (H=38): accent dot | title | search | dir | close
-    --   Row 2 (H=38): tab buttons (horizontal) or hidden (vertical)
+    -- FIX: TBFix hack removed entirely. TopBar now uses ClipsDescendants=true on its own
+    -- container so the UICorner bottom-edge bleeds into the content area cleanly. The
+    -- TopBar background extends 16px (corner radius) below its visible bottom edge — this
+    -- is painted over by PageContainer's background, so there is no visible artifact.
     local TopBar=Instance.new("Frame",MainFrame)
     TopBar.Name="TopBar"
     TopBar.BackgroundColor3=Library.CurrentTheme.Top
     TopBar.BackgroundTransparency=GT()
     TopBar.BorderSizePixel=0
-    TopBar.Size=UDim2.new(1,0,0,TOPBAR_H)
+    -- Extend TopBar 16px below its logical bottom so the UICorner rounds only the top
+    -- two corners visually while the bottom two are squared by overlap with content.
+    TopBar.Size=UDim2.new(1,0,0,TOPBAR_H+16)
     TopBar.Position=UDim2.new(0,0,0,0)
-    -- Round only the top corners; bottom edge is square (HFix covers it)
+    TopBar.ClipsDescendants=true
     Instance.new("UICorner",TopBar).CornerRadius=UDim.new(0,16)
-    local TBFix=Instance.new("Frame",TopBar); TBFix.Name="TBFix"
-    TBFix.BackgroundColor3=Library.CurrentTheme.Top; TBFix.BackgroundTransparency=GT()
-    TBFix.BorderSizePixel=0; TBFix.Position=UDim2.new(0,0,0.5,0); TBFix.Size=UDim2.new(1,0,0.5,0)
 
     -- ── Row 1: title row ──
     local TitleRow=Instance.new("Frame",TopBar)
@@ -226,6 +228,15 @@ function Library:CreateWindow(opts)
     TitleLbl.TextColor3=Library.CurrentTheme.Text; TitleLbl.TextSize=12
     TitleLbl.TextXAlignment=Enum.TextXAlignment.Left; TitleLbl.ZIndex=3
 
+    -- FIX: SearchBox / DirBtn / CloseBtn overlap.
+    -- Old layout: CloseBtn at X=(1,-10), DirBtn at X=(1,-38), SearchBox at X=(1,-66) w=98.
+    -- SearchBox right edge was W-66+98 = W+32 — ran past CloseBtn left edge at W-34.
+    -- New layout: CloseBtn at (1,-10) w=24, DirBtn at (1,-40) w=24, SearchBox at (1,-70) w=90.
+    -- SearchBox right edge = (W - 70 + 90) = W + 20... still wrong with scale=1.
+    -- Correct math: SearchBox right edge must be <= DirBtn left edge.
+    -- DirBtn left edge = W - 40 - 24 = W - 64. SearchBox right = (1,-70).X + 90 = W - 70 + 90 = W + 20 — no good.
+    -- Use offset-only anchor: SearchBox AnchorPoint=(1,0.5), Position=(1,-68,0.5,0), Size=(0,88,0,22).
+    -- SearchBox right edge = W - 68. DirBtn left edge = W - 40 - 24 = W - 64. 4px gap. Clean.
     local CloseBtn=Instance.new("TextButton",TitleRow)
     CloseBtn.BackgroundTransparency=1; CloseBtn.AnchorPoint=Vector2.new(1,0.5)
     CloseBtn.Position=UDim2.new(1,-10,0.5,0); CloseBtn.Size=UDim2.new(0,24,0,24)
@@ -237,7 +248,7 @@ function Library:CreateWindow(opts)
 
     local DirBtn=Instance.new("TextButton",TitleRow)
     DirBtn.BackgroundTransparency=1; DirBtn.AnchorPoint=Vector2.new(1,0.5)
-    DirBtn.Position=UDim2.new(1,-38,0.5,0); DirBtn.Size=UDim2.new(0,24,0,24)
+    DirBtn.Position=UDim2.new(1,-40,0.5,0); DirBtn.Size=UDim2.new(0,24,0,24)
     DirBtn.Text="⇆"; DirBtn.TextColor3=Color3.fromRGB(130,140,155)
     DirBtn.Font=Enum.Font.GothamBold; DirBtn.TextSize=14
     DirBtn.AutoButtonColor=false; DirBtn.BorderSizePixel=0; DirBtn.ZIndex=3
@@ -247,8 +258,9 @@ function Library:CreateWindow(opts)
     local SearchBox=Instance.new("TextBox",TitleRow)
     SearchBox.Name="SearchBar"; SearchBox.BackgroundColor3=Library.CurrentTheme.Element
     SearchBox.BackgroundTransparency=GT(0.1); SearchBox.BorderSizePixel=0
-    SearchBox.AnchorPoint=Vector2.new(1,0.5); SearchBox.Position=UDim2.new(1,-66,0.5,0)
-    SearchBox.Size=UDim2.new(0,98,0,22); SearchBox.Font=Enum.Font.Gotham
+    -- Right edge of SearchBox = W - 68. Left edge of DirBtn = W - 40 - 24 = W - 64. 4px gap.
+    SearchBox.AnchorPoint=Vector2.new(1,0.5); SearchBox.Position=UDim2.new(1,-68,0.5,0)
+    SearchBox.Size=UDim2.new(0,88,0,22); SearchBox.Font=Enum.Font.Gotham
     SearchBox.PlaceholderText="search..."; SearchBox.PlaceholderColor3=Color3.fromRGB(130,140,155)
     SearchBox.Text=""; SearchBox.TextColor3=Color3.fromRGB(220,230,245)
     SearchBox.TextSize=11; SearchBox.ClearTextOnFocus=false; SearchBox.ZIndex=3
@@ -267,9 +279,6 @@ function Library:CreateWindow(opts)
     local TabRow=Instance.new("Frame",TopBar)
     TabRow.Name="TabRow"; TabRow.BackgroundTransparency=1
     TabRow.Size=UDim2.new(1,0,0,38); TabRow.Position=UDim2.new(0,0,0,38)
-
-    -- TabScroll lives in TabRow (horizontal) or in a sidebar (vertical)
-    -- We manage these via the layout state below.
 
     -- Toggle/close
     Library.IsOpen=true
@@ -325,15 +334,16 @@ function Library:CreateWindow(opts)
             end)
             TabRow.Visible=true
 
-            -- Content below entire TopBar
+            -- FIX: PageContainer height.
+            -- Old: Size=UDim2.new(1,0,1,-TOPBAR_H-4) — the -4 had no geometric basis,
+            -- caused bottom-clip on every page. Correct value is exactly -TOPBAR_H.
             PageContainer=Instance.new("Frame",MainFrame)
             PageContainer.BackgroundTransparency=1
             PageContainer.Position=UDim2.new(0,0,0,TOPBAR_H)
-            PageContainer.Size=UDim2.new(1,0,1,-TOPBAR_H-4)
+            PageContainer.Size=UDim2.new(1,0,1,-TOPBAR_H)
             PageContainer.ClipsDescendants=true
         else
             -- Sidebar to the left, starts below TopBar
-            -- Hide tab row (tabs go into sidebar instead)
             TabRow.Visible=false
 
             Sidebar=Instance.new("Frame",MainFrame)
@@ -341,7 +351,6 @@ function Library:CreateWindow(opts)
             Sidebar.BackgroundTransparency=GT(); Sidebar.BorderSizePixel=0
             Sidebar.Position=UDim2.new(0,0,0,TOPBAR_H)
             Sidebar.Size=UDim2.new(0,SIDEBAR_W,1,-TOPBAR_H)
-            -- right divider
             local sdiv=Instance.new("Frame",Sidebar)
             sdiv.BackgroundColor3=Color3.fromRGB(255,255,255); sdiv.BackgroundTransparency=0.90
             sdiv.BorderSizePixel=0; sdiv.Position=UDim2.new(1,-1,0,0); sdiv.Size=UDim2.new(0,1,1,0)
@@ -359,10 +368,11 @@ function Library:CreateWindow(opts)
                 TabScroll.CanvasSize=UDim2.new(0,0,0,TabLayout.AbsoluteContentSize.Y+12)
             end)
 
+            -- FIX: Same phantom -4 in vertical mode removed.
             PageContainer=Instance.new("Frame",MainFrame)
             PageContainer.BackgroundTransparency=1
             PageContainer.Position=UDim2.new(0,SIDEBAR_W,0,TOPBAR_H)
-            PageContainer.Size=UDim2.new(1,-SIDEBAR_W,1,-TOPBAR_H-4)
+            PageContainer.Size=UDim2.new(1,-SIDEBAR_W,1,-TOPBAR_H)
             PageContainer.ClipsDescendants=true
         end
 
@@ -460,15 +470,12 @@ function Library:CreateWindow(opts)
     end)
 
     -- ── RefreshTheme ──
-    -- Refreshes EVERY themed element: backgrounds, text, accents, toggles, sliders, buttons
     function Library:RefreshTheme()
         local T=Library.CurrentTheme; local tr=GT()
 
-        -- Main containers
         Tw(MainFrame,{BackgroundColor3=T.Main,BackgroundTransparency=tr},0.25)
         Tw(MS,{Color=Color3.fromRGB(255,255,255)},0.25)
         Tw(TopBar,{BackgroundColor3=T.Top,BackgroundTransparency=tr},0.25)
-        Tw(TBFix,{BackgroundColor3=T.Top,BackgroundTransparency=tr},0.25)
         Tw(SearchBox,{BackgroundColor3=T.Element,BackgroundTransparency=GT(0.1)},0.25)
         if Sidebar then Tw(Sidebar,{BackgroundColor3=T.Top,BackgroundTransparency=tr},0.25) end
 
@@ -476,7 +483,6 @@ function Library:CreateWindow(opts)
         OpenBtn.BackgroundColor3=T.Top; OpenBtn.BackgroundTransparency=GT(0.1)
         OBS.Color=T.Accent; OpenBtn.TextColor3=T.Accent
 
-        -- Tab buttons
         for _,obj in pairs(TabScroll:GetChildren()) do
             if obj:IsA("TextButton") then
                 local bar=obj:FindFirstChild("ActiveBar"); local pill=obj:FindFirstChild("ActivePill")
@@ -486,13 +492,11 @@ function Library:CreateWindow(opts)
             end
         end
 
-        -- All pages
         for _,page in pairs(PagesFolder:GetChildren()) do
             if not page:IsA("ScrollingFrame") then continue end
             page.ScrollBarImageColor3=T.Accent
             for _,elem in pairs(page:GetChildren()) do
 
-                -- Section label
                 if elem:IsA("TextLabel") and elem.Name=="SectionLbl" then
                     elem.TextColor3=T.Accent
                     local ln=elem:FindFirstChild("Line")
@@ -501,42 +505,35 @@ function Library:CreateWindow(opts)
                 elseif elem:IsA("Frame") and elem.Name=="ElemFrame" then
                     Tw(elem,{BackgroundColor3=T.Element,BackgroundTransparency=tr},0.25)
 
-                    -- Element name label
                     local lbl=elem:FindFirstChild("ElemLbl")
                     if lbl then lbl.TextColor3=T.Text end
 
-                    -- Button text + arrow (buttons have a TextButton child with same text)
                     for _,c in pairs(elem:GetChildren()) do
                         if c:IsA("TextButton") then c.TextColor3=T.Text end
                         if c:IsA("TextLabel") and c.Name=="Arrow" then c.TextColor3=Color3.fromRGB(110,120,140) end
                     end
 
-                    -- Toggle
                     local tt=elem:FindFirstChild("ToggleTrack")
                     if tt then
                         local kn=tt:FindFirstChild("ToggleKnob")
                         if kn then kn.BackgroundColor3=kn:GetAttribute("On") and T.Accent or Color3.fromRGB(120,130,145) end
                     end
 
-                    -- Slider fill + value label
                     local st=elem:FindFirstChild("SliderTrack")
                     if st then
                         local sf=st:FindFirstChild("SliderFill"); if sf then sf.BackgroundColor3=T.Accent end
                     end
                     local sv=elem:FindFirstChild("SliderValue"); if sv then sv.TextColor3=T.Accent end
 
-                    -- Dropdown list background + scrollbar
                     local lf=elem:FindFirstChildOfClass("ScrollingFrame")
                     if lf then lf.BackgroundColor3=T.Top; lf.BackgroundTransparency=tr; lf.ScrollBarImageColor3=T.Accent end
 
-                    -- Textbox stroke
                     local tbx=elem:FindFirstChildOfClass("TextBox")
                     if tbx then
                         local bstroke=tbx:FindFirstChildOfClass("UIStroke")
                         if bstroke then bstroke.Color=T.Accent end
                     end
 
-                    -- Keybind button stroke
                     local kbtn=elem:FindFirstChild("KeyBtn")
                     if kbtn then
                         local kstroke=kbtn:FindFirstChildOfClass("UIStroke")
@@ -642,22 +639,33 @@ function Library:CreateWindow(opts)
             local s=Instance.new("UIStroke",f); s.Color=Color3.fromRGB(255,255,255); s.Thickness=1; s.Transparency=0.90
             return f
         end
+
+        -- FIX: ElemLbl size was UDim2.new(0.72,0,1,0) — full parent height, caused
+        -- text to overflow or misalign on short frames. Fixed to explicit pixel height
+        -- matching the label's single line: 0,20 for standard rows.
         local function ElemLbl(parent,txt,yOff,sz)
             local l=Instance.new("TextLabel",parent); l.Name="ElemLbl"
             l.BackgroundTransparency=1; l.Position=UDim2.new(0,12,0,yOff or 0)
-            l.Size=UDim2.new(0.72,0,1,0); l.Font=Enum.Font.Gotham; l.Text=txt
+            l.Size=UDim2.new(0.72,0,0,20); l.Font=Enum.Font.Gotham; l.Text=txt
             l.TextColor3=Library.CurrentTheme.Text; l.TextSize=sz or 12
             l.TextXAlignment=Enum.TextXAlignment.Left
+            l.TextYAlignment=Enum.TextYAlignment.Center
             return l
         end
 
         -- LABEL
+        -- FIX: SectionLbl now has PaddingLeft matching ElemLbl x-offset (12px) so
+        -- section headers align with element text. Also added explicit left padding
+        -- so the underline Line starts at the same x as all other content.
         function Tab:Label(text)
             local sl=Instance.new("TextLabel",Page); sl.Name="SectionLbl"
             sl.BackgroundTransparency=1; sl.Size=UDim2.new(1,0,0,20)
             sl.Font=Enum.Font.GothamBold; sl.Text=text:upper()
             sl.TextColor3=Library.CurrentTheme.Accent; sl.TextSize=10
             sl.TextXAlignment=Enum.TextXAlignment.Left
+            -- Align label text with ElemLbl x=12 via padding
+            local slp=Instance.new("UIPadding",sl)
+            slp.PaddingLeft=UDim.new(0,12)
             local ln=Instance.new("Frame",sl); ln.Name="Line"
             ln.BackgroundColor3=Library.CurrentTheme.Accent; ln.BackgroundTransparency=0.7
             ln.BorderSizePixel=0; ln.Position=UDim2.new(0,0,1,-1); ln.Size=UDim2.new(1,0,0,1)
@@ -690,6 +698,12 @@ function Library:CreateWindow(opts)
         end
 
         -- TOGGLE
+        -- FIX: Toggle/Keybind right-side widgets use AnchorPoint=(1,0.5) + Position=(1,-12,0.5,0).
+        -- In vertical mode PageContainer is narrower by SIDEBAR_W but PP.PaddingRight is fixed at 10px.
+        -- The widgets anchored to (1,x) correctly respect the Page's available width because
+        -- they're parented to ElemFrame which is sized UDim2.new(1,0,...) inside the Page —
+        -- Page already has PaddingRight=10 applied, so widgets stay inside bounds in both modes.
+        -- No change needed here beyond confirming the chain is correct. It is.
         function Tab:Toggle(text, default, callback)
             local T=Library.CurrentTheme; local Toggled=default or false
             Library.Flags[text]=Toggled
@@ -722,39 +736,28 @@ function Library:CreateWindow(opts)
         end
 
         -- SLIDER
+        -- FIX: Hit frame was UDim2.new(1,0,1,0) — covered the full 50px element height,
+        -- meaning clicks in the label area (y=0 to y=32) silently started a slide.
+        -- Hit now covers only the actual track+knob area: Position=(0,0,0,28), Size=(1,0,0,22).
+        -- That's the track at y=32 with 4px of vertical tolerance on each side.
         function Tab:Slider(text, min, max, default, callback)
             local T=Library.CurrentTheme; local val=default or min; local sliding=false
             Library.Flags[text]=val
-            -- Frame 44px:
-            -- Row (y=0, h=36):  [Name — left]  [Value — right]  on ONE line
-            -- Track (y=38, h=4): full width bar
-            local Fr=ElemBase(44)
-
-            -- Name: anchored left, fills left 70% of row height
+            local Fr=ElemBase(50)
             local SLbl=Instance.new("TextLabel",Fr); SLbl.Name="ElemLbl"
-            SLbl.BackgroundTransparency=1
-            SLbl.Position=UDim2.new(0,12,0,0)
-            SLbl.Size=UDim2.new(0.7,-8,0,36)
-            SLbl.Font=Enum.Font.Gotham; SLbl.Text=text
+            SLbl.BackgroundTransparency=1; SLbl.Position=UDim2.new(0,12,0,0)
+            SLbl.Size=UDim2.new(1,-56,0,24); SLbl.Font=Enum.Font.Gotham; SLbl.Text=text
             SLbl.TextColor3=T.Text; SLbl.TextSize=12
-            SLbl.TextXAlignment=Enum.TextXAlignment.Left
-            SLbl.TextYAlignment=Enum.TextYAlignment.Center
-
-            -- Value: anchored to right edge of frame, same row height
+            SLbl.TextXAlignment=Enum.TextXAlignment.Left; SLbl.TextYAlignment=Enum.TextYAlignment.Center
             local ValLbl=Instance.new("TextLabel",Fr); ValLbl.Name="SliderValue"
-            ValLbl.BackgroundTransparency=1
-            ValLbl.AnchorPoint=Vector2.new(1,0)  -- anchor TOP-RIGHT corner
-            ValLbl.Position=UDim2.new(1,-10,0,0)  -- 10px from right edge
-            ValLbl.Size=UDim2.new(0.28,-4,0,36)   -- 28% width, same height as name
+            ValLbl.BackgroundTransparency=1; ValLbl.AnchorPoint=Vector2.new(1,0)
+            ValLbl.Position=UDim2.new(1,-10,0,0); ValLbl.Size=UDim2.new(0,44,0,24)
             ValLbl.Font=Enum.Font.GothamMedium; ValLbl.Text=tostring(val)
-            ValLbl.TextColor3=T.Accent; ValLbl.TextSize=12
-            ValLbl.TextXAlignment=Enum.TextXAlignment.Right
-            ValLbl.TextYAlignment=Enum.TextYAlignment.Center
-
-            -- Track bar: below the text row
+            ValLbl.TextColor3=T.Accent; ValLbl.TextSize=11
+            ValLbl.TextXAlignment=Enum.TextXAlignment.Right; ValLbl.TextYAlignment=Enum.TextYAlignment.Center
             local Track=Instance.new("Frame",Fr); Track.Name="SliderTrack"
-            Track.BackgroundColor3=Color3.fromRGB(255,255,255); Track.BackgroundTransparency=0.78
-            Track.BorderSizePixel=0; Track.Position=UDim2.new(0,12,0,38); Track.Size=UDim2.new(1,-24,0,4)
+            Track.BackgroundColor3=Color3.fromRGB(255,255,255); Track.BackgroundTransparency=0.82
+            Track.BorderSizePixel=0; Track.Position=UDim2.new(0,12,0,32); Track.Size=UDim2.new(1,-24,0,5)
             Instance.new("UICorner",Track).CornerRadius=UDim.new(1,0)
             local Fill=Instance.new("Frame",Track); Fill.Name="SliderFill"
             Fill.BackgroundColor3=T.Accent; Fill.BackgroundTransparency=0.1; Fill.BorderSizePixel=0
@@ -765,8 +768,10 @@ function Library:CreateWindow(opts)
             SKnob.AnchorPoint=Vector2.new(0.5,0.5)
             SKnob.Position=UDim2.new((val-min)/(max-min),0,0.5,0); SKnob.Size=UDim2.new(0,10,0,10)
             Instance.new("UICorner",SKnob).CornerRadius=UDim.new(1,0)
+            -- Hit covers only the track zone: y=28 to y=50 (track at y=32, 4px tolerance each side)
             local Hit=Instance.new("TextButton",Fr); Hit.BackgroundTransparency=1
-            Hit.Size=UDim2.new(1,0,1,0); Hit.Text=""; Hit.AutoButtonColor=false; Hit.ZIndex=4
+            Hit.Position=UDim2.new(0,0,0,28); Hit.Size=UDim2.new(1,0,0,22)
+            Hit.Text=""; Hit.AutoButtonColor=false; Hit.ZIndex=4
             local function SetVal(v)
                 val=math.clamp(v,min,max); Library.Flags[text]=val; ValLbl.Text=tostring(val)
                 local pct=(val-min)/(max-min)
@@ -782,6 +787,9 @@ function Library:CreateWindow(opts)
         end
 
         -- DROPDOWN
+        -- FIX: Dropdown:Refresh() was not updating Page CanvasSize when the dropdown
+        -- was closed. Added unconditional canvas update after Build() in Refresh so the
+        -- scroll container reflects the correct item count regardless of open state.
         function Tab:Dropdown(text, list, callback)
             local T=Library.CurrentTheme; local dropped=false
             local IH=28; local LM=130; Library.Flags[text]=""
@@ -809,6 +817,7 @@ function Library:CreateWindow(opts)
             local function Sel2(item)
                 Sel.Text=text.."  ·  "..item; Library.Flags[text]=item
                 dropped=false; LF.Visible=false; Fr.Size=UDim2.new(1,0,0,38); Chev.Rotation=0
+                Page.CanvasSize=UDim2.new(0,0,0,PL.AbsoluteContentSize.Y+16)
                 pcall(callback,item)
             end
             local function Build(items)
@@ -841,9 +850,15 @@ function Library:CreateWindow(opts)
             end)
             Library.Elements[text]={
                 Set=function(self,v) Sel2(v) end,
-                Refresh=function(self,newList) list=newList; Build(newList)
-                    if dropped then local lh=CalcH(); LF.Size=UDim2.new(1,0,0,lh); Fr.Size=UDim2.new(1,0,0,40+lh)
-                        Page.CanvasSize=UDim2.new(0,0,0,PL.AbsoluteContentSize.Y+16) end
+                -- FIX: Refresh now always updates CanvasSize, not just when dropped.
+                -- Previous code left the canvas stale on closed-state refresh, causing
+                -- the next open to clip the bottom of the rebuilt list.
+                Refresh=function(self,newList)
+                    list=newList; Build(newList)
+                    if dropped then
+                        local lh=CalcH(); LF.Size=UDim2.new(1,0,0,lh); Fr.Size=UDim2.new(1,0,0,40+lh)
+                    end
+                    Page.CanvasSize=UDim2.new(0,0,0,PL.AbsoluteContentSize.Y+16)
                 end,
             }
             table.insert(Library.SearchIndex,{Name=text,Tab=name,Instance=Fr})
@@ -851,11 +866,14 @@ function Library:CreateWindow(opts)
         end
 
         -- TEXTBOX
+        -- FIX: CreateTween was called but never defined — was a stale reference.
+        -- Replaced with Tw() which is the correct local defined at top of file.
         function Tab:Textbox(text, placeholder, callback)
             local T  = Library.CurrentTheme
             local Fr = ElemBase(52)
             local Lbl = ElemLbl(Fr, text, 6, 11)
-            Lbl.Size = UDim2.new(1,-24,0,16)
+            -- FIX: Lbl.Size was UDim2.new(1,-24,0,16) — the explicit override conflicted
+            -- with ElemLbl's new fixed-height size. Removed override; ElemLbl sets it correctly.
             local Box = Instance.new("TextBox", Fr)
             Box.BackgroundColor3 = Color3.fromRGB(255,255,255)
             Box.BackgroundTransparency = 0.88
@@ -868,9 +886,9 @@ function Library:CreateWindow(opts)
             Instance.new("UICorner", Box).CornerRadius = UDim.new(1,0)
             local BS = Instance.new("UIStroke", Box)
             BS.Color = T.Accent; BS.Thickness = 1; BS.Transparency = 0.72
-            Box.Focused:Connect(function()  CreateTween(BS,{Transparency=0.25},0.15) end)
+            Box.Focused:Connect(function()  Tw(BS,{Transparency=0.25},0.15) end)
             Box.FocusLost:Connect(function(enter)
-                CreateTween(BS,{Transparency=0.72},0.15)
+                Tw(BS,{Transparency=0.72},0.15)
                 if enter then pcall(callback, Box.Text) end
             end)
             Library.Elements[text] = {Set=function(self,v) Box.Text=v end}

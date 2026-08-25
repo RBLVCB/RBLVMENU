@@ -1,5 +1,7 @@
 -- ================================================
 --   Universal Library v2.0 - Ultra Liquid Glass Edition
+--   FIX: GlassShine frames now have Active=false so they
+--        no longer block input to buttons/toggles/tabs
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -62,7 +64,7 @@ local function GT(extra)
     return math.clamp(t+(extra or 0), 0, 0.95)
 end
 
--- Refined Glass Specular Shine Overlay Helper
+-- *** FIX: Active=false ensures shine never intercepts clicks/touches ***
 local function AddGlassShine(parent, cornerRadius)
     local shine = Instance.new("Frame", parent)
     shine.Name = "GlassShine"
@@ -71,9 +73,10 @@ local function AddGlassShine(parent, cornerRadius)
     shine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     shine.BackgroundTransparency = 0.94
     shine.BorderSizePixel = 0
-    shine.ZIndex = parent.ZIndex + 1
+    shine.ZIndex = (parent.ZIndex or 1)        -- same ZIndex as parent, not higher
+    shine.Active = false                        -- KEY FIX: never capture input
+    shine.Interactable = false                  -- belt-and-suspenders for newer Roblox
     Instance.new("UICorner", shine).CornerRadius = cornerRadius or UDim.new(0, 12)
-    
     local grad = Instance.new("UIGradient", shine)
     grad.Rotation = 90
     grad.Transparency = NumberSequence.new({
@@ -84,7 +87,6 @@ local function AddGlassShine(parent, cornerRadius)
     return shine
 end
 
--- Dynamic Glass Border Gradient Helper
 local function ApplyGlassStroke(stroke)
     local grad = Instance.new("UIGradient", stroke)
     grad.Rotation = 45
@@ -162,25 +164,20 @@ function Library:Notification(opts)
     NF.ClipsDescendants=true
     Instance.new("UICorner",NF).CornerRadius=UDim.new(0,14)
     AddGlassShine(NF, UDim.new(0,14))
-    
     local ns=Instance.new("UIStroke",NF); ns.Color=Color3.fromRGB(255,255,255); ns.Thickness=1.2; ns.Transparency=0.75
     ApplyGlassStroke(ns)
-    
     local strip=Instance.new("Frame",NF); strip.BackgroundColor3=T.Accent
     strip.BorderSizePixel=0; strip.Size=UDim2.new(0,3,1,0)
     Instance.new("UICorner",strip).CornerRadius=UDim.new(0,2)
-    
     local nt=Instance.new("TextLabel",NF); nt.BackgroundTransparency=1
     nt.Position=UDim2.new(0,14,0,10); nt.Size=UDim2.new(1,-18,0,16)
     nt.Font=Enum.Font.GothamBold; nt.Text=opts.Title or "Menu"
     nt.TextColor3=T.Text; nt.TextSize=12; nt.TextXAlignment=Enum.TextXAlignment.Left
-    
     local nd=Instance.new("TextLabel",NF); nd.BackgroundTransparency=1
     nd.Position=UDim2.new(0,14,0,28); nd.Size=UDim2.new(1,-18,0,28)
     nd.Font=Enum.Font.Gotham; nd.Text=opts.Content or ""
     nd.TextColor3=Color3.fromRGB(200,210,225); nd.TextSize=11
     nd.TextXAlignment=Enum.TextXAlignment.Left; nd.TextWrapped=true
-    
     Tw(NF,{Size=UDim2.new(0,240,0,62)},0.3,Enum.EasingStyle.Back)
     task.delay(opts.Duration or 4, function()
         Tw(NF,{Size=UDim2.new(0,240,0,0),BackgroundTransparency=1},0.25)
@@ -240,6 +237,7 @@ function Library:CreateWindow(opts)
     PillDot.Position              = UDim2.new(0.5, 0, 0.5, 0)
     PillDot.Size                  = UDim2.new(0, 8, 0, 8)
     PillDot.Visible               = false
+    PillDot.Active                = false   -- dot is decorative only
     Instance.new("UICorner", PillDot).CornerRadius = UDim.new(1, 0)
 
     local function ApplyPillVisual()
@@ -279,9 +277,7 @@ function Library:CreateWindow(opts)
 
     OpenBtn.InputEnded:Connect(function(i)
         if i.UserInputType ~= Enum.UserInputType.Touch and i.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
-        if _pressTimer then
-            task.cancel(_pressTimer); _pressTimer = nil
-        end
+        if _pressTimer then task.cancel(_pressTimer); _pressTimer = nil end
         if not _pressFired then
             _pillHidden = false; _pillIcon = false
             ApplyPillVisual()
@@ -301,7 +297,6 @@ function Library:CreateWindow(opts)
     if KC.Enabled then MainFrame.Size=UDim2.new(0,0,0,0) end
     Instance.new("UICorner",MainFrame).CornerRadius=UDim.new(0,18)
     AddGlassShine(MainFrame, UDim.new(0,18))
-
     local MS=Instance.new("UIStroke",MainFrame)
     MS.Color=Color3.fromRGB(255,255,255); MS.Thickness=1.2; MS.Transparency=0.75
     ApplyGlassStroke(MS)
@@ -315,12 +310,10 @@ function Library:CreateWindow(opts)
     TopBar.Size=UDim2.new(1,0,0,TOPBAR_H)
     TopBar.Position=UDim2.new(0,0,0,0)
     Instance.new("UICorner",TopBar).CornerRadius=UDim.new(0,18)
-    
     local TBFix=Instance.new("Frame",TopBar); TBFix.Name="TBFix"
     TBFix.BackgroundColor3=Library.CurrentTheme.Top; TBFix.BackgroundTransparency=GT()
     TBFix.BorderSizePixel=0; TBFix.Position=UDim2.new(0,0,0.5,0); TBFix.Size=UDim2.new(1,0,0.5,0)
 
-    -- Title row
     local TitleRow=Instance.new("Frame",TopBar)
     TitleRow.Name="TitleRow"; TitleRow.BackgroundTransparency=1
     TitleRow.Size=UDim2.new(1,0,0,38); TitleRow.Position=UDim2.new(0,0,0,0)
@@ -329,7 +322,8 @@ function Library:CreateWindow(opts)
     TitleDot.Name="TitleDot"; TitleDot.BackgroundColor3=Library.CurrentTheme.Accent
     TitleDot.BorderSizePixel=0; TitleDot.AnchorPoint=Vector2.new(0,0.5)
     TitleDot.Position=UDim2.new(0,14,0.5,0); TitleDot.Size=UDim2.new(0,4,0,16)
-    TitleDot.ZIndex=3; Instance.new("UICorner",TitleDot).CornerRadius=UDim.new(1,0)
+    TitleDot.ZIndex=3; TitleDot.Active=false
+    Instance.new("UICorner",TitleDot).CornerRadius=UDim.new(1,0)
 
     local TitleLbl=Instance.new("TextLabel",TitleRow)
     TitleLbl.Name="TitleLbl"; TitleLbl.BackgroundTransparency=1
@@ -338,23 +332,21 @@ function Library:CreateWindow(opts)
     TitleLbl.TextColor3=Library.CurrentTheme.Text; TitleLbl.TextSize=13
     TitleLbl.TextXAlignment=Enum.TextXAlignment.Left; TitleLbl.ZIndex=3
 
-    -- Close button
     local CloseBtn=Instance.new("TextButton",TitleRow)
     CloseBtn.BackgroundTransparency=1; CloseBtn.AnchorPoint=Vector2.new(1,0.5)
     CloseBtn.Position=UDim2.new(1,-10,0.5,0); CloseBtn.Size=UDim2.new(0,24,0,24)
     CloseBtn.Text="×"; CloseBtn.TextColor3=Color3.fromRGB(150,165,185)
     CloseBtn.Font=Enum.Font.GothamBold; CloseBtn.TextSize=20
-    CloseBtn.AutoButtonColor=false; CloseBtn.BorderSizePixel=0; CloseBtn.ZIndex=3
+    CloseBtn.AutoButtonColor=false; CloseBtn.BorderSizePixel=0; CloseBtn.ZIndex=4
     CloseBtn.MouseEnter:Connect(function() Tw(CloseBtn,{TextColor3=Library.CurrentTheme.Accent},0.12) end)
     CloseBtn.MouseLeave:Connect(function() Tw(CloseBtn,{TextColor3=Color3.fromRGB(150,165,185)},0.12) end)
 
-    -- Hide Mode button
     local HideBtn=Instance.new("TextButton",TitleRow)
     HideBtn.BackgroundTransparency=1; HideBtn.AnchorPoint=Vector2.new(1,0.5)
     HideBtn.Position=UDim2.new(1,-40,0.5,0); HideBtn.Size=UDim2.new(0,56,0,20)
     HideBtn.Text="Hide Mode"; HideBtn.TextColor3=Color3.fromRGB(130,145,165)
     HideBtn.Font=Enum.Font.GothamMedium; HideBtn.TextSize=10
-    HideBtn.AutoButtonColor=false; HideBtn.BorderSizePixel=0; HideBtn.ZIndex=3
+    HideBtn.AutoButtonColor=false; HideBtn.BorderSizePixel=0; HideBtn.ZIndex=4
     HideBtn.MouseEnter:Connect(function() Tw(HideBtn,{TextColor3=Library.CurrentTheme.Accent},0.12) end)
     HideBtn.MouseLeave:Connect(function() Tw(HideBtn,{TextColor3=Color3.fromRGB(130,145,165)},0.12) end)
     HideBtn.MouseButton1Click:Connect(function()
@@ -363,7 +355,6 @@ function Library:CreateWindow(opts)
         task.defer(ApplyPillVisual)
     end)
 
-    -- Search box
     local SearchBox=Instance.new("TextBox",TitleRow)
     SearchBox.Name="SearchBar"; SearchBox.BackgroundColor3=Library.CurrentTheme.Element
     SearchBox.BackgroundTransparency=GT(0.05); SearchBox.BorderSizePixel=0
@@ -371,7 +362,7 @@ function Library:CreateWindow(opts)
     SearchBox.Size=UDim2.new(0,102,0,22); SearchBox.Font=Enum.Font.Gotham
     SearchBox.PlaceholderText="search..."; SearchBox.PlaceholderColor3=Color3.fromRGB(130,145,165)
     SearchBox.Text=""; SearchBox.TextColor3=Color3.fromRGB(230,240,255)
-    SearchBox.TextSize=11; SearchBox.ClearTextOnFocus=false; SearchBox.ZIndex=3
+    SearchBox.TextSize=11; SearchBox.ClearTextOnFocus=false; SearchBox.ZIndex=4
     Instance.new("UICorner",SearchBox).CornerRadius=UDim.new(1,0)
     local SBS=Instance.new("UIStroke",SearchBox)
     SBS.Color=Color3.fromRGB(255,255,255); SBS.Thickness=1; SBS.Transparency=0.82
@@ -379,12 +370,11 @@ function Library:CreateWindow(opts)
     SearchBox.Focused:Connect(function()  Tw(SBS,{Color=Library.CurrentTheme.Accent,Transparency=0.2},0.15) end)
     SearchBox.FocusLost:Connect(function() Tw(SBS,{Color=Color3.fromRGB(255,255,255),Transparency=0.82},0.15) end)
 
-    -- Separator Line
     local TBSep=Instance.new("Frame",TopBar); TBSep.Name="TBSep"
     TBSep.BackgroundColor3=Color3.fromRGB(255,255,255); TBSep.BackgroundTransparency=0.88
     TBSep.BorderSizePixel=0; TBSep.Position=UDim2.new(0,0,0,38); TBSep.Size=UDim2.new(1,0,0,1)
+    TBSep.Active=false
 
-    -- Tab row
     local TabRow=Instance.new("Frame",TopBar)
     TabRow.Name="TabRow"; TabRow.BackgroundTransparency=1
     TabRow.Size=UDim2.new(1,0,0,38); TabRow.Position=UDim2.new(0,0,0,38)
@@ -401,7 +391,6 @@ function Library:CreateWindow(opts)
         TabScroll.CanvasSize=UDim2.new(0,TabLayout.AbsoluteContentSize.X+16,0,0)
     end)
 
-    -- Page container
     local PageContainer=Instance.new("Frame",MainFrame)
     PageContainer.BackgroundTransparency=1
     PageContainer.Position=UDim2.new(0,0,0,TOPBAR_H)
@@ -472,13 +461,13 @@ function Library:CreateWindow(opts)
         btn.BorderSizePixel=0; btn.AutoButtonColor=false
         btn.Size=UDim2.new(0,math.max(#name*7+20,60),1,0)
         btn.TextColor3=isActive and Library.CurrentTheme.Accent or Color3.fromRGB(130,145,165)
-        
+        btn.ZIndex=3   -- ensure tab buttons are above shine overlays
         local bar=Instance.new("Frame",btn); bar.Name="ActiveBar"
         bar.BackgroundColor3=Library.CurrentTheme.Accent; bar.BorderSizePixel=0
         bar.AnchorPoint=Vector2.new(0.5,1); bar.Position=UDim2.new(0.5,0,1,0)
         bar.Size=UDim2.new(0.7,0,0,2); bar.BackgroundTransparency=isActive and 0 or 1
+        bar.Active=false
         Instance.new("UICorner",bar).CornerRadius=UDim.new(1,0)
-        
         btn.MouseButton1Click:Connect(function() SwitchToTab(name) end)
         btn.MouseEnter:Connect(function()
             if btn.TextColor3~=Library.CurrentTheme.Accent then Tw(btn,{TextColor3=Color3.fromRGB(210,225,245)},0.12) end
@@ -556,31 +545,26 @@ function Library:CreateWindow(opts)
         KF.AnchorPoint=Vector2.new(0.5,0.5); KF.Position=UDim2.new(0.5,0,0.5,0); KF.Size=UDim2.new(0,360,0,200)
         Instance.new("UICorner",KF).CornerRadius=UDim.new(0,16)
         AddGlassShine(KF, UDim.new(0,16))
-        
         local ks=Instance.new("UIStroke",KF); ks.Color=T.Accent; ks.Thickness=1.2; ks.Transparency=0.45
         ApplyGlassStroke(ks)
-        
         local ka=Instance.new("Frame",KF); ka.BackgroundColor3=T.Accent; ka.BorderSizePixel=0; ka.Size=UDim2.new(1,0,0,2)
+        ka.Active=false
         Instance.new("UICorner",ka).CornerRadius=UDim.new(0,16)
-        
         local kt=Instance.new("TextLabel",KF); kt.BackgroundTransparency=1
         kt.Position=UDim2.new(0,0,0,18); kt.Size=UDim2.new(1,0,0,22); kt.Font=Enum.Font.GothamBold
         kt.Text=KC.KeyName; kt.TextColor3=T.Text; kt.TextSize=15
-        
         local ki=Instance.new("TextBox",KF); ki.BackgroundColor3=T.Element; ki.BackgroundTransparency=GT()
         ki.Position=UDim2.new(0.08,0,0,58); ki.Size=UDim2.new(0.84,0,0,34)
         ki.Font=Enum.Font.Gotham; ki.PlaceholderText="enter key..."; ki.PlaceholderColor3=Color3.fromRGB(130,145,165)
         ki.Text=""; ki.TextColor3=T.Text; ki.TextSize=13; ki.BorderSizePixel=0
         Instance.new("UICorner",ki).CornerRadius=UDim.new(0,10)
-        
         local kis=Instance.new("UIStroke",ki); kis.Color=T.Accent; kis.Transparency=0.55
-        
         local function MKB(txt,x,w,accent)
             local b=Instance.new("TextButton",KF)
             b.BackgroundColor3=accent and T.Accent or T.Element; b.BackgroundTransparency=accent and 0.1 or GT()
             b.Position=UDim2.new(x,0,0,108); b.Size=UDim2.new(w,-4,0,30)
             b.Font=Enum.Font.GothamBold; b.Text=txt; b.TextColor3=Color3.fromRGB(255,255,255); b.TextSize=12
-            b.BorderSizePixel=0; b.AutoButtonColor=false
+            b.BorderSizePixel=0; b.AutoButtonColor=false; b.ZIndex=3
             Instance.new("UICorner",b).CornerRadius=UDim.new(0,10)
             AddGlassShine(b, UDim.new(0,10))
             local bs=Instance.new("UIStroke",b); bs.Color=T.Accent; bs.Transparency=accent and 0.35 or 0.65
@@ -637,8 +621,7 @@ function Library:CreateWindow(opts)
             f.BackgroundColor3=Library.CurrentTheme.Element; f.BackgroundTransparency=GT()
             f.Size=UDim2.new(1,0,0,h or 38); f.BorderSizePixel=0
             Instance.new("UICorner",f).CornerRadius=UDim.new(0,12)
-            AddGlassShine(f, UDim.new(0,12))
-            
+            AddGlassShine(f, UDim.new(0,12))   -- Active=false inside, safe
             local s=Instance.new("UIStroke",f); s.Color=Color3.fromRGB(255,255,255); s.Thickness=1; s.Transparency=0.88
             ApplyGlassStroke(s)
             return f
@@ -662,49 +645,32 @@ function Library:CreateWindow(opts)
             local ln=Instance.new("Frame",sl); ln.Name="Line"
             ln.BackgroundColor3=Library.CurrentTheme.Accent; ln.BackgroundTransparency=0.75
             ln.BorderSizePixel=0; ln.Position=UDim2.new(0,0,1,-1); ln.Size=UDim2.new(1,0,0,1)
+            ln.Active=false
             return sl
         end
 
-        -- Extended Text / Paragraph Element Implementation
         function Tab:Text(title, content)
             content = content or ""
             local Fr = ElemBase(40)
             Fr.AutomaticSize = Enum.AutomaticSize.Y
-
             local hasTitle = (title and title ~= "")
-            
             local TLbl
             if hasTitle then
-                TLbl = Instance.new("TextLabel", Fr)
-                TLbl.Name = "TextTitle"
-                TLbl.BackgroundTransparency = 1
-                TLbl.Position = UDim2.new(0, 12, 0, 8)
-                TLbl.Size = UDim2.new(1, -24, 0, 16)
-                TLbl.Font = Enum.Font.GothamBold
-                TLbl.Text = title
-                TLbl.TextColor3 = Library.CurrentTheme.Text
-                TLbl.TextSize = 12
-                TLbl.TextXAlignment = Enum.TextXAlignment.Left
+                TLbl = Instance.new("TextLabel", Fr); TLbl.Name = "TextTitle"
+                TLbl.BackgroundTransparency = 1; TLbl.Position = UDim2.new(0, 12, 0, 8)
+                TLbl.Size = UDim2.new(1, -24, 0, 16); TLbl.Font = Enum.Font.GothamBold
+                TLbl.Text = title; TLbl.TextColor3 = Library.CurrentTheme.Text
+                TLbl.TextSize = 12; TLbl.TextXAlignment = Enum.TextXAlignment.Left
             end
-
-            local CLbl = Instance.new("TextLabel", Fr)
-            CLbl.Name = "TextContent"
+            local CLbl = Instance.new("TextLabel", Fr); CLbl.Name = "TextContent"
             CLbl.BackgroundTransparency = 1
             CLbl.Position = UDim2.new(0, 12, 0, hasTitle and 26 or 8)
-            CLbl.Size = UDim2.new(1, -24, 0, 0)
-            CLbl.AutomaticSize = Enum.AutomaticSize.Y
-            CLbl.Font = Enum.Font.Gotham
-            CLbl.Text = content
-            CLbl.TextColor3 = Color3.fromRGB(195, 210, 230)
-            CLbl.TextSize = 11
-            CLbl.TextWrapped = true
-            CLbl.TextXAlignment = Enum.TextXAlignment.Left
-
-            local Pad = Instance.new("UIPadding", Fr)
-            Pad.PaddingBottom = UDim.new(0, 8)
-
-            table.insert(Library.SearchIndex, {Name = (title or "") .. " " .. content, Tab = name, Instance = Fr})
-            
+            CLbl.Size = UDim2.new(1, -24, 0, 0); CLbl.AutomaticSize = Enum.AutomaticSize.Y
+            CLbl.Font = Enum.Font.Gotham; CLbl.Text = content
+            CLbl.TextColor3 = Color3.fromRGB(195, 210, 230); CLbl.TextSize = 11
+            CLbl.TextWrapped = true; CLbl.TextXAlignment = Enum.TextXAlignment.Left
+            local Pad = Instance.new("UIPadding", Fr); Pad.PaddingBottom = UDim.new(0, 8)
+            table.insert(Library.SearchIndex, {Name=(title or "").." "..content, Tab=name, Instance=Fr})
             local TextObj = {}
             function TextObj:Set(newTitle, newContent)
                 if hasTitle and newTitle then TLbl.Text = newTitle end
@@ -712,7 +678,6 @@ function Library:CreateWindow(opts)
             end
             return TextObj
         end
-        
         Tab.Paragraph = Tab.Text
 
         function Tab:Button(text, callback)
@@ -720,12 +685,12 @@ function Library:CreateWindow(opts)
             local bt=Instance.new("TextButton",Fr); bt.Name="BtnText"
             bt.BackgroundTransparency=1; bt.Size=UDim2.new(1,0,1,0)
             bt.Font=Enum.Font.Gotham; bt.Text=text; bt.TextColor3=T.Text; bt.TextSize=12
-            bt.AutoButtonColor=false
+            bt.AutoButtonColor=false; bt.ZIndex=3
             local arrow=Instance.new("TextLabel",Fr); arrow.Name="Arrow"
             arrow.BackgroundTransparency=1; arrow.AnchorPoint=Vector2.new(1,0.5)
             arrow.Position=UDim2.new(1,-12,0.5,0); arrow.Size=UDim2.new(0,14,0,14)
             arrow.Text="›"; arrow.TextColor3=Color3.fromRGB(110,125,145)
-            arrow.Font=Enum.Font.GothamBold; arrow.TextSize=14
+            arrow.Font=Enum.Font.GothamBold; arrow.TextSize=14; arrow.ZIndex=3
             bt.MouseButton1Click:Connect(function()
                 Tw(Fr,{BackgroundColor3=T.Accent,BackgroundTransparency=0.45},0.1)
                 task.wait(0.12)
@@ -742,24 +707,22 @@ function Library:CreateWindow(opts)
             local T=Library.CurrentTheme; local Toggled=default or false
             Library.Flags[text]=Toggled
             local Fr=ElemBase(38); ElemLbl(Fr,text)
-            
             local Track=Instance.new("Frame",Fr); Track.Name="ToggleTrack"
             Track.BackgroundColor3=Color3.fromRGB(255,255,255)
             Track.BackgroundTransparency=Toggled and 0.1 or 0.85
             Track.AnchorPoint=Vector2.new(1,0.5); Track.Position=UDim2.new(1,-12,0.5,0)
             Track.Size=UDim2.new(0,44,0,24); Track.BorderSizePixel=0
             Instance.new("UICorner",Track).CornerRadius=UDim.new(1,0)
-            
             local Knob=Instance.new("Frame",Track); Knob.Name="ToggleKnob"
             Knob.BackgroundColor3=Toggled and T.Accent or Color3.fromRGB(120,135,155)
             Knob:SetAttribute("On",Toggled); Knob.AnchorPoint=Vector2.new(0,0.5)
             Knob.Position=Toggled and UDim2.new(1,-21,0.5,0) or UDim2.new(0,3,0.5,0)
             Knob.Size=UDim2.new(0,18,0,18); Knob.BorderSizePixel=0
+            Knob.Active=false   -- decorative knob, don't steal input
             Instance.new("UICorner",Knob).CornerRadius=UDim.new(1,0)
-            
+            -- Hit button covers the whole row at a high ZIndex
             local Hit=Instance.new("TextButton",Fr); Hit.BackgroundTransparency=1
-            Hit.Size=UDim2.new(1,0,1,0); Hit.Text=""; Hit.AutoButtonColor=false
-            
+            Hit.Size=UDim2.new(1,0,1,0); Hit.Text=""; Hit.AutoButtonColor=false; Hit.ZIndex=4
             local function Update(val)
                 Toggled=val; Library.Flags[text]=Toggled; Knob:SetAttribute("On",Toggled)
                 Tw(Track,{BackgroundTransparency=Toggled and 0.1 or 0.85},0.18)
@@ -777,39 +740,33 @@ function Library:CreateWindow(opts)
             local T=Library.CurrentTheme; local val=default or min; local sliding=false
             Library.Flags[text]=val
             local Fr=ElemBase(50)
-            
             local SLbl=Instance.new("TextLabel",Fr); SLbl.Name="ElemLbl"
             SLbl.BackgroundTransparency=1; SLbl.Position=UDim2.new(0,12,0,0)
             SLbl.Size=UDim2.new(1,-56,0,24); SLbl.Font=Enum.Font.Gotham; SLbl.Text=text
             SLbl.TextColor3=T.Text; SLbl.TextSize=12
             SLbl.TextXAlignment=Enum.TextXAlignment.Left; SLbl.TextYAlignment=Enum.TextYAlignment.Center
-            
             local ValLbl=Instance.new("TextLabel",Fr); ValLbl.Name="SliderValue"
             ValLbl.BackgroundTransparency=1; ValLbl.AnchorPoint=Vector2.new(1,0)
             ValLbl.Position=UDim2.new(1,-10,0,0); ValLbl.Size=UDim2.new(0,44,0,24)
             ValLbl.Font=Enum.Font.GothamMedium; ValLbl.Text=tostring(val)
             ValLbl.TextColor3=T.Accent; ValLbl.TextSize=11
             ValLbl.TextXAlignment=Enum.TextXAlignment.Right; ValLbl.TextYAlignment=Enum.TextYAlignment.Center
-            
             local Track=Instance.new("Frame",Fr); Track.Name="SliderTrack"
             Track.BackgroundColor3=Color3.fromRGB(255,255,255); Track.BackgroundTransparency=0.85
             Track.BorderSizePixel=0; Track.Position=UDim2.new(0,12,0,32); Track.Size=UDim2.new(1,-24,0,6)
             Instance.new("UICorner",Track).CornerRadius=UDim.new(1,0)
-            
             local Fill=Instance.new("Frame",Track); Fill.Name="SliderFill"
             Fill.BackgroundColor3=T.Accent; Fill.BackgroundTransparency=0.05; Fill.BorderSizePixel=0
-            Fill.Size=UDim2.new((val-min)/(max-min),0,1,0)
+            Fill.Size=UDim2.new((val-min)/(max-min),0,1,0); Fill.Active=false
             Instance.new("UICorner",Fill).CornerRadius=UDim.new(1,0)
-            
             local SKnob=Instance.new("Frame",Track); SKnob.Name="SliderKnob"
             SKnob.BackgroundColor3=Color3.fromRGB(255,255,255); SKnob.BorderSizePixel=0
             SKnob.AnchorPoint=Vector2.new(0.5,0.5)
             SKnob.Position=UDim2.new((val-min)/(max-min),0,0.5,0); SKnob.Size=UDim2.new(0,12,0,12)
+            SKnob.Active=false
             Instance.new("UICorner",SKnob).CornerRadius=UDim.new(1,0)
-            
             local Hit=Instance.new("TextButton",Fr); Hit.BackgroundTransparency=1
             Hit.Size=UDim2.new(1,0,1,0); Hit.Text=""; Hit.AutoButtonColor=false; Hit.ZIndex=4
-            
             local function SetVal(v)
                 val=math.clamp(v,min,max); Library.Flags[text]=val; ValLbl.Text=tostring(val)
                 local pct=(val-min)/(max-min)
@@ -832,37 +789,29 @@ function Library:CreateWindow(opts)
             Fr.Size=UDim2.new(1,0,0,38); Fr.ClipsDescendants=true; Fr.BorderSizePixel=0
             Instance.new("UICorner",Fr).CornerRadius=UDim.new(0,12)
             AddGlassShine(Fr, UDim.new(0,12))
-            
             local fs=Instance.new("UIStroke",Fr); fs.Color=Color3.fromRGB(255,255,255); fs.Thickness=1; fs.Transparency=0.88
             ApplyGlassStroke(fs)
-            
             local Sel=Instance.new("TextLabel",Fr); Sel.Name="ElemLbl"
             Sel.BackgroundTransparency=1; Sel.Position=UDim2.new(0,12,0,0); Sel.Size=UDim2.new(1,-36,0,38)
             Sel.Font=Enum.Font.Gotham; Sel.Text=text; Sel.TextColor3=T.Text; Sel.TextSize=12
             Sel.TextXAlignment=Enum.TextXAlignment.Left
-            
             local Chev=Instance.new("TextLabel",Fr); Chev.BackgroundTransparency=1
             Chev.AnchorPoint=Vector2.new(1,0.5); Chev.Position=UDim2.new(1,-14,0,19); Chev.Size=UDim2.new(0,14,0,14)
             Chev.Text="⌄"; Chev.TextColor3=Color3.fromRGB(120,135,155); Chev.Font=Enum.Font.GothamBold; Chev.TextSize=13
-            
             local LF=Instance.new("ScrollingFrame",Fr); LF.BackgroundColor3=T.Top; LF.BackgroundTransparency=GT()
             LF.BorderSizePixel=0; LF.Position=UDim2.new(0,0,0,40); LF.Size=UDim2.new(1,0,0,LM)
             LF.CanvasSize=UDim2.new(0,0,0,0); LF.ScrollBarThickness=3
             LF.ScrollBarImageColor3=T.Accent; LF.Visible=false; LF.ZIndex=5
             Instance.new("UICorner",LF).CornerRadius=UDim.new(0,10)
-            
             local il=Instance.new("UIListLayout",LF); il.SortOrder=Enum.SortOrder.LayoutOrder; il.Padding=UDim.new(0,1)
             local ip=Instance.new("UIPadding",LF); ip.PaddingTop=UDim.new(0,3); ip.PaddingLeft=UDim.new(0,3); ip.PaddingRight=UDim.new(0,3)
-            
             local Hit=Instance.new("TextButton",Fr); Hit.BackgroundTransparency=1
             Hit.Size=UDim2.new(1,0,0,38); Hit.Text=""; Hit.ZIndex=3; Hit.AutoButtonColor=false
-            
             local function Sel2(item)
                 Sel.Text=text.."  ·  "..item; Library.Flags[text]=item
                 dropped=false; LF.Visible=false; Fr.Size=UDim2.new(1,0,0,38); Chev.Rotation=0
                 pcall(callback,item)
             end
-            
             local function Build(items)
                 for _,c in pairs(LF:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
                 for i,item in ipairs(items) do
@@ -879,7 +828,6 @@ function Library:CreateWindow(opts)
                 LF.CanvasSize=UDim2.new(0,0,0,#items*IH+8)
             end
             Build(list)
-            
             local function CalcH() return math.min(#list*IH+8,LM) end
             Hit.MouseButton1Click:Connect(function()
                 dropped=not dropped
@@ -908,7 +856,6 @@ function Library:CreateWindow(opts)
             local Fr=ElemBase(52)
             local Lbl=ElemLbl(Fr,text,6,11)
             Lbl.Size=UDim2.new(1,-24,0,16)
-            
             local Box=Instance.new("TextBox",Fr)
             Box.BackgroundColor3=Color3.fromRGB(255,255,255); Box.BackgroundTransparency=0.9
             Box.BorderSizePixel=0
@@ -916,9 +863,8 @@ function Library:CreateWindow(opts)
             Box.Font=Enum.Font.Gotham; Box.PlaceholderText=placeholder or ""
             Box.PlaceholderColor3=Color3.fromRGB(130,145,165)
             Box.Text=""; Box.TextColor3=T.Text; Box.TextSize=11
-            Box.ClearTextOnFocus=false
+            Box.ClearTextOnFocus=false; Box.ZIndex=3
             Instance.new("UICorner",Box).CornerRadius=UDim.new(1,0)
-            
             local BS=Instance.new("UIStroke",Box)
             BS.Color=T.Accent; BS.Thickness=1; BS.Transparency=0.75
             Box.Focused:Connect(function()  Tw(BS,{Transparency=0.2},0.15) end)
@@ -934,14 +880,13 @@ function Library:CreateWindow(opts)
             local T=Library.CurrentTheme; local key=default or Enum.KeyCode.Unknown; local binding=false
             Library.Flags[text]=key
             local Fr=ElemBase(38); ElemLbl(Fr,text)
-            
             local KB=Instance.new("TextButton",Fr); KB.Name="KeyBtn"
             KB.BackgroundColor3=Color3.fromRGB(255,255,255); KB.BackgroundTransparency=0.9
             KB.AnchorPoint=Vector2.new(1,0.5); KB.Position=UDim2.new(1,-12,0.5,0); KB.Size=UDim2.new(0,72,0,24)
             KB.Font=Enum.Font.GothamMedium; KB.Text=key==Enum.KeyCode.Unknown and "None" or key.Name
             KB.TextColor3=Color3.fromRGB(190,205,220); KB.TextSize=10; KB.AutoButtonColor=false; KB.BorderSizePixel=0
+            KB.ZIndex=3
             Instance.new("UICorner",KB).CornerRadius=UDim.new(1,0)
-            
             local kbs=Instance.new("UIStroke",KB); kbs.Color=T.Accent; kbs.Thickness=1; kbs.Transparency=0.75
             KB.MouseButton1Click:Connect(function()
                 binding=true; KB.Text="..."; KB.TextColor3=T.Accent; Tw(kbs,{Transparency=0.25},0.12)

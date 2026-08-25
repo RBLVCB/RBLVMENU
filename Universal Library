@@ -1,5 +1,5 @@
 -- ================================================
---   Universal Library v2.0 - Liquid Glass Edition (Fixed)
+--   Universal Library v2.0 - Ultra Liquid Glass Edition (Fixed Build)
 -- ================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -23,22 +23,22 @@ Library.Settings = { Theme = _randomTheme, Transparency = true }
 
 -- ==================== THEMES ====================
 Library.Themes = {
-    LiquidBlue   = {Main=Color3.fromRGB(14,22,40),  Top=Color3.fromRGB(18,28,50),  Accent=Color3.fromRGB(90,170,255),  Text=Color3.fromRGB(230,242,255), Element=Color3.fromRGB(26,38,60),  Trans=0.28},
-    LiquidPurple = {Main=Color3.fromRGB(26,16,40),  Top=Color3.fromRGB(34,22,54),  Accent=Color3.fromRGB(170,90,255),  Text=Color3.fromRGB(242,234,255), Element=Color3.fromRGB(44,28,60),  Trans=0.28},
-    LiquidCyan   = {Main=Color3.fromRGB(10,30,36),  Top=Color3.fromRGB(14,38,44),  Accent=Color3.fromRGB(0,205,205),   Text=Color3.fromRGB(215,255,255), Element=Color3.fromRGB(20,48,56),  Trans=0.28},
-    LiquidGreen  = {Main=Color3.fromRGB(14,32,20),  Top=Color3.fromRGB(18,40,26),  Accent=Color3.fromRGB(70,220,110),  Text=Color3.fromRGB(225,255,230), Element=Color3.fromRGB(26,50,34),  Trans=0.28},
-    LiquidPink   = {Main=Color3.fromRGB(36,16,30),  Top=Color3.fromRGB(46,22,40),  Accent=Color3.fromRGB(255,90,170),  Text=Color3.fromRGB(255,230,245), Element=Color3.fromRGB(56,28,50),  Trans=0.28},
-    LiquidRose   = {Main=Color3.fromRGB(34,16,20),  Top=Color3.fromRGB(44,22,28),  Accent=Color3.fromRGB(255,100,115), Text=Color3.fromRGB(255,232,235), Element=Color3.fromRGB(52,28,34),  Trans=0.28},
-    LiquidAmber  = {Main=Color3.fromRGB(34,26,14),  Top=Color3.fromRGB(44,34,18),  Accent=Color3.fromRGB(255,185,70),  Text=Color3.fromRGB(255,244,220), Element=Color3.fromRGB(54,42,24),  Trans=0.28},
-    LiquidTeal   = {Main=Color3.fromRGB(10,28,30),  Top=Color3.fromRGB(16,38,40),  Accent=Color3.fromRGB(50,210,195),  Text=Color3.fromRGB(220,255,250), Element=Color3.fromRGB(22,48,50),  Trans=0.28},
-    LiquidIndigo = {Main=Color3.fromRGB(18,18,44),  Top=Color3.fromRGB(26,26,58),  Accent=Color3.fromRGB(120,132,255), Text=Color3.fromRGB(232,232,255), Element=Color3.fromRGB(34,34,64),  Trans=0.28},
-    LiquidSlate  = {Main=Color3.fromRGB(22,26,32),  Top=Color3.fromRGB(30,36,44),  Accent=Color3.fromRGB(140,165,195), Text=Color3.fromRGB(230,238,245), Element=Color3.fromRGB(38,44,52),  Trans=0.28},
+    LiquidBlue   = {Main=Color3.fromRGB(10,16,30),  Top=Color3.fromRGB(15,24,45),  Accent=Color3.fromRGB(0,140,255),  Text=Color3.fromRGB(240,248,255), Element=Color3.fromRGB(20,32,55),  Trans=0.25},
+    LiquidPurple = {Main=Color3.fromRGB(20,10,32),  Top=Color3.fromRGB(28,15,45),  Accent=Color3.fromRGB(160,70,255), Text=Color3.fromRGB(245,238,255), Element=Color3.fromRGB(36,20,55),  Trans=0.25},
+    LiquidCyan   = {Main=Color3.fromRGB(8,24,30),   Top=Color3.fromRGB(12,32,40),  Accent=Color3.fromRGB(0,220,230),  Text=Color3.fromRGB(220,255,255), Element=Color3.fromRGB(16,40,50),  Trans=0.25},
+    LiquidGreen  = {Main=Color3.fromRGB(10,26,16),  Top=Color3.fromRGB(15,34,22),  Accent=Color3.fromRGB(40,225,100), Text=Color3.fromRGB(230,255,235), Element=Color3.fromRGB(20,42,28),  Trans=0.25},
+    LiquidPink   = {Main=Color3.fromRGB(28,10,24),  Top=Color3.fromRGB(38,15,32),  Accent=Color3.fromRGB(255,70,160), Text=Color3.fromRGB(255,235,248), Element=Color3.fromRGB(46,20,40),  Trans=0.25},
+    LiquidRose   = {Main=Color3.fromRGB(28,12,16),  Top=Color3.fromRGB(38,16,22),  Accent=Color3.fromRGB(255,80,100), Text=Color3.fromRGB(255,235,238), Element=Color3.fromRGB(45,20,28),  Trans=0.25},
+    LiquidAmber  = {Main=Color3.fromRGB(28,20,10),  Top=Color3.fromRGB(38,26,14),  Accent=Color3.fromRGB(255,170,40), Text=Color3.fromRGB(255,245,225), Element=Color3.fromRGB(45,32,18),  Trans=0.25},
+    LiquidTeal   = {Main=Color3.fromRGB(8,22,24),   Top=Color3.fromRGB(12,30,32),  Accent=Color3.fromRGB(30,215,185), Text=Color3.fromRGB(225,255,250), Element=Color3.fromRGB(16,38,42),  Trans=0.25},
+    LiquidIndigo = {Main=Color3.fromRGB(14,14,36),  Top=Color3.fromRGB(20,20,50),  Accent=Color3.fromRGB(100,115,255),Text=Color3.fromRGB(235,235,255), Element=Color3.fromRGB(26,26,56),  Trans=0.25},
+    LiquidSlate  = {Main=Color3.fromRGB(16,20,26),  Top=Color3.fromRGB(24,28,36),  Accent=Color3.fromRGB(130,160,195),Text=Color3.fromRGB(235,240,248), Element=Color3.fromRGB(30,36,44),  Trans=0.25},
 }
 Library.CurrentTheme = Library.Themes[_randomTheme] or Library.Themes["LiquidBlue"]
 
--- ==================== UTILITY ====================
-local function Tw(obj, props, t)
-    TweenService:Create(obj, TweenInfo.new(t or 0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
+-- ==================== UTILITY & ANIMATION ====================
+local function Tw(obj, props, t, style, dir)
+    TweenService:Create(obj, TweenInfo.new(t or 0.22, style or Enum.EasingStyle.OutQuint, dir or Enum.EasingDirection.Out), props):Play()
 end
 
 local function MakeDraggable(handle, frame)
@@ -58,8 +58,42 @@ local function MakeDraggable(handle, frame)
 end
 
 local function GT(extra)
-    local t = Library.Settings.Transparency and (Library.CurrentTheme.Trans or 0.28) or 0
-    return math.clamp(t+(extra or 0), 0, 0.92)
+    local t = Library.Settings.Transparency and (Library.CurrentTheme.Trans or 0.25) or 0
+    return math.clamp(t+(extra or 0), 0, 0.95)
+end
+
+-- Refined Glass Specular Shine Overlay Helper
+local function AddGlassShine(parent, cornerRadius)
+    local shine = Instance.new("Frame", parent)
+    shine.Name = "GlassShine"
+    shine.Size = UDim2.new(1, 0, 0.45, 0)
+    shine.Position = UDim2.new(0, 0, 0, 0)
+    shine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    shine.BackgroundTransparency = 0.94
+    shine.BorderSizePixel = 0
+    shine.ZIndex = parent.ZIndex + 1
+    Instance.new("UICorner", shine).CornerRadius = cornerRadius or UDim.new(0, 12)
+    
+    local grad = Instance.new("UIGradient", shine)
+    grad.Rotation = 90
+    grad.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.2),
+        NumberSequenceKeypoint.new(0.5, 0.7),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+    return shine
+end
+
+-- Dynamic Glass Border Gradient Helper
+local function ApplyGlassStroke(stroke)
+    local grad = Instance.new("UIGradient", stroke)
+    grad.Rotation = 45
+    grad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(160, 180, 210)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))
+    })
+    return grad
 end
 
 -- ==================== FILE SYSTEM ====================
@@ -127,20 +161,27 @@ function Library:Notification(opts)
     NF.Position=UDim2.new(1,-14,1,-14); NF.Size=UDim2.new(0,240,0,0)
     NF.ClipsDescendants=true
     Instance.new("UICorner",NF).CornerRadius=UDim.new(0,14)
-    local ns=Instance.new("UIStroke",NF); ns.Color=Color3.fromRGB(255,255,255); ns.Thickness=1; ns.Transparency=0.82
+    AddGlassShine(NF, UDim.new(0,14))
+    
+    local ns=Instance.new("UIStroke",NF); ns.Color=Color3.fromRGB(255,255,255); ns.Thickness=1.2; ns.Transparency=0.75
+    ApplyGlassStroke(ns)
+    
     local strip=Instance.new("Frame",NF); strip.BackgroundColor3=T.Accent
     strip.BorderSizePixel=0; strip.Size=UDim2.new(0,3,1,0)
     Instance.new("UICorner",strip).CornerRadius=UDim.new(0,2)
+    
     local nt=Instance.new("TextLabel",NF); nt.BackgroundTransparency=1
     nt.Position=UDim2.new(0,14,0,10); nt.Size=UDim2.new(1,-18,0,16)
     nt.Font=Enum.Font.GothamBold; nt.Text=opts.Title or "Menu"
     nt.TextColor3=T.Text; nt.TextSize=12; nt.TextXAlignment=Enum.TextXAlignment.Left
+    
     local nd=Instance.new("TextLabel",NF); nd.BackgroundTransparency=1
     nd.Position=UDim2.new(0,14,0,28); nd.Size=UDim2.new(1,-18,0,28)
     nd.Font=Enum.Font.Gotham; nd.Text=opts.Content or ""
-    nd.TextColor3=Color3.fromRGB(185,195,210); nd.TextSize=11
+    nd.TextColor3=Color3.fromRGB(200,210,225); nd.TextSize=11
     nd.TextXAlignment=Enum.TextXAlignment.Left; nd.TextWrapped=true
-    Tw(NF,{Size=UDim2.new(0,240,0,62)},0.25)
+    
+    Tw(NF,{Size=UDim2.new(0,240,0,62)},0.3,Enum.EasingStyle.Back)
     task.delay(opts.Duration or 4, function()
         Tw(NF,{Size=UDim2.new(0,240,0,0),BackgroundTransparency=1},0.25)
         Tw(ns,{Transparency=1},0.2); Tw(nt,{TextTransparency=1},0.2); Tw(nd,{TextTransparency=1},0.2)
@@ -159,9 +200,10 @@ function Library:CreateWindow(opts)
     local TitanUI = Instance.new("ScreenGui"); TitanUI.Name="Universal_UI"; TitanUI.Parent=CoreGui
     TitanUI.ZIndexBehavior=Enum.ZIndexBehavior.Sibling; TitanUI.ResetOnSpawn=false; TitanUI.DisplayOrder=9000
 
-    local W, H     = 520, 340
+    local W, H     = 530, 350
     local TOPBAR_H = 76
 
+    -- ==================== OPEN PILL ====================
     local _pillHidden  = false
     local _pillIcon    = false
     local _pressTimer  = nil
@@ -170,9 +212,9 @@ function Library:CreateWindow(opts)
     local OpenBtn = Instance.new("TextButton")
     OpenBtn.Parent                = TitanUI
     OpenBtn.BackgroundColor3      = Library.CurrentTheme.Top
-    OpenBtn.BackgroundTransparency = GT(0.1)
+    OpenBtn.BackgroundTransparency = GT(0.05)
     OpenBtn.Position              = UDim2.new(0.05, 0, 0.1, 0)
-    OpenBtn.Size                  = UDim2.new(0, 82, 0, 28)
+    OpenBtn.Size                  = UDim2.new(0, 86, 0, 30)
     OpenBtn.Visible               = false
     OpenBtn.Active                = true
     OpenBtn.Text                  = Title
@@ -183,10 +225,12 @@ function Library:CreateWindow(opts)
     OpenBtn.AutoButtonColor       = false
     OpenBtn.ZIndex                = 9001
     Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(1, 0)
+    AddGlassShine(OpenBtn, UDim.new(1, 0))
+
     local OBS = Instance.new("UIStroke", OpenBtn)
     OBS.Color       = Library.CurrentTheme.Accent
-    OBS.Thickness   = 1
-    OBS.Transparency = 0.4
+    OBS.Thickness   = 1.2
+    OBS.Transparency = 0.35
 
     local PillDot = Instance.new("Frame", OpenBtn)
     PillDot.Name                  = "PillDot"
@@ -205,17 +249,17 @@ function Library:CreateWindow(opts)
             OBS.Transparency               = 1
             PillDot.Visible                = false
         elseif _pillIcon then
-            OpenBtn.BackgroundTransparency = GT(0.1)
+            OpenBtn.BackgroundTransparency = GT(0.05)
             OpenBtn.TextTransparency       = 1
-            OBS.Transparency               = 0.4
-            OpenBtn.Size                   = UDim2.new(0, 28, 0, 28)
+            OBS.Transparency               = 0.35
+            Tw(OpenBtn, {Size = UDim2.new(0, 30, 0, 30)}, 0.2, Enum.EasingStyle.Back)
             PillDot.Visible                = true
             PillDot.BackgroundColor3       = Library.CurrentTheme.Accent
         else
-            OpenBtn.BackgroundTransparency = GT(0.1)
+            OpenBtn.BackgroundTransparency = GT(0.05)
             OpenBtn.TextTransparency       = 0
-            OBS.Transparency               = 0.4
-            OpenBtn.Size                   = UDim2.new(0, 82, 0, 28)
+            OBS.Transparency               = 0.35
+            Tw(OpenBtn, {Size = UDim2.new(0, 86, 0, 30)}, 0.2, Enum.EasingStyle.Back)
             OpenBtn.Text                   = Title
             PillDot.Visible                = false
         end
@@ -255,9 +299,12 @@ function Library:CreateWindow(opts)
     MainFrame.ClipsDescendants=true
     MainFrame.Visible=not KC.Enabled
     if KC.Enabled then MainFrame.Size=UDim2.new(0,0,0,0) end
-    Instance.new("UICorner",MainFrame).CornerRadius=UDim.new(0,16)
+    Instance.new("UICorner",MainFrame).CornerRadius=UDim.new(0,18)
+    AddGlassShine(MainFrame, UDim.new(0,18))
+
     local MS=Instance.new("UIStroke",MainFrame)
-    MS.Color=Color3.fromRGB(255,255,255); MS.Thickness=1; MS.Transparency=0.82
+    MS.Color=Color3.fromRGB(255,255,255); MS.Thickness=1.2; MS.Transparency=0.75
+    ApplyGlassStroke(MS)
 
     -- ==================== TOP BAR ====================
     local TopBar=Instance.new("Frame",MainFrame)
@@ -267,7 +314,8 @@ function Library:CreateWindow(opts)
     TopBar.BorderSizePixel=0
     TopBar.Size=UDim2.new(1,0,0,TOPBAR_H)
     TopBar.Position=UDim2.new(0,0,0,0)
-    Instance.new("UICorner",TopBar).CornerRadius=UDim.new(0,16)
+    Instance.new("UICorner",TopBar).CornerRadius=UDim.new(0,18)
+    
     local TBFix=Instance.new("Frame",TopBar); TBFix.Name="TBFix"
     TBFix.BackgroundColor3=Library.CurrentTheme.Top; TBFix.BackgroundTransparency=GT()
     TBFix.BorderSizePixel=0; TBFix.Position=UDim2.new(0,0,0.5,0); TBFix.Size=UDim2.new(1,0,0.5,0)
@@ -280,57 +328,65 @@ function Library:CreateWindow(opts)
     local TitleDot=Instance.new("Frame",TitleRow)
     TitleDot.Name="TitleDot"; TitleDot.BackgroundColor3=Library.CurrentTheme.Accent
     TitleDot.BorderSizePixel=0; TitleDot.AnchorPoint=Vector2.new(0,0.5)
-    TitleDot.Position=UDim2.new(0,12,0.5,0); TitleDot.Size=UDim2.new(0,3,0,14)
+    TitleDot.Position=UDim2.new(0,14,0.5,0); TitleDot.Size=UDim2.new(0,4,0,16)
     TitleDot.ZIndex=3; Instance.new("UICorner",TitleDot).CornerRadius=UDim.new(1,0)
 
     local TitleLbl=Instance.new("TextLabel",TitleRow)
     TitleLbl.Name="TitleLbl"; TitleLbl.BackgroundTransparency=1
-    TitleLbl.Position=UDim2.new(0,22,0,0); TitleLbl.Size=UDim2.new(0.45,0,1,0)
+    TitleLbl.Position=UDim2.new(0,26,0,0); TitleLbl.Size=UDim2.new(0.45,0,1,0)
     TitleLbl.Font=Enum.Font.GothamBold; TitleLbl.Text=Title
-    TitleLbl.TextColor3=Library.CurrentTheme.Text; TitleLbl.TextSize=12
+    TitleLbl.TextColor3=Library.CurrentTheme.Text; TitleLbl.TextSize=13
     TitleLbl.TextXAlignment=Enum.TextXAlignment.Left; TitleLbl.ZIndex=3
 
+    -- Close button
     local CloseBtn=Instance.new("TextButton",TitleRow)
     CloseBtn.BackgroundTransparency=1; CloseBtn.AnchorPoint=Vector2.new(1,0.5)
     CloseBtn.Position=UDim2.new(1,-10,0.5,0); CloseBtn.Size=UDim2.new(0,24,0,24)
-    CloseBtn.Text="×"; CloseBtn.TextColor3=Color3.fromRGB(150,160,175)
-    CloseBtn.Font=Enum.Font.GothamBold; CloseBtn.TextSize=18
-    CloseBtn.AutoButtonColor=false; CloseBtn.BorderSizePixel=0; CloseBtn.ZIndex=3
-    CloseBtn.MouseEnter:Connect(function() Tw(CloseBtn,{TextColor3=Library.CurrentTheme.Text},0.12) end)
-    CloseBtn.MouseLeave:Connect(function() Tw(CloseBtn,{TextColor3=Color3.fromRGB(150,160,175)},0.12) end)
+    CloseBtn.Text="×"; CloseBtn.TextColor3=Color3.fromRGB(150,165,185)
+    CloseBtn.Font=Enum.Font.GothamBold; CloseBtn.TextSize=20
+    CloseBtn.AutoButtonColor=false; CloseBtn.BorderSizePixel=0; CloseBtn.ZIndex=4
+    CloseBtn.MouseEnter:Connect(function() Tw(CloseBtn,{TextColor3=Library.CurrentTheme.Accent},0.12) end)
+    CloseBtn.MouseLeave:Connect(function() Tw(CloseBtn,{TextColor3=Color3.fromRGB(150,165,185)},0.12) end)
 
+    -- Hide Mode button
     local HideBtn=Instance.new("TextButton",TitleRow)
     HideBtn.BackgroundTransparency=1; HideBtn.AnchorPoint=Vector2.new(1,0.5)
     HideBtn.Position=UDim2.new(1,-40,0.5,0); HideBtn.Size=UDim2.new(0,56,0,20)
-    HideBtn.Text="Hide Mode"; HideBtn.TextColor3=Color3.fromRGB(130,140,155)
-    HideBtn.Font=Enum.Font.Gotham; HideBtn.TextSize=10
-    HideBtn.AutoButtonColor=false; HideBtn.BorderSizePixel=0; HideBtn.ZIndex=3
+    HideBtn.Text="Hide Mode"; HideBtn.TextColor3=Color3.fromRGB(130,145,165)
+    HideBtn.Font=Enum.Font.GothamMedium; HideBtn.TextSize=10
+    HideBtn.AutoButtonColor=false; HideBtn.BorderSizePixel=0; HideBtn.ZIndex=4
     HideBtn.MouseEnter:Connect(function() Tw(HideBtn,{TextColor3=Library.CurrentTheme.Accent},0.12) end)
-    HideBtn.MouseLeave:Connect(function() Tw(HideBtn,{TextColor3=Color3.fromRGB(130,140,155)},0.12) end)
-    HideBtn.MouseButton1Click:Connect(function()
-        _pillHidden = true
-        Library:Toggle()
-        task.defer(ApplyPillVisual)
+    HideBtn.MouseLeave:Connect(function() Tw(HideBtn,{TextColor3=Color3.fromRGB(130,145,165)},0.12) end)
+    HideBtn.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+            _pillHidden = true
+            Library:Toggle()
+            task.defer(ApplyPillVisual)
+        end
     end)
 
+    -- Search box
     local SearchBox=Instance.new("TextBox",TitleRow)
     SearchBox.Name="SearchBar"; SearchBox.BackgroundColor3=Library.CurrentTheme.Element
-    SearchBox.BackgroundTransparency=GT(0.1); SearchBox.BorderSizePixel=0
-    SearchBox.AnchorPoint=Vector2.new(1,0.5); SearchBox.Position=UDim2.new(1,-102,0.5,0)
-    SearchBox.Size=UDim2.new(0,98,0,22); SearchBox.Font=Enum.Font.Gotham
-    SearchBox.PlaceholderText="search..."; SearchBox.PlaceholderColor3=Color3.fromRGB(130,140,155)
-    SearchBox.Text=""; SearchBox.TextColor3=Color3.fromRGB(220,230,245)
-    SearchBox.TextSize=11; SearchBox.ClearTextOnFocus=false; SearchBox.ZIndex=3
+    SearchBox.BackgroundTransparency=GT(0.05); SearchBox.BorderSizePixel=0
+    SearchBox.AnchorPoint=Vector2.new(1,0.5); SearchBox.Position=UDim2.new(1,-104,0.5,0)
+    SearchBox.Size=UDim2.new(0,102,0,22); SearchBox.Font=Enum.Font.Gotham
+    SearchBox.PlaceholderText="search..."; SearchBox.PlaceholderColor3=Color3.fromRGB(130,145,165)
+    SearchBox.Text=""; SearchBox.TextColor3=Color3.fromRGB(230,240,255)
+    SearchBox.TextSize=11; SearchBox.ClearTextOnFocus=false; SearchBox.ZIndex=4
     Instance.new("UICorner",SearchBox).CornerRadius=UDim.new(1,0)
     local SBS=Instance.new("UIStroke",SearchBox)
-    SBS.Color=Color3.fromRGB(255,255,255); SBS.Thickness=1; SBS.Transparency=0.86
-    SearchBox.Focused:Connect(function()  Tw(SBS,{Color=Library.CurrentTheme.Accent,Transparency=0.3},0.15) end)
-    SearchBox.FocusLost:Connect(function() Tw(SBS,{Color=Color3.fromRGB(255,255,255),Transparency=0.86},0.15) end)
+    SBS.Color=Color3.fromRGB(255,255,255); SBS.Thickness=1; SBS.Transparency=0.82
+    ApplyGlassStroke(SBS)
+    SearchBox.Focused:Connect(function()  Tw(SBS,{Color=Library.CurrentTheme.Accent,Transparency=0.2},0.15) end)
+    SearchBox.FocusLost:Connect(function() Tw(SBS,{Color=Color3.fromRGB(255,255,255),Transparency=0.82},0.15) end)
 
+    -- Separator Line
     local TBSep=Instance.new("Frame",TopBar); TBSep.Name="TBSep"
-    TBSep.BackgroundColor3=Color3.fromRGB(255,255,255); TBSep.BackgroundTransparency=0.90
+    TBSep.BackgroundColor3=Color3.fromRGB(255,255,255); TBSep.BackgroundTransparency=0.88
     TBSep.BorderSizePixel=0; TBSep.Position=UDim2.new(0,0,0,38); TBSep.Size=UDim2.new(1,0,0,1)
 
+    -- Tab row
     local TabRow=Instance.new("Frame",TopBar)
     TabRow.Name="TabRow"; TabRow.BackgroundTransparency=1
     TabRow.Size=UDim2.new(1,0,0,38); TabRow.Position=UDim2.new(0,0,0,38)
@@ -341,12 +397,13 @@ function Library:CreateWindow(opts)
     TabScroll.CanvasSize=UDim2.new(0,0,0,0); TabScroll.ScrollingDirection=Enum.ScrollingDirection.X
     local TabLayout=Instance.new("UIListLayout",TabScroll)
     TabLayout.FillDirection=Enum.FillDirection.Horizontal
-    TabLayout.SortOrder=Enum.SortOrder.LayoutOrder; TabLayout.Padding=UDim.new(0,0)
-    local TabPad=Instance.new("UIPadding",TabScroll); TabPad.PaddingLeft=UDim.new(0,8)
+    TabLayout.SortOrder=Enum.SortOrder.LayoutOrder; TabLayout.Padding=UDim.new(0,4)
+    local TabPad=Instance.new("UIPadding",TabScroll); TabPad.PaddingLeft=UDim.new(0,10)
     TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabScroll.CanvasSize=UDim2.new(0,TabLayout.AbsoluteContentSize.X+16,0,0)
     end)
 
+    -- Page container
     local PageContainer=Instance.new("Frame",MainFrame)
     PageContainer.BackgroundTransparency=1
     PageContainer.Position=UDim2.new(0,0,0,TOPBAR_H)
@@ -363,9 +420,9 @@ function Library:CreateWindow(opts)
         Library.IsOpen=not Library.IsOpen
         if Library.IsOpen then
             OpenBtn.Visible=false; MainFrame.Visible=true
-            Tw(MainFrame,{Size=UDim2.new(0,W,0,H)},0.3)
+            Tw(MainFrame,{Size=UDim2.new(0,W,0,H)},0.35,Enum.EasingStyle.Back)
         else
-            TweenService:Create(MainFrame,TweenInfo.new(0.3,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{Size=UDim2.new(0,W,0,0)}):Play()
+            Tw(MainFrame,{Size=UDim2.new(0,W,0,0)},0.3,Enum.EasingStyle.Quad)
             task.delay(0.31, function()
                 if not Library.IsOpen then
                     MainFrame.Visible=false
@@ -375,7 +432,11 @@ function Library:CreateWindow(opts)
             end)
         end
     end
-    CloseBtn.MouseButton1Click:Connect(function() Library:Toggle() end)
+    CloseBtn.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+            Library:Toggle()
+        end
+    end)
     MakeDraggable(TitleRow, MainFrame)
 
     -- ==================== SEARCH ====================
@@ -383,9 +444,9 @@ function Library:CreateWindow(opts)
         for _,v in pairs(TabScroll:GetChildren()) do
             if v:IsA("TextButton") then
                 local on=(v.Name==name)
-                v.TextColor3=on and Library.CurrentTheme.Accent or Color3.fromRGB(130,140,155)
+                Tw(v, {TextColor3 = on and Library.CurrentTheme.Accent or Color3.fromRGB(130,145,165)}, 0.15)
                 local bar=v:FindFirstChild("ActiveBar")
-                if bar then bar.BackgroundTransparency=on and 0 or 1 end
+                if bar then Tw(bar, {BackgroundTransparency = on and 0 or 1}, 0.15) end
             end
         end
         for _,v in pairs(PagesFolder:GetChildren()) do
@@ -416,18 +477,26 @@ function Library:CreateWindow(opts)
         btn.Font=Enum.Font.GothamMedium; btn.Text=name; btn.TextSize=11
         btn.BorderSizePixel=0; btn.AutoButtonColor=false
         btn.Size=UDim2.new(0,math.max(#name*7+20,60),1,0)
-        btn.TextColor3=isActive and Library.CurrentTheme.Accent or Color3.fromRGB(130,140,155)
+        btn.TextColor3=isActive and Library.CurrentTheme.Accent or Color3.fromRGB(130,145,165)
+        btn.ZIndex=4
+        
         local bar=Instance.new("Frame",btn); bar.Name="ActiveBar"
         bar.BackgroundColor3=Library.CurrentTheme.Accent; bar.BorderSizePixel=0
         bar.AnchorPoint=Vector2.new(0.5,1); bar.Position=UDim2.new(0.5,0,1,0)
         bar.Size=UDim2.new(0.7,0,0,2); bar.BackgroundTransparency=isActive and 0 or 1
+        bar.ZIndex=4
         Instance.new("UICorner",bar).CornerRadius=UDim.new(1,0)
-        btn.MouseButton1Click:Connect(function() SwitchToTab(name) end)
+        
+        btn.InputBegan:Connect(function(i)
+            if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+                SwitchToTab(name)
+            end
+        end)
         btn.MouseEnter:Connect(function()
-            if btn.TextColor3~=Library.CurrentTheme.Accent then Tw(btn,{TextColor3=Color3.fromRGB(200,210,225)},0.12) end
+            if btn.TextColor3~=Library.CurrentTheme.Accent then Tw(btn,{TextColor3=Color3.fromRGB(210,225,245)},0.12) end
         end)
         btn.MouseLeave:Connect(function()
-            if btn.TextColor3~=Library.CurrentTheme.Accent then Tw(btn,{TextColor3=Color3.fromRGB(130,140,155)},0.12) end
+            if btn.TextColor3~=Library.CurrentTheme.Accent then Tw(btn,{TextColor3=Color3.fromRGB(130,145,165)},0.12) end
         end)
         return btn
     end
@@ -438,7 +507,7 @@ function Library:CreateWindow(opts)
         Tw(MainFrame,{BackgroundColor3=T.Main,BackgroundTransparency=tr},0.25)
         Tw(TopBar,{BackgroundColor3=T.Top,BackgroundTransparency=tr},0.25)
         Tw(TBFix,{BackgroundColor3=T.Top,BackgroundTransparency=tr},0.25)
-        Tw(SearchBox,{BackgroundColor3=T.Element,BackgroundTransparency=GT(0.1)},0.25)
+        Tw(SearchBox,{BackgroundColor3=T.Element,BackgroundTransparency=GT(0.05)},0.25)
         TitleDot.BackgroundColor3=T.Accent; TitleLbl.TextColor3=T.Text
         PillDot.BackgroundColor3=T.Accent
         if not _pillHidden then
@@ -449,7 +518,7 @@ function Library:CreateWindow(opts)
             if obj:IsA("TextButton") then
                 local bar=obj:FindFirstChild("ActiveBar")
                 local on=(bar and bar.BackgroundTransparency<1)
-                obj.TextColor3=on and T.Accent or Color3.fromRGB(130,140,155)
+                obj.TextColor3=on and T.Accent or Color3.fromRGB(130,145,165)
                 if bar then bar.BackgroundColor3=T.Accent end
             end
         end
@@ -465,10 +534,10 @@ function Library:CreateWindow(opts)
                     local lbl=elem:FindFirstChild("ElemLbl"); if lbl then lbl.TextColor3=T.Text end
                     for _,c in pairs(elem:GetChildren()) do
                         if c:IsA("TextButton") then c.TextColor3=T.Text end
-                        if c:IsA("TextLabel") and c.Name=="Arrow" then c.TextColor3=Color3.fromRGB(110,120,140) end
+                        if c:IsA("TextLabel") and c.Name=="Arrow" then c.TextColor3=Color3.fromRGB(110,125,145) end
                     end
                     local tt=elem:FindFirstChild("ToggleTrack")
-                    if tt then local kn=tt:FindFirstChild("ToggleKnob"); if kn then kn.BackgroundColor3=kn:GetAttribute("On") and T.Accent or Color3.fromRGB(120,130,145) end end
+                    if tt then local kn=tt:FindFirstChild("ToggleKnob"); if kn then kn.BackgroundColor3=kn:GetAttribute("On") and T.Accent or Color3.fromRGB(120,135,155) end end
                     local st=elem:FindFirstChild("SliderTrack")
                     if st then local sf=st:FindFirstChild("SliderFill"); if sf then sf.BackgroundColor3=T.Accent end end
                     local sv=elem:FindFirstChild("SliderValue"); if sv then sv.TextColor3=T.Accent end
@@ -497,57 +566,66 @@ function Library:CreateWindow(opts)
         KF.BackgroundColor3=T.Main; KF.BackgroundTransparency=GT()
         KF.AnchorPoint=Vector2.new(0.5,0.5); KF.Position=UDim2.new(0.5,0,0.5,0); KF.Size=UDim2.new(0,360,0,200)
         Instance.new("UICorner",KF).CornerRadius=UDim.new(0,16)
-        local ks=Instance.new("UIStroke",KF); ks.Color=T.Accent; ks.Thickness=1; ks.Transparency=0.5
+        AddGlassShine(KF, UDim.new(0,16))
+        
+        local ks=Instance.new("UIStroke",KF); ks.Color=T.Accent; ks.Thickness=1.2; ks.Transparency=0.45
+        ApplyGlassStroke(ks)
+        
         local ka=Instance.new("Frame",KF); ka.BackgroundColor3=T.Accent; ka.BorderSizePixel=0; ka.Size=UDim2.new(1,0,0,2)
         Instance.new("UICorner",ka).CornerRadius=UDim.new(0,16)
+        
         local kt=Instance.new("TextLabel",KF); kt.BackgroundTransparency=1
         kt.Position=UDim2.new(0,0,0,18); kt.Size=UDim2.new(1,0,0,22); kt.Font=Enum.Font.GothamBold
         kt.Text=KC.KeyName; kt.TextColor3=T.Text; kt.TextSize=15
+        
         local ki=Instance.new("TextBox",KF); ki.BackgroundColor3=T.Element; ki.BackgroundTransparency=GT()
         ki.Position=UDim2.new(0.08,0,0,58); ki.Size=UDim2.new(0.84,0,0,34)
-        ki.Font=Enum.Font.Gotham; ki.PlaceholderText="enter key..."; ki.PlaceholderColor3=Color3.fromRGB(130,140,155)
-        ki.Text=""; ki.TextColor3=T.Text; ki.TextSize=13; ki.BorderSizePixel=0
+        ki.Font=Enum.Font.Gotham; ki.PlaceholderText="enter key..."; ki.PlaceholderColor3=Color3.fromRGB(130,145,165)
+        ki.Text=""; ki.TextColor3=T.Text; ki.TextSize=13; ki.BorderSizePixel=0; ki.ZIndex=4
         Instance.new("UICorner",ki).CornerRadius=UDim.new(0,10)
+        
         local kis=Instance.new("UIStroke",ki); kis.Color=T.Accent; kis.Transparency=0.55
+        
         local function MKB(txt,x,w,accent)
             local b=Instance.new("TextButton",KF)
             b.BackgroundColor3=accent and T.Accent or T.Element; b.BackgroundTransparency=accent and 0.1 or GT()
             b.Position=UDim2.new(x,0,0,108); b.Size=UDim2.new(w,-4,0,30)
             b.Font=Enum.Font.GothamBold; b.Text=txt; b.TextColor3=Color3.fromRGB(255,255,255); b.TextSize=12
-            b.BorderSizePixel=0; b.AutoButtonColor=false
+            b.BorderSizePixel=0; b.AutoButtonColor=false; b.ZIndex=4
             Instance.new("UICorner",b).CornerRadius=UDim.new(0,10)
-            local bs=Instance.new("UIStroke",b); bs.Color=T.Accent; bs.Transparency=accent and 0.4 or 0.7
+            AddGlassShine(b, UDim.new(0,10))
+            local bs=Instance.new("UIStroke",b); bs.Color=T.Accent; bs.Transparency=accent and 0.35 or 0.65
             return b
         end
         local kbtn=MKB("Login",0.08,0.46,true); local klink=MKB("Get Key",0.54,0.38,false)
         MakeDraggable(KF,KF)
-        klink.MouseButton1Click:Connect(function() if setclipboard then setclipboard(KC.KeySite); Library:Notification({Title="Key System",Content="Link copied."}) end end)
-        kbtn.MouseButton1Click:Connect(function()
-            local inp=string.gsub(ki.Text,"%s+",""); local real=string.gsub(tostring(KC.Key),"%s+","")
-            if inp==real then
-                Library:Notification({Title="Success",Content="Key verified."})
-                Tw(KF,{Size=UDim2.new(0,0,0,0)},0.3)
-                task.delay(0.32,function() 
-                    KF.Visible=false; MainFrame.Visible=true
-                    Tw(MainFrame,{Size=UDim2.new(0,W,0,H)},0.35)
-                    task.defer(function()
-                        if LoadConfig() then Library:RefreshTheme() end
-                    end)
-                end)
-            else
-                Library:Notification({Title="Error",Content="Incorrect key."})
-                Tw(kis,{Color=Color3.fromRGB(255,80,80),Transparency=0.1},0.1)
-                task.wait(0.6); Tw(kis,{Color=Library.CurrentTheme.Accent,Transparency=0.55},0.2)
+        klink.InputBegan:Connect(function(i) 
+            if (i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch) and setclipboard then 
+                setclipboard(KC.KeySite); Library:Notification({Title="Key System",Content="Link copied."}) 
+            end 
+        end)
+        kbtn.InputBegan:Connect(function(i)
+            if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+                local inp=string.gsub(ki.Text,"%s+",""); local real=string.gsub(tostring(KC.Key),"%s+","")
+                if inp==real then
+                    Library:Notification({Title="Success",Content="Key verified."})
+                    Tw(KF,{Size=UDim2.new(0,0,0,0)},0.3,Enum.EasingStyle.Back)
+                    task.delay(0.32,function() KF.Visible=false; MainFrame.Visible=true; Tw(MainFrame,{Size=UDim2.new(0,W,0,H)},0.35,Enum.EasingStyle.Back) end)
+                else
+                    Library:Notification({Title="Error",Content="Incorrect key."})
+                    Tw(kis,{Color=Color3.fromRGB(255,80,80),Transparency=0.1},0.1)
+                    task.wait(0.6); Tw(kis,{Color=Library.CurrentTheme.Accent,Transparency=0.55},0.2)
+                end
             end
         end)
     else
-        Tw(MainFrame,{Size=UDim2.new(0,W,0,H)},0.35)
-        task.defer(function()
-            if LoadConfig() then Library:RefreshTheme(); Library:Notification({Title="Config",Content="Config loaded.",Duration=3}) end
-        end)
+        if LoadConfig() then Library:RefreshTheme(); Library:Notification({Title="Config",Content="Config loaded.",Duration=3}) end
+        Tw(MainFrame,{Size=UDim2.new(0,W,0,H)},0.35,Enum.EasingStyle.Back)
     end
 
-    -- ==================== WINDOW OBJECT ====================
+    -- ==============================================================
+    --  WINDOW OBJECT
+    -- ==============================================================
     local Window={}
 
     function Window:Tab(name)
@@ -563,7 +641,7 @@ function Library:CreateWindow(opts)
         Page.Visible=isFirst; Page.CanvasSize=UDim2.new(0,0,0,0); Page.BorderSizePixel=0
 
         local PL=Instance.new("UIListLayout",Page)
-        PL.SortOrder=Enum.SortOrder.LayoutOrder; PL.Padding=UDim.new(0,5)
+        PL.SortOrder=Enum.SortOrder.LayoutOrder; PL.Padding=UDim.new(0,6)
         local PP=Instance.new("UIPadding",Page)
         PP.PaddingTop=UDim.new(0,8); PP.PaddingBottom=UDim.new(0,12)
         PP.PaddingLeft=UDim.new(0,10); PP.PaddingRight=UDim.new(0,10)
@@ -576,26 +654,30 @@ function Library:CreateWindow(opts)
             f.BackgroundColor3=Library.CurrentTheme.Element; f.BackgroundTransparency=GT()
             f.Size=UDim2.new(1,0,0,h or 38); f.BorderSizePixel=0
             Instance.new("UICorner",f).CornerRadius=UDim.new(0,12)
-            local s=Instance.new("UIStroke",f); s.Color=Color3.fromRGB(255,255,255); s.Thickness=1; s.Transparency=0.90
+            AddGlassShine(f, UDim.new(0,12))
+            
+            local s=Instance.new("UIStroke",f); s.Color=Color3.fromRGB(255,255,255); s.Thickness=1; s.Transparency=0.88
+            ApplyGlassStroke(s)
             return f
         end
+
         local function ElemLbl(parent,txt,yOff,sz)
             local l=Instance.new("TextLabel",parent); l.Name="ElemLbl"
             l.BackgroundTransparency=1; l.Position=UDim2.new(0,12,0,yOff or 0)
             l.Size=UDim2.new(0.72,0,1,0); l.Font=Enum.Font.Gotham; l.Text=txt
             l.TextColor3=Library.CurrentTheme.Text; l.TextSize=sz or 12
-            l.TextXAlignment=Enum.TextXAlignment.Left
+            l.TextXAlignment=Enum.TextXAlignment.Left; l.ZIndex=3
             return l
         end
 
         function Tab:Label(text)
             local sl=Instance.new("TextLabel",Page); sl.Name="SectionLbl"
-            sl.BackgroundTransparency=1; sl.Size=UDim2.new(1,0,0,20)
+            sl.BackgroundTransparency=1; sl.Size=UDim2.new(1,0,0,22)
             sl.Font=Enum.Font.GothamBold; sl.Text=text:upper()
             sl.TextColor3=Library.CurrentTheme.Accent; sl.TextSize=10
             sl.TextXAlignment=Enum.TextXAlignment.Left
             local ln=Instance.new("Frame",sl); ln.Name="Line"
-            ln.BackgroundColor3=Library.CurrentTheme.Accent; ln.BackgroundTransparency=0.7
+            ln.BackgroundColor3=Library.CurrentTheme.Accent; ln.BackgroundTransparency=0.75
             ln.BorderSizePixel=0; ln.Position=UDim2.new(0,0,1,-1); ln.Size=UDim2.new(1,0,0,1)
             return sl
         end
@@ -606,20 +688,23 @@ function Library:CreateWindow(opts)
             local bt=Instance.new("TextButton",Fr); bt.Name="BtnText"
             bt.BackgroundTransparency=1; bt.Size=UDim2.new(1,0,1,0)
             bt.Font=Enum.Font.Gotham; bt.Text=text; bt.TextColor3=T.Text; bt.TextSize=12
-            bt.AutoButtonColor=false
+            bt.AutoButtonColor=false; bt.ZIndex=4
             local arrow=Instance.new("TextLabel",Fr); arrow.Name="Arrow"
             arrow.BackgroundTransparency=1; arrow.AnchorPoint=Vector2.new(1,0.5)
             arrow.Position=UDim2.new(1,-12,0.5,0); arrow.Size=UDim2.new(0,14,0,14)
-            arrow.Text="›"; arrow.TextColor3=Color3.fromRGB(110,120,140)
-            arrow.Font=Enum.Font.GothamBold; arrow.TextSize=14
-            bt.MouseButton1Click:Connect(function()
-                Tw(Fr,{BackgroundColor3=T.Accent,BackgroundTransparency=0.55},0.1)
-                task.wait(0.12)
-                Tw(Fr,{BackgroundColor3=Library.CurrentTheme.Element,BackgroundTransparency=GT()},0.14)
-                if callback then pcall(callback) end
+            arrow.Text="›"; arrow.TextColor3=Color3.fromRGB(110,125,145)
+            arrow.Font=Enum.Font.GothamBold; arrow.TextSize=14; arrow.ZIndex=4
+            
+            bt.InputBegan:Connect(function(i)
+                if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+                    Tw(Fr,{BackgroundColor3=T.Accent,BackgroundTransparency=0.45},0.1)
+                    task.wait(0.12)
+                    Tw(Fr,{BackgroundColor3=Library.CurrentTheme.Element,BackgroundTransparency=GT()},0.14)
+                    pcall(callback)
+                end
             end)
-            bt.MouseEnter:Connect(function()  Tw(arrow,{TextColor3=T.Accent},0.12) end)
-            bt.MouseLeave:Connect(function()  Tw(arrow,{TextColor3=Color3.fromRGB(110,120,140)},0.12) end)
+            bt.MouseEnter:Connect(function() Tw(arrow,{TextColor3=T.Accent},0.12) end)
+            bt.MouseLeave:Connect(function() Tw(arrow,{TextColor3=Color3.fromRGB(110,125,145)},0.12) end)
             table.insert(Library.SearchIndex,{Name=text,Tab=name,Instance=Fr})
             return bt
         end
@@ -628,28 +713,36 @@ function Library:CreateWindow(opts)
             local T=Library.CurrentTheme; local Toggled=default or false
             Library.Flags[text]=Toggled
             local Fr=ElemBase(38); ElemLbl(Fr,text)
+            
             local Track=Instance.new("Frame",Fr); Track.Name="ToggleTrack"
             Track.BackgroundColor3=Color3.fromRGB(255,255,255)
-            Track.BackgroundTransparency=Toggled and 0.0 or 0.82
+            Track.BackgroundTransparency=Toggled and 0.1 or 0.85
             Track.AnchorPoint=Vector2.new(1,0.5); Track.Position=UDim2.new(1,-12,0.5,0)
-            Track.Size=UDim2.new(0,44,0,24); Track.BorderSizePixel=0
+            Track.Size=UDim2.new(0,44,0,24); Track.BorderSizePixel=0; Track.ZIndex=3
             Instance.new("UICorner",Track).CornerRadius=UDim.new(1,0)
+            
             local Knob=Instance.new("Frame",Track); Knob.Name="ToggleKnob"
-            Knob.BackgroundColor3=Toggled and T.Accent or Color3.fromRGB(120,130,145)
+            Knob.BackgroundColor3=Toggled and T.Accent or Color3.fromRGB(120,135,155)
             Knob:SetAttribute("On",Toggled); Knob.AnchorPoint=Vector2.new(0,0.5)
             Knob.Position=Toggled and UDim2.new(1,-21,0.5,0) or UDim2.new(0,3,0.5,0)
-            Knob.Size=UDim2.new(0,18,0,18); Knob.BorderSizePixel=0
+            Knob.Size=UDim2.new(0,18,0,18); Knob.BorderSizePixel=0; Knob.ZIndex=3
             Instance.new("UICorner",Knob).CornerRadius=UDim.new(1,0)
+            
             local Hit=Instance.new("TextButton",Fr); Hit.BackgroundTransparency=1
-            Hit.Size=UDim2.new(1,0,1,0); Hit.Text=""; Hit.AutoButtonColor=false
+            Hit.Size=UDim2.new(1,0,1,0); Hit.Text=""; Hit.AutoButtonColor=false; Hit.ZIndex=4
+            
             local function Update(val)
                 Toggled=val; Library.Flags[text]=Toggled; Knob:SetAttribute("On",Toggled)
-                Tw(Track,{BackgroundTransparency=Toggled and 0.0 or 0.82},0.15)
+                Tw(Track,{BackgroundTransparency=Toggled and 0.1 or 0.85},0.18)
                 Tw(Knob,{Position=Toggled and UDim2.new(1,-21,0.5,0) or UDim2.new(0,3,0.5,0),
-                    BackgroundColor3=Toggled and Library.CurrentTheme.Accent or Color3.fromRGB(120,130,145)},0.15)
-                if callback then pcall(callback,Toggled) end
+                    BackgroundColor3=Toggled and Library.CurrentTheme.Accent or Color3.fromRGB(120,135,155)},0.18,Enum.EasingStyle.Back)
+                pcall(callback,Toggled)
             end
-            Hit.MouseButton1Click:Connect(function() Update(not Toggled) end)
+            Hit.InputBegan:Connect(function(i)
+                if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+                    Update(not Toggled)
+                end
+            end)
             Library.Elements[text]={Set=function(self,v) Update(v) end}
             table.insert(Library.SearchIndex,{Name=text,Tab=name,Instance=Fr})
             return Fr
@@ -659,37 +752,44 @@ function Library:CreateWindow(opts)
             local T=Library.CurrentTheme; local val=default or min; local sliding=false
             Library.Flags[text]=val
             local Fr=ElemBase(50)
+            
             local SLbl=Instance.new("TextLabel",Fr); SLbl.Name="ElemLbl"
             SLbl.BackgroundTransparency=1; SLbl.Position=UDim2.new(0,12,0,0)
             SLbl.Size=UDim2.new(1,-56,0,24); SLbl.Font=Enum.Font.Gotham; SLbl.Text=text
-            SLbl.TextColor3=T.Text; SLbl.TextSize=12
+            SLbl.TextColor3=T.Text; SLbl.TextSize=12; SLbl.ZIndex=3
             SLbl.TextXAlignment=Enum.TextXAlignment.Left; SLbl.TextYAlignment=Enum.TextYAlignment.Center
+            
             local ValLbl=Instance.new("TextLabel",Fr); ValLbl.Name="SliderValue"
             ValLbl.BackgroundTransparency=1; ValLbl.AnchorPoint=Vector2.new(1,0)
             ValLbl.Position=UDim2.new(1,-10,0,0); ValLbl.Size=UDim2.new(0,44,0,24)
             ValLbl.Font=Enum.Font.GothamMedium; ValLbl.Text=tostring(val)
-            ValLbl.TextColor3=T.Accent; ValLbl.TextSize=11
+            ValLbl.TextColor3=T.Accent; ValLbl.TextSize=11; ValLbl.ZIndex=3
             ValLbl.TextXAlignment=Enum.TextXAlignment.Right; ValLbl.TextYAlignment=Enum.TextYAlignment.Center
+            
             local Track=Instance.new("Frame",Fr); Track.Name="SliderTrack"
-            Track.BackgroundColor3=Color3.fromRGB(255,255,255); Track.BackgroundTransparency=0.82
-            Track.BorderSizePixel=0; Track.Position=UDim2.new(0,12,0,32); Track.Size=UDim2.new(1,-24,0,5)
+            Track.BackgroundColor3=Color3.fromRGB(255,255,255); Track.BackgroundTransparency=0.85
+            Track.BorderSizePixel=0; Track.Position=UDim2.new(0,12,0,32); Track.Size=UDim2.new(1,-24,0,6); Track.ZIndex=3
             Instance.new("UICorner",Track).CornerRadius=UDim.new(1,0)
+            
             local Fill=Instance.new("Frame",Track); Fill.Name="SliderFill"
-            Fill.BackgroundColor3=T.Accent; Fill.BackgroundTransparency=0.1; Fill.BorderSizePixel=0
-            Fill.Size=UDim2.new((val-min)/(max-min),0,1,0)
+            Fill.BackgroundColor3=T.Accent; Fill.BackgroundTransparency=0.05; Fill.BorderSizePixel=0
+            Fill.Size=UDim2.new((val-min)/(max-min),0,1,0); Fill.ZIndex=3
             Instance.new("UICorner",Fill).CornerRadius=UDim.new(1,0)
+            
             local SKnob=Instance.new("Frame",Track); SKnob.Name="SliderKnob"
             SKnob.BackgroundColor3=Color3.fromRGB(255,255,255); SKnob.BorderSizePixel=0
             SKnob.AnchorPoint=Vector2.new(0.5,0.5)
-            SKnob.Position=UDim2.new((val-min)/(max-min),0,0.5,0); SKnob.Size=UDim2.new(0,10,0,10)
+            SKnob.Position=UDim2.new((val-min)/(max-min),0,0.5,0); SKnob.Size=UDim2.new(0,12,0,12); SKnob.ZIndex=3
             Instance.new("UICorner",SKnob).CornerRadius=UDim.new(1,0)
+            
             local Hit=Instance.new("TextButton",Fr); Hit.BackgroundTransparency=1
             Hit.Size=UDim2.new(1,0,1,0); Hit.Text=""; Hit.AutoButtonColor=false; Hit.ZIndex=4
+            
             local function SetVal(v)
                 val=math.clamp(v,min,max); Library.Flags[text]=val; ValLbl.Text=tostring(val)
                 local pct=(val-min)/(max-min)
-                Tw(Fill,{Size=UDim2.new(pct,0,1,0)},0.06); Tw(SKnob,{Position=UDim2.new(pct,0,0.5,0)},0.06)
-                if callback then pcall(callback,val) end
+                Tw(Fill,{Size=UDim2.new(pct,0,1,0)},0.08); Tw(SKnob,{Position=UDim2.new(pct,0,0.5,0)},0.08)
+                pcall(callback,val)
             end
             local function FI(i) SetVal(math.floor(min+(max-min)*math.clamp((i.Position.X-Track.AbsolutePosition.X)/Track.AbsoluteSize.X,0,1))) end
             Hit.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then sliding=true; FI(i) end end)
@@ -706,28 +806,38 @@ function Library:CreateWindow(opts)
             Fr.BackgroundColor3=T.Element; Fr.BackgroundTransparency=GT()
             Fr.Size=UDim2.new(1,0,0,38); Fr.ClipsDescendants=true; Fr.BorderSizePixel=0
             Instance.new("UICorner",Fr).CornerRadius=UDim.new(0,12)
-            local fs=Instance.new("UIStroke",Fr); fs.Color=Color3.fromRGB(255,255,255); fs.Thickness=1; fs.Transparency=0.90
+            AddGlassShine(Fr, UDim.new(0,12))
+            
+            local fs=Instance.new("UIStroke",Fr); fs.Color=Color3.fromRGB(255,255,255); fs.Thickness=1; fs.Transparency=0.88
+            ApplyGlassStroke(fs)
+            
             local Sel=Instance.new("TextLabel",Fr); Sel.Name="ElemLbl"
             Sel.BackgroundTransparency=1; Sel.Position=UDim2.new(0,12,0,0); Sel.Size=UDim2.new(1,-36,0,38)
-            Sel.Font=Enum.Font.Gotham; Sel.Text=text; Sel.TextColor3=T.Text; Sel.TextSize=12
+            Sel.Font=Enum.Font.Gotham; Sel.Text=text; Sel.TextColor3=T.Text; Sel.TextSize=12; Sel.ZIndex=3
             Sel.TextXAlignment=Enum.TextXAlignment.Left
+            
             local Chev=Instance.new("TextLabel",Fr); Chev.BackgroundTransparency=1
             Chev.AnchorPoint=Vector2.new(1,0.5); Chev.Position=UDim2.new(1,-14,0,19); Chev.Size=UDim2.new(0,14,0,14)
-            Chev.Text="⌄"; Chev.TextColor3=Color3.fromRGB(120,130,145); Chev.Font=Enum.Font.GothamBold; Chev.TextSize=13
+            Chev.Text="⌄"; Chev.TextColor3=Color3.fromRGB(120,135,155); Chev.Font=Enum.Font.GothamBold; Chev.TextSize=13; Chev.ZIndex=3
+            
             local LF=Instance.new("ScrollingFrame",Fr); LF.BackgroundColor3=T.Top; LF.BackgroundTransparency=GT()
             LF.BorderSizePixel=0; LF.Position=UDim2.new(0,0,0,40); LF.Size=UDim2.new(1,0,0,LM)
             LF.CanvasSize=UDim2.new(0,0,0,0); LF.ScrollBarThickness=3
             LF.ScrollBarImageColor3=T.Accent; LF.Visible=false; LF.ZIndex=5
             Instance.new("UICorner",LF).CornerRadius=UDim.new(0,10)
+            
             local il=Instance.new("UIListLayout",LF); il.SortOrder=Enum.SortOrder.LayoutOrder; il.Padding=UDim.new(0,1)
             local ip=Instance.new("UIPadding",LF); ip.PaddingTop=UDim.new(0,3); ip.PaddingLeft=UDim.new(0,3); ip.PaddingRight=UDim.new(0,3)
+            
             local Hit=Instance.new("TextButton",Fr); Hit.BackgroundTransparency=1
-            Hit.Size=UDim2.new(1,0,0,38); Hit.Text=""; Hit.ZIndex=3; Hit.AutoButtonColor=false
+            Hit.Size=UDim2.new(1,0,0,38); Hit.Text=""; Hit.ZIndex=4; Hit.AutoButtonColor=false
+            
             local function Sel2(item)
                 Sel.Text=text.."  ·  "..item; Library.Flags[text]=item
                 dropped=false; LF.Visible=false; Fr.Size=UDim2.new(1,0,0,38); Chev.Rotation=0
-                if callback then pcall(callback,item) end
+                pcall(callback,item)
             end
+            
             local function Build(items)
                 for _,c in pairs(LF:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
                 for i,item in ipairs(items) do
@@ -737,24 +847,31 @@ function Library:CreateWindow(opts)
                     ib.TextColor3=Library.CurrentTheme.Text; ib.TextSize=11
                     ib.AutoButtonColor=false; ib.BorderSizePixel=0; ib.LayoutOrder=i; ib.ZIndex=6
                     Instance.new("UICorner",ib).CornerRadius=UDim.new(0,8)
-                    ib.MouseButton1Click:Connect(function() Sel2(item) end)
-                    ib.MouseEnter:Connect(function() ib.BackgroundColor3=Library.CurrentTheme.Accent; ib.BackgroundTransparency=0.5 end)
+                    ib.InputBegan:Connect(function(i) 
+                        if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+                            Sel2(item) 
+                        end
+                    end)
+                    ib.MouseEnter:Connect(function() ib.BackgroundColor3=Library.CurrentTheme.Accent; ib.BackgroundTransparency=0.45 end)
                     ib.MouseLeave:Connect(function() ib.BackgroundColor3=Color3.fromRGB(255,255,255); ib.BackgroundTransparency=0.92 end)
                 end
                 LF.CanvasSize=UDim2.new(0,0,0,#items*IH+8)
             end
             Build(list)
+            
             local function CalcH() return math.min(#list*IH+8,LM) end
-            Hit.MouseButton1Click:Connect(function()
-                dropped=not dropped
-                if dropped then
-                    local lh=CalcH(); LF.Size=UDim2.new(1,0,0,lh)
-                    LF.Visible=true; LF.CanvasPosition=Vector2.new(0,0); Fr.Size=UDim2.new(1,0,0,40+lh)
-                    Tw(Chev,{Rotation=180},0.15)
-                else
-                    LF.Visible=false; Fr.Size=UDim2.new(1,0,0,38); Tw(Chev,{Rotation=0},0.15)
+            Hit.InputBegan:Connect(function(i)
+                if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+                    dropped=not dropped
+                    if dropped then
+                        local lh=CalcH(); LF.Size=UDim2.new(1,0,0,lh)
+                        LF.Visible=true; LF.CanvasPosition=Vector2.new(0,0); Fr.Size=UDim2.new(1,0,0,40+lh)
+                        Tw(Chev,{Rotation=180},0.18)
+                    else
+                        LF.Visible=false; Fr.Size=UDim2.new(1,0,0,38); Tw(Chev,{Rotation=0},0.18)
+                    end
+                    Page.CanvasSize=UDim2.new(0,0,0,PL.AbsoluteContentSize.Y+16)
                 end
-                Page.CanvasSize=UDim2.new(0,0,0,PL.AbsoluteContentSize.Y+16)
             end)
             Library.Elements[text]={
                 Set=function(self,v) Sel2(v) end,
@@ -772,21 +889,23 @@ function Library:CreateWindow(opts)
             local Fr=ElemBase(52)
             local Lbl=ElemLbl(Fr,text,6,11)
             Lbl.Size=UDim2.new(1,-24,0,16)
+            
             local Box=Instance.new("TextBox",Fr)
-            Box.BackgroundColor3=Color3.fromRGB(255,255,255); Box.BackgroundTransparency=0.88
+            Box.BackgroundColor3=Color3.fromRGB(255,255,255); Box.BackgroundTransparency=0.9
             Box.BorderSizePixel=0
             Box.Position=UDim2.new(0,10,0,24); Box.Size=UDim2.new(1,-20,0,22)
             Box.Font=Enum.Font.Gotham; Box.PlaceholderText=placeholder or ""
-            Box.PlaceholderColor3=Color3.fromRGB(130,140,155)
+            Box.PlaceholderColor3=Color3.fromRGB(130,145,165)
             Box.Text=""; Box.TextColor3=T.Text; Box.TextSize=11
-            Box.ClearTextOnFocus=false
+            Box.ClearTextOnFocus=false; Box.ZIndex=4
             Instance.new("UICorner",Box).CornerRadius=UDim.new(1,0)
+            
             local BS=Instance.new("UIStroke",Box)
-            BS.Color=T.Accent; BS.Thickness=1; BS.Transparency=0.72
-            Box.Focused:Connect(function()  Tw(BS,{Transparency=0.25},0.15) end)
+            BS.Color=T.Accent; BS.Thickness=1; BS.Transparency=0.75
+            Box.Focused:Connect(function()  Tw(BS,{Transparency=0.2},0.15) end)
             Box.FocusLost:Connect(function(enter)
-                Tw(BS,{Transparency=0.72},0.15)
-                if enter and callback then pcall(callback,Box.Text) end
+                Tw(BS,{Transparency=0.75},0.15)
+                if enter then pcall(callback,Box.Text) end
             end)
             Library.Elements[text]={Set=function(self,v) Box.Text=v end}
             table.insert(Library.SearchIndex,{Name=text,Tab=name,Instance=Fr})
@@ -796,23 +915,27 @@ function Library:CreateWindow(opts)
             local T=Library.CurrentTheme; local key=default or Enum.KeyCode.Unknown; local binding=false
             Library.Flags[text]=key
             local Fr=ElemBase(38); ElemLbl(Fr,text)
+            
             local KB=Instance.new("TextButton",Fr); KB.Name="KeyBtn"
-            KB.BackgroundColor3=Color3.fromRGB(255,255,255); KB.BackgroundTransparency=0.88
+            KB.BackgroundColor3=Color3.fromRGB(255,255,255); KB.BackgroundTransparency=0.9
             KB.AnchorPoint=Vector2.new(1,0.5); KB.Position=UDim2.new(1,-12,0.5,0); KB.Size=UDim2.new(0,72,0,24)
             KB.Font=Enum.Font.GothamMedium; KB.Text=key==Enum.KeyCode.Unknown and "None" or key.Name
-            KB.TextColor3=Color3.fromRGB(190,200,215); KB.TextSize=10; KB.AutoButtonColor=false; KB.BorderSizePixel=0
+            KB.TextColor3=Color3.fromRGB(190,205,220); KB.TextSize=10; KB.AutoButtonColor=false; KB.BorderSizePixel=0; KB.ZIndex=4
             Instance.new("UICorner",KB).CornerRadius=UDim.new(1,0)
-            local kbs=Instance.new("UIStroke",KB); kbs.Color=T.Accent; kbs.Thickness=1; kbs.Transparency=0.72
-            KB.MouseButton1Click:Connect(function()
-                binding=true; KB.Text="..."; KB.TextColor3=T.Accent; Tw(kbs,{Transparency=0.3},0.12)
+            
+            local kbs=Instance.new("UIStroke",KB); kbs.Color=T.Accent; kbs.Thickness=1; kbs.Transparency=0.75
+            KB.InputBegan:Connect(function(i)
+                if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+                    binding=true; KB.Text="..."; KB.TextColor3=T.Accent; Tw(kbs,{Transparency=0.25},0.12)
+                end
             end)
             UserInputService.InputBegan:Connect(function(input,gpe)
                 if binding and not gpe and input.UserInputType==Enum.UserInputType.Keyboard then
                     key=input.KeyCode; binding=false; KB.Text=key.Name
-                    KB.TextColor3=Color3.fromRGB(190,200,215); Tw(kbs,{Transparency=0.72},0.12)
+                    KB.TextColor3=Color3.fromRGB(190,205,220); Tw(kbs,{Transparency=0.75},0.12)
                     Library.Flags[text]=key
                 elseif not binding and not gpe and input.UserInputType==Enum.UserInputType.Keyboard then
-                    if input.KeyCode==key and callback then pcall(callback,key) end
+                    if input.KeyCode==key then pcall(callback,key) end
                 end
             end)
             Library.Elements[text]={Set=function(self,k) key=k; KB.Text=k.Name end}

@@ -416,16 +416,35 @@ function Library:CreateWindow(opts)
 
     SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
         local txt=SearchBox.Text:lower(); if txt=="" then return end
+        -- Collect ALL matches first, not just the first one found via pairs() (which is
+        -- unordered and previously caused unpredictable jumps + a single break on first hit).
+        local matches={}
         for _,item in pairs(Library.SearchIndex) do
-            if string.find(item.Name:lower(),txt) then
-                SwitchToTab(item.Tab)
-                local pg=PagesFolder:FindFirstChild(item.Tab)
-                if pg and item.Instance then
-                    Tw(pg,{CanvasPosition=Vector2.new(0,item.Instance.AbsolutePosition.Y-pg.AbsolutePosition.Y+pg.CanvasPosition.Y)},0.3)
-                end
-                break
+            if item.Name and item.Instance and item.Instance.Parent and string.find(item.Name:lower(),txt,1,true) then
+                table.insert(matches,item)
             end
         end
+        if #matches==0 then return end
+        -- Prefer an exact/prefix match over a substring match so typing "Current" resolves
+        -- predictably instead of landing on whichever "...Current..." happened to be first.
+        table.sort(matches,function(a,b)
+            local an,bn=a.Name:lower(),b.Name:lower()
+            local aPrefix = an:sub(1,#txt)==txt
+            local bPrefix = bn:sub(1,#txt)==txt
+            if aPrefix~=bPrefix then return aPrefix end
+            return #an<#bn
+        end)
+        local item=matches[1]
+        SwitchToTab(item.Tab)
+        -- Defer one frame so layout (UIListLayout / dropdown expand-collapse) has settled
+        -- before reading AbsolutePosition — fixes jumps landing on the wrong element when a
+        -- Dropdown above the target is expanded or was just Refresh()'d, shifting positions.
+        task.defer(function()
+            local pg=PagesFolder:FindFirstChild(item.Tab)
+            if pg and item.Instance and item.Instance.Parent then
+                Tw(pg,{CanvasPosition=Vector2.new(0,math.max(0,item.Instance.AbsolutePosition.Y-pg.AbsolutePosition.Y+pg.CanvasPosition.Y))},0.3)
+            end
+        end)
     end)
 
     -- ==================== TAB BUTTON ====================
